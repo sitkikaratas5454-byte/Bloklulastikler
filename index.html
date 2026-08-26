@@ -57,15 +57,6 @@
     color:var(--text);
   }
   h1 span{color:var(--yellow);}
-  .on-ambar{
-    font-family:'Oswald',sans-serif;
-    font-weight:700;
-    font-size:15.5px;
-    letter-spacing:.06em;
-    text-transform:uppercase;
-    color:var(--yellow);
-    margin:6px 0 2px;
-  }
   .sub{color:var(--muted);font-size:13.5px;margin:0;}
   .tabs{
     display:flex;
@@ -327,6 +318,13 @@
   .field-card .btn-add{width:100%;margin-top:10px;}
   .field-card.gold .btn-add{background:#1c1f26;color:var(--yellow);}
   .field-card .msg{margin:8px 0 0;min-height:16px;}
+  .field-card.save-card{
+    flex:1 1 180px;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+  }
+  .field-card.save-card .btn-add{margin-top:0;}
   .bulk-box textarea{
     width:100%;
     min-height:110px;
@@ -346,8 +344,6 @@
       inset 0 -1px 0 rgba(255,255,255,.04);
   }
   .bulk-box textarea:focus{border-color:var(--yellow);}
-  .bulk-row{display:flex;align-items:center;gap:14px;margin-top:10px;}
-  .bulk-row .msg{margin:0;}
 
   /* Bulunanlar */
   .filter-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
@@ -712,8 +708,7 @@
 
 <div class="stripe"></div>
 <header>
-  <h1>Bloklu <span>Lastik</span> Paneli</h1>
-  <p class="on-ambar">Ön Ambar</p>
+  <h1>Bitmiş Ürün Ambarı <span>Bloklu Lastik</span> Paneli</h1>
   <p class="sub">Beadcode blok listesi ve okutma kayıtları</p>
 </header>
 
@@ -739,16 +734,22 @@
             <textarea id="bulkInput"></textarea>
           </div>
         </div>
-      </div>
-
-      <div class="bulk-row">
-        <button class="btn-add" id="btnKaydet">Kaydet</button>
-        <span class="msg" id="kaydetMsg"></span>
+        <div class="field-card save-card">
+          <p class="tag">Kaydet</p>
+          <p class="ttl">&nbsp;</p>
+          <button class="btn-add" id="btnKaydet">Kaydet</button>
+          <span class="msg" id="kaydetMsg"></span>
+        </div>
       </div>
 
       <p class="list-title">
         <span>Bloklu Kod Listesi</span>
       </p>
+      <div class="filter-row">
+        <div class="chip chip-custom" data-open="gun" data-target="kod" id="chipGunKod">Tarih Seç</div>
+        <div class="chip chip-custom" data-open="aralik" data-target="kod" id="chipAralikKod">Tarih Aralığı Seç</div>
+        <div class="chip chip-custom" data-open="yil" data-target="kod" id="chipYilKod">Yıl Seç</div>
+      </div>
       <ul class="code-list" id="kodListe">
         <li class="empty">Yükleniyor...</li>
       </ul>
@@ -756,9 +757,9 @@
 
     <section id="view-log" class="view">
       <div class="filter-row">
-        <div class="chip chip-custom" data-open="gun" id="chipGun">Tarih Seç</div>
-        <div class="chip chip-custom" data-open="aralik" id="chipAralik">Tarih Aralığı Seç</div>
-        <div class="chip chip-custom" data-open="yil" id="chipYil">Yıl Seç</div>
+        <div class="chip chip-custom" data-open="gun" data-target="log" id="chipGun">Tarih Seç</div>
+        <div class="chip chip-custom" data-open="aralik" data-target="log" id="chipAralik">Tarih Aralığı Seç</div>
+        <div class="chip chip-custom" data-open="yil" data-target="log" id="chipYil">Yıl Seç</div>
         <div class="count-badge" id="logSayisi">0 okutma</div>
         <button class="btn-danger" id="btnLogTemizle" style="flex:0 0 auto;padding:7px 14px;font-size:12.5px;">Komple Temizle</button>
       </div>
@@ -1029,50 +1030,68 @@ modalSilBtn.addEventListener('click', async ()=>{
   }
 });
 
+let tumKodKayitlari = [];
 const qKodlar = query(kodlarCol, orderBy('eklenme', 'desc'));
 onSnapshot(qKodlar, snap=>{
   setConn('ok');
   mevcutKodlar = new Map();
-  if(snap.empty){
-    kodListe.innerHTML = '<li class="empty">Henüz bloklu kod eklenmedi.</li>';
-    return;
-  }
-  let html = '';
-  const kayitlar = [];
+  tumKodKayitlari = [];
   snap.forEach(d=>{
     const data = d.data();
     const blokluKodlar = Array.isArray(data.blokluKodlar) ? data.blokluKodlar : [];
     mevcutKodlar.set(data.lastikKodu, { id: d.id, blokluKodlar: new Set(blokluKodlar) });
-    kayitlar.push({ id: d.id, lastikKodu: data.lastikKodu, blokluKodlar });
-    const tarih = data.eklenme && data.eklenme.toDate ? formatTarih(data.eklenme.toDate()) : '—';
+    tumKodKayitlari.push({
+      id: d.id,
+      lastikKodu: data.lastikKodu,
+      blokluKodlar,
+      tarih: data.eklenme && data.eklenme.toDate ? data.eklenme.toDate() : null
+    });
+  });
+  renderKodListe();
+}, err=>{
+  setConn('err');
+  kodListe.innerHTML = '<li class="empty">Bağlantı hatası: ' + err.message + '</li>';
+});
+
+function renderKodListe(){
+  const { start, end } = filtreAraligi('kod');
+  const filtreli = tumKodKayitlari.filter(k=>{
+    if(!k.tarih) return !start;
+    if(start && k.tarih < start) return false;
+    if(end && k.tarih >= end) return false;
+    return true;
+  });
+  if(filtreli.length === 0){
+    kodListe.innerHTML = '<li class="empty">' + (tumKodKayitlari.length === 0 ? 'Henüz bloklu kod eklenmedi.' : 'Seçilen tarihte kayıt yok.') + '</li>';
+    return;
+  }
+  let html = '';
+  filtreli.forEach(k=>{
+    const tarih = k.tarih ? formatTarih(k.tarih) : '—';
     html += `<li class="code-item">
       <div>
-        <div class="kod">Lastik Kodu: ${escapeHtml(data.lastikKodu)}</div>
-        <div class="meta">Bloklu Kodlar: ${blokluKodlar.map(escapeHtml).join(', ')}</div>
+        <div class="kod">Lastik Kodu: ${escapeHtml(k.lastikKodu)}</div>
+        <div class="meta">Bloklu Kodlar: ${k.blokluKodlar.map(escapeHtml).join(', ')}</div>
         <div class="meta">eklendi: ${tarih}</div>
       </div>
       <div class="item-right">
-        <span class="row-count">${blokluKodlar.length} blokeli kod</span>
-        <button class="btn-upd" data-id="${d.id}">Güncelle</button>
+        <span class="row-count">${k.blokluKodlar.length} blokeli kod</span>
+        <button class="btn-upd" data-id="${k.id}">Güncelle</button>
       </div>
     </li>`;
   });
   kodListe.innerHTML = html;
   kodListe.querySelectorAll('.btn-upd').forEach(b=>{
     b.addEventListener('click', ()=>{
-      const kayit = kayitlar.find(k=>k.id === b.dataset.id);
+      const kayit = tumKodKayitlari.find(k=>k.id === b.dataset.id);
       if(kayit) kodGuncelle(kayit.id, kayit.lastikKodu, kayit.blokluKodlar);
     });
   });
-}, err=>{
-  setConn('err');
-  kodListe.innerHTML = '<li class="empty">Bağlantı hatası: ' + err.message + '</li>';
-});
+}
 
 /* ---------- Bulunanlar (log) ---------- */
 const logBody = document.getElementById('logBody');
 const logSayisi = document.getElementById('logSayisi');
-let aktifFiltre = null;
 let tumOkutmalar = [];
 
 /* ---------- Takvim (tarih / tarih aralığı / yıl seçici) ---------- */
@@ -1092,13 +1111,17 @@ const takvimUygulaBtn = document.getElementById('takvimUygula');
 const AY_ADLARI = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
 const GUN_ADLARI = ['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
 
+/* Her hedef (log = Bulunanlar, kod = Bloklu Kod Listesi) kendi filtre durumunu tutar,
+   ikisi de aynı takvim modalını ve aynı seçim mantığını kullanır. */
+const filtreDurumu = {
+  log: { aktifFiltre: 'ozel-gun', seciliGun: new Date(), aralikBas: null, aralikSon: null, seciliYil: null },
+  kod: { aktifFiltre: 'ozel-gun', seciliGun: new Date(), aralikBas: null, aralikSon: null, seciliYil: null }
+};
+
+let takvimHedef = 'log';
 let takvimMod = 'gun';
 let takvimGosterilenAy = new Date();
-let takvimSeciliGun = null;
-let takvimAralikBas = null;
-let takvimAralikSon = null;
 let takvimYilBlokBaslangic = Math.floor(new Date().getFullYear() / 12) * 12;
-let takvimSeciliYil = null;
 
 function ayniGun(a, b){
   return !!a && !!b && a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
@@ -1107,27 +1130,36 @@ function formatTarihKisa(d){
   return d.toLocaleDateString('tr-TR', {day:'2-digit', month:'2-digit', year:'2-digit'});
 }
 
-function takvimChipEtiketleriGuncelle(){
-  document.getElementById('chipGun').textContent = takvimSeciliGun ? formatTarihKisa(takvimSeciliGun) : 'Tarih Seç';
-  document.getElementById('chipAralik').textContent = (takvimAralikBas && takvimAralikSon)
-    ? (formatTarihKisa(takvimAralikBas) + ' – ' + formatTarihKisa(takvimAralikSon))
+function takvimChipEtiketleriGuncelle(hedef){
+  const durum = filtreDurumu[hedef];
+  const ekEtiket = hedef === 'kod' ? 'Kod' : '';
+  document.getElementById('chipGun' + ekEtiket).textContent = durum.seciliGun ? formatTarihKisa(durum.seciliGun) : 'Tarih Seç';
+  document.getElementById('chipAralik' + ekEtiket).textContent = (durum.aralikBas && durum.aralikSon)
+    ? (formatTarihKisa(durum.aralikBas) + ' – ' + formatTarihKisa(durum.aralikSon))
     : 'Tarih Aralığı Seç';
-  document.getElementById('chipYil').textContent = takvimSeciliYil ? String(takvimSeciliYil) : 'Yıl Seç';
+  document.getElementById('chipYil' + ekEtiket).textContent = durum.seciliYil ? String(durum.seciliYil) : 'Yıl Seç';
 }
+takvimChipEtiketleriGuncelle('log');
+takvimChipEtiketleriGuncelle('kod');
+document.getElementById('chipGun').classList.add('active');
+document.getElementById('chipGunKod').classList.add('active');
 
-function takvimAc(mod){
+function takvimAc(mod, hedef){
   takvimMod = mod;
+  takvimHedef = hedef;
+  const durum = filtreDurumu[hedef];
+  takvimTag.textContent = (hedef === 'kod' ? 'Bloklu Kod Listesi' : 'Bloklu Bulunan Lastikler') + ' Filtresi';
   takvimHint.textContent = '';
   if(mod === 'gun'){
     takvimBaslik.textContent = 'Tarih Seç';
-    takvimGosterilenAy = takvimSeciliGun ? new Date(takvimSeciliGun) : new Date();
+    takvimGosterilenAy = durum.seciliGun ? new Date(durum.seciliGun) : new Date();
   }else if(mod === 'aralik'){
     takvimBaslik.textContent = 'Tarih Aralığı Seç';
-    takvimGosterilenAy = takvimAralikBas ? new Date(takvimAralikBas) : new Date();
+    takvimGosterilenAy = durum.aralikBas ? new Date(durum.aralikBas) : new Date();
     takvimHint.textContent = 'Önce başlangıç, sonra bitiş tarihine dokun.';
   }else if(mod === 'yil'){
     takvimBaslik.textContent = 'Yıl Seç';
-    takvimYilBlokBaslangic = Math.floor((takvimSeciliYil || new Date().getFullYear()) / 12) * 12;
+    takvimYilBlokBaslangic = Math.floor((durum.seciliYil || new Date().getFullYear()) / 12) * 12;
   }
   takvimOverlay.classList.add('open');
   takvimCiz();
@@ -1137,22 +1169,23 @@ takvimOverlay.addEventListener('click', (e)=>{ if(e.target === takvimOverlay) ta
 document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && takvimOverlay.classList.contains('open')) takvimOverlay.classList.remove('open'); });
 
 document.querySelectorAll('.chip[data-open]').forEach(chip=>{
-  chip.addEventListener('click', ()=> takvimAc(chip.dataset.open));
+  chip.addEventListener('click', ()=> takvimAc(chip.dataset.open, chip.dataset.target));
 });
 
 function takvimCiz(){
+  const durum = filtreDurumu[takvimHedef];
   if(takvimMod === 'yil'){
     takvimGunlerEl.style.display = 'none';
     takvimGridEl.classList.add('yil-grid');
     takvimAyYilEl.textContent = takvimYilBlokBaslangic + ' – ' + (takvimYilBlokBaslangic + 11);
     let html = '';
     for(let y = takvimYilBlokBaslangic; y < takvimYilBlokBaslangic + 12; y++){
-      html += `<div class="takvim-yil ${takvimSeciliYil === y ? 'secili' : ''}" data-yil="${y}">${y}</div>`;
+      html += `<div class="takvim-yil ${durum.seciliYil === y ? 'secili' : ''}" data-yil="${y}">${y}</div>`;
     }
     takvimGridEl.innerHTML = html;
     takvimGridEl.querySelectorAll('.takvim-yil').forEach(el=>{
       el.addEventListener('click', ()=>{
-        takvimSeciliYil = parseInt(el.dataset.yil, 10);
+        durum.seciliYil = parseInt(el.dataset.yil, 10);
         takvimCiz();
       });
     });
@@ -1180,11 +1213,11 @@ function takvimCiz(){
     const tarih = new Date(yil, ay, g);
     const sinifs = ['takvim-gun'];
     if(ayniGun(tarih, bugun)) sinifs.push('bugun');
-    if(takvimMod === 'gun' && ayniGun(tarih, takvimSeciliGun)) sinifs.push('secili');
+    if(takvimMod === 'gun' && ayniGun(tarih, durum.seciliGun)) sinifs.push('secili');
     if(takvimMod === 'aralik'){
-      if(takvimAralikBas && ayniGun(tarih, takvimAralikBas)) sinifs.push('secili', 'aralik-bas');
-      if(takvimAralikSon && ayniGun(tarih, takvimAralikSon)) sinifs.push('secili', 'aralik-son');
-      if(takvimAralikBas && takvimAralikSon && tarih > takvimAralikBas && tarih < takvimAralikSon) sinifs.push('aralikta');
+      if(durum.aralikBas && ayniGun(tarih, durum.aralikBas)) sinifs.push('secili', 'aralik-bas');
+      if(durum.aralikSon && ayniGun(tarih, durum.aralikSon)) sinifs.push('secili', 'aralik-son');
+      if(durum.aralikBas && durum.aralikSon && tarih > durum.aralikBas && tarih < durum.aralikSon) sinifs.push('aralikta');
     }
     html += `<div class="${sinifs.join(' ')}" data-tarih="${tarih.getTime()}">${g}</div>`;
   }
@@ -1199,16 +1232,16 @@ function takvimCiz(){
     el.addEventListener('click', ()=>{
       const tarih = new Date(parseInt(el.dataset.tarih, 10));
       if(takvimMod === 'gun'){
-        takvimSeciliGun = tarih;
+        durum.seciliGun = tarih;
       }else if(takvimMod === 'aralik'){
-        if(!takvimAralikBas || (takvimAralikBas && takvimAralikSon)){
-          takvimAralikBas = tarih;
-          takvimAralikSon = null;
-        }else if(tarih < takvimAralikBas){
-          takvimAralikSon = takvimAralikBas;
-          takvimAralikBas = tarih;
+        if(!durum.aralikBas || (durum.aralikBas && durum.aralikSon)){
+          durum.aralikBas = tarih;
+          durum.aralikSon = null;
+        }else if(tarih < durum.aralikBas){
+          durum.aralikSon = durum.aralikBas;
+          durum.aralikBas = tarih;
         }else{
-          takvimAralikSon = tarih;
+          durum.aralikSon = tarih;
         }
       }
       takvimCiz();
@@ -1227,43 +1260,47 @@ takvimIleriBtn.addEventListener('click', ()=>{
   takvimCiz();
 });
 takvimTemizleBtn.addEventListener('click', ()=>{
-  if(takvimMod === 'gun') takvimSeciliGun = null;
-  if(takvimMod === 'aralik'){ takvimAralikBas = null; takvimAralikSon = null; }
-  if(takvimMod === 'yil') takvimSeciliYil = null;
+  const durum = filtreDurumu[takvimHedef];
+  if(takvimMod === 'gun') durum.seciliGun = null;
+  if(takvimMod === 'aralik'){ durum.aralikBas = null; durum.aralikSon = null; }
+  if(takvimMod === 'yil') durum.seciliYil = null;
   takvimCiz();
 });
 takvimUygulaBtn.addEventListener('click', ()=>{
+  const durum = filtreDurumu[takvimHedef];
   if(takvimMod === 'gun'){
-    if(!takvimSeciliGun) return;
-    aktifFiltre = 'ozel-gun';
+    if(!durum.seciliGun) return;
+    durum.aktifFiltre = 'ozel-gun';
   }else if(takvimMod === 'aralik'){
-    if(!takvimAralikBas || !takvimAralikSon) return;
-    aktifFiltre = 'ozel-aralik';
+    if(!durum.aralikBas || !durum.aralikSon) return;
+    durum.aktifFiltre = 'ozel-aralik';
   }else if(takvimMod === 'yil'){
-    if(!takvimSeciliYil) return;
-    aktifFiltre = 'ozel-yil';
+    if(!durum.seciliYil) return;
+    durum.aktifFiltre = 'ozel-yil';
   }
-  takvimChipEtiketleriGuncelle();
-  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
-  document.querySelector(`.chip[data-open="${takvimMod}"]`).classList.add('active');
+  takvimChipEtiketleriGuncelle(takvimHedef);
+  document.querySelectorAll(`.chip[data-target="${takvimHedef}"]`).forEach(c=>c.classList.remove('active'));
+  document.querySelector(`.chip[data-open="${takvimMod}"][data-target="${takvimHedef}"]`).classList.add('active');
   takvimOverlay.classList.remove('open');
-  renderLog();
+  if(takvimHedef === 'kod') renderKodListe();
+  else renderLog();
 });
 
-function filtreAraligi(){
-  if(aktifFiltre === 'ozel-gun' && takvimSeciliGun){
-    const start = new Date(takvimSeciliGun.getFullYear(), takvimSeciliGun.getMonth(), takvimSeciliGun.getDate());
+function filtreAraligi(hedef){
+  const durum = filtreDurumu[hedef];
+  if(durum.aktifFiltre === 'ozel-gun' && durum.seciliGun){
+    const start = new Date(durum.seciliGun.getFullYear(), durum.seciliGun.getMonth(), durum.seciliGun.getDate());
     const end = new Date(start); end.setDate(end.getDate() + 1);
     return { start, end };
   }
-  if(aktifFiltre === 'ozel-aralik' && takvimAralikBas && takvimAralikSon){
-    const start = new Date(takvimAralikBas.getFullYear(), takvimAralikBas.getMonth(), takvimAralikBas.getDate());
-    const end = new Date(takvimAralikSon.getFullYear(), takvimAralikSon.getMonth(), takvimAralikSon.getDate());
+  if(durum.aktifFiltre === 'ozel-aralik' && durum.aralikBas && durum.aralikSon){
+    const start = new Date(durum.aralikBas.getFullYear(), durum.aralikBas.getMonth(), durum.aralikBas.getDate());
+    const end = new Date(durum.aralikSon.getFullYear(), durum.aralikSon.getMonth(), durum.aralikSon.getDate());
     end.setDate(end.getDate() + 1);
     return { start, end };
   }
-  if(aktifFiltre === 'ozel-yil' && takvimSeciliYil){
-    return { start: new Date(takvimSeciliYil, 0, 1), end: new Date(takvimSeciliYil + 1, 0, 1) };
+  if(durum.aktifFiltre === 'ozel-yil' && durum.seciliYil){
+    return { start: new Date(durum.seciliYil, 0, 1), end: new Date(durum.seciliYil + 1, 0, 1) };
   }
   return { start: null, end: null };
 }
@@ -1271,7 +1308,7 @@ function filtreAraligi(){
 const summaryListe = document.getElementById('summaryListe');
 
 function renderLog(){
-  const { start, end } = filtreAraligi();
+  const { start, end } = filtreAraligi('log');
   const filtreli = tumOkutmalar.filter(o=>{
     if(!o.tarih) return !start;
     if(start && o.tarih < start) return false;
