@@ -79,12 +79,20 @@
     font-size:14px;
     cursor:pointer;
     border-radius:8px 8px 0 0;
-    transition:background .15s,color .15s;
+    transition:background .15s,color .15s,box-shadow .15s,transform .1s;
+    box-shadow:
+      0 4px 0 rgba(0,0,0,.35),
+      0 6px 10px rgba(0,0,0,.3),
+      inset 0 1px 0 rgba(255,255,255,.12);
   }
   .tab.active{
     background:var(--yellow);
     color:#1c1f26;
     border-color:var(--yellow);
+    box-shadow:
+      0 4px 0 var(--yellow-dim),
+      0 6px 10px rgba(0,0,0,.3),
+      inset 0 1px 0 rgba(255,255,255,.5);
   }
   main{
     max-width:760px;
@@ -97,6 +105,10 @@
     border-radius:0 10px 10px 10px;
     padding:20px;
     backdrop-filter:blur(10px);
+    box-shadow:
+      0 10px 24px rgba(0,0,0,.4),
+      inset 0 1px 0 rgba(255,255,255,.08),
+      inset 0 -2px 6px rgba(0,0,0,.3);
   }
   .view{display:none;}
   .view.active{display:block;}
@@ -114,6 +126,11 @@
     border-radius:7px;
     outline:none;
   }
+  input[type=text]{
+    box-shadow:
+      inset 0 2px 5px rgba(0,0,0,.4),
+      inset 0 -1px 0 rgba(255,255,255,.04);
+  }
   input[type=text]:focus{border-color:var(--yellow);}
   input[type=text]::placeholder{color:#5c6472;}
   button{
@@ -124,29 +141,52 @@
     border:none;
     border-radius:7px;
     cursor:pointer;
-    transition:filter .15s,transform .05s;
+    transition:filter .15s,transform .08s,box-shadow .08s;
+    box-shadow:
+      0 4px 0 rgba(0,0,0,.35),
+      0 6px 12px rgba(0,0,0,.35),
+      inset 0 1px 0 rgba(255,255,255,.2);
   }
-  button:active{transform:scale(.97);}
+  button:active{
+    transform:translateY(3px) scale(.99);
+    box-shadow:
+      0 1px 0 rgba(0,0,0,.35),
+      0 2px 4px rgba(0,0,0,.3),
+      inset 0 1px 0 rgba(255,255,255,.2);
+  }
   .btn-add{
     background:var(--yellow);
     color:#1c1f26;
     padding:13px 26px;
     font-size:14px;
+    box-shadow:
+      0 4px 0 var(--yellow-dim),
+      0 6px 12px rgba(0,0,0,.35),
+      inset 0 1px 0 rgba(255,255,255,.5);
   }
   .btn-add:hover{filter:brightness(1.08);}
+  .btn-add:active{
+    box-shadow:
+      0 1px 0 var(--yellow-dim),
+      0 2px 4px rgba(0,0,0,.3),
+      inset 0 1px 0 rgba(255,255,255,.5);
+  }
   .msg{font-size:13px;margin:-8px 0 14px;min-height:16px;}
   .msg.err{color:var(--red);}
   .msg.ok{color:var(--green);}
 
   .list-title{
-    font-size:11.5px;
-    color:var(--muted);
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:19px;
+    color:var(--text);
     text-transform:uppercase;
-    letter-spacing:.08em;
-    margin:0 0 10px;
+    letter-spacing:.04em;
+    margin:28px 0 14px;
     display:flex;
     justify-content:space-between;
   }
+  .list-title span{color:var(--yellow);}
   .code-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;max-height:420px;overflow-y:auto;}
   .code-item{
     display:flex;
@@ -156,6 +196,10 @@
     border:1px solid var(--line);
     border-radius:7px;
     padding:11px 12px;
+    box-shadow:
+      0 3px 8px rgba(0,0,0,.3),
+      inset 0 1px 0 rgba(255,255,255,.06),
+      inset 0 -1px 0 rgba(0,0,0,.25);
   }
   .code-item .kod{font-family:var(--mono);font-size:15px;letter-spacing:.03em;color:var(--red);}
   .code-item .meta{font-size:11px;color:var(--muted);margin-top:2px;}
@@ -168,6 +212,9 @@
     padding:4px 10px;
     border-radius:14px;
     white-space:nowrap;
+    box-shadow:
+      0 2px 4px rgba(0,0,0,.3),
+      inset 0 1px 0 rgba(255,255,255,.1);
   }
   .btn-del{
     background:transparent;
@@ -176,8 +223,12 @@
     padding:6px 12px;
     font-size:11.5px;
     border-radius:6px;
+    box-shadow:
+      0 3px 0 rgba(0,0,0,.3),
+      0 4px 8px rgba(0,0,0,.3);
   }
   .btn-del:hover{background:var(--red-dim);}
+  .btn-del:active{box-shadow:0 1px 0 rgba(0,0,0,.3),0 2px 4px rgba(0,0,0,.25);}
   .btn-upd{
     background:transparent;
     border:1px solid var(--yellow);
@@ -185,8 +236,12 @@
     padding:6px 12px;
     font-size:11.5px;
     border-radius:6px;
+    box-shadow:
+      0 3px 0 rgba(0,0,0,.3),
+      0 4px 8px rgba(0,0,0,.3);
   }
   .btn-upd:hover{background:var(--yellow-dim);}
+  .btn-upd:active{box-shadow:0 1px 0 rgba(0,0,0,.3),0 2px 4px rgba(0,0,0,.25);}
   .empty{color:var(--muted);font-size:13.5px;padding:20px 0;text-align:center;}
 
   .field-grid{
@@ -201,10 +256,18 @@
     padding:16px 16px 18px;
     border:1px solid var(--line);
     background:linear-gradient(160deg, var(--navy-2), var(--navy));
+    box-shadow:
+      0 6px 14px rgba(0,0,0,.35),
+      inset 0 1px 0 rgba(255,255,255,.1),
+      inset 0 -2px 5px rgba(0,0,0,.3);
   }
   .field-card.gold{
     background:linear-gradient(160deg, var(--yellow), var(--yellow-2));
     border-color:var(--yellow-2);
+    box-shadow:
+      0 6px 14px rgba(0,0,0,.35),
+      inset 0 1px 0 rgba(255,255,255,.5),
+      inset 0 -2px 5px rgba(0,0,0,.15);
   }
   .field-card .tag{
     font-size:10.5px;
@@ -253,6 +316,11 @@
     outline:none;
     resize:vertical;
   }
+  .bulk-box textarea{
+    box-shadow:
+      inset 0 2px 5px rgba(0,0,0,.4),
+      inset 0 -1px 0 rgba(255,255,255,.04);
+  }
   .bulk-box textarea:focus{border-color:var(--yellow);}
   .bulk-row{display:flex;align-items:center;gap:14px;margin-top:10px;}
   .bulk-row .msg{margin:0;}
@@ -266,8 +334,23 @@
     padding:7px 14px;
     font-size:12.5px;
     border-radius:20px;
+    cursor:pointer;
+    transition:box-shadow .1s,transform .1s;
+    box-shadow:
+      0 3px 0 rgba(0,0,0,.3),
+      0 4px 8px rgba(0,0,0,.3),
+      inset 0 1px 0 rgba(255,255,255,.08);
   }
-  .chip.active{background:var(--yellow);color:#1c1f26;border-color:var(--yellow);}
+  .chip:active{transform:translateY(2px);}
+  .chip.active{
+    background:var(--yellow);
+    color:#1c1f26;
+    border-color:var(--yellow);
+    box-shadow:
+      0 3px 0 var(--yellow-dim),
+      0 4px 8px rgba(0,0,0,.3),
+      inset 0 1px 0 rgba(255,255,255,.5);
+  }
   .count-badge{
     margin-left:auto;
     font-family:var(--mono);
@@ -276,6 +359,9 @@
     background:#3a2f06;
     padding:6px 12px;
     border-radius:20px;
+    box-shadow:
+      0 2px 4px rgba(0,0,0,.3),
+      inset 0 1px 0 rgba(255,255,255,.1);
   }
   table{width:100%;border-collapse:collapse;}
   thead th{
@@ -312,6 +398,10 @@
     border:1px solid var(--line);
     border-radius:7px;
     padding:9px 12px;
+    box-shadow:
+      0 3px 8px rgba(0,0,0,.3),
+      inset 0 1px 0 rgba(255,255,255,.06),
+      inset 0 -1px 0 rgba(0,0,0,.25);
   }
   .summary-item .kod{font-family:var(--mono);font-size:14px;letter-spacing:.02em;}
   .summary-item .adet{
@@ -322,6 +412,9 @@
     padding:4px 10px;
     border-radius:14px;
     white-space:nowrap;
+    box-shadow:
+      0 2px 4px rgba(0,0,0,.3),
+      inset 0 1px 0 rgba(255,255,255,.1);
   }
   .conn{
     position:fixed;bottom:14px;right:16px;
@@ -360,7 +453,10 @@
     padding:22px 20px calc(20px + env(safe-area-inset-bottom));
     transform:translateY(24px);
     transition:transform .2s ease;
-    box-shadow:0 -10px 40px rgba(0,0,0,.5);
+    box-shadow:
+      0 -10px 40px rgba(0,0,0,.5),
+      inset 0 1px 0 rgba(255,255,255,.08),
+      inset 0 -2px 8px rgba(0,0,0,.35);
   }
   .modal-overlay.open .modal-card{transform:translateY(0);}
   @media (min-width:600px){
@@ -399,8 +495,14 @@
     cursor:pointer;
     flex-shrink:0;
     display:flex;align-items:center;justify-content:center;
+    transition:box-shadow .1s,transform .1s,color .15s,border-color .15s;
+    box-shadow:
+      0 3px 0 rgba(0,0,0,.3),
+      0 4px 8px rgba(0,0,0,.3),
+      inset 0 1px 0 rgba(255,255,255,.1);
   }
   .modal-close:hover{color:var(--text);border-color:var(--muted);}
+  .modal-close:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.3),0 2px 4px rgba(0,0,0,.25);}
   .modal-label{
     font-size:11.5px;
     color:var(--muted);
@@ -421,6 +523,11 @@
     border-radius:9px;
     outline:none;
     resize:vertical;
+  }
+  .modal-card textarea{
+    box-shadow:
+      inset 0 2px 5px rgba(0,0,0,.4),
+      inset 0 -1px 0 rgba(255,255,255,.04);
   }
   .modal-card textarea:focus{border-color:var(--yellow);}
   .modal-hint{font-size:11.5px;color:var(--muted);margin:8px 0 0;}
@@ -459,7 +566,7 @@
 <div class="stripe"></div>
 <header>
   <h1>Bloklu <span>Lastik</span> Paneli</h1>
-  <p class="sub">Ön Ambar &mdash; Beadkod blok listesi ve okutma kayıtları</p>
+  <p class="sub">Ön Ambar &mdash; Beadcode blok listesi ve okutma kayıtları</p>
 </header>
 
 <div class="tabs">
@@ -505,6 +612,7 @@
         <div class="chip" data-filter="hafta">Bu Hafta</div>
         <div class="chip" data-filter="tum">Tümü</div>
         <div class="count-badge" id="logSayisi">0 okutma</div>
+        <button class="btn-danger" id="btnLogTemizle" style="flex:0 0 auto;padding:7px 14px;font-size:12.5px;">Komple Temizle</button>
       </div>
       <p class="summary-title">Koda Göre Bulunma Sayısı</p>
       <ul class="summary-list" id="summaryListe">
@@ -556,7 +664,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getFirestore, collection, addDoc, updateDoc, deleteDoc, doc,
-  onSnapshot, query, orderBy, serverTimestamp, Timestamp
+  onSnapshot, query, orderBy, serverTimestamp, Timestamp, getDocs, writeBatch
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -847,6 +955,36 @@ function renderLog(){
   });
   logBody.innerHTML = html;
 }
+
+/* ---------- Bulunanlar: komple temizle ---------- */
+const btnLogTemizle = document.getElementById('btnLogTemizle');
+let logTemizleniyor = false;
+
+btnLogTemizle.addEventListener('click', async ()=>{
+  if(logTemizleniyor) return;
+  if(tumOkutmalar.length === 0){ return; }
+  if(!confirm('Tüm okutma kayıtlarını komple silmek istediğine emin misin? Bu işlem geri alınamaz.')) return;
+
+  logTemizleniyor = true;
+  btnLogTemizle.disabled = true;
+  btnLogTemizle.textContent = 'Temizleniyor...';
+  try{
+    const snap = await getDocs(okutmalarCol);
+    const docs = snap.docs;
+    const parcaBoyutu = 400; // Firestore batch limiti 500
+    for(let i=0; i<docs.length; i+=parcaBoyutu){
+      const batch = writeBatch(db);
+      docs.slice(i, i+parcaBoyutu).forEach(d=> batch.delete(d.ref));
+      await batch.commit();
+    }
+  }catch(e){
+    alert('Hata: ' + e.message);
+  }finally{
+    logTemizleniyor = false;
+    btnLogTemizle.disabled = false;
+    btnLogTemizle.textContent = 'Komple Temizle';
+  }
+});
 
 const qLog = query(okutmalarCol, orderBy('tarih', 'desc'));
 onSnapshot(qLog, snap=>{
