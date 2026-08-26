@@ -486,6 +486,8 @@
   td.kod{font-family:var(--mono);color:var(--text);letter-spacing:.02em;}
   td.istasyon{color:var(--yellow);font-size:12.5px;}
   td.bloklu{font-family:var(--mono);color:var(--red);font-size:12.5px;}
+  td.saat{font-family:var(--mono);color:var(--muted);font-size:12px;white-space:nowrap;}
+  .bloklu-adet{color:var(--yellow);font-size:10.5px;}
   td.adet{font-family:var(--mono);color:var(--yellow);font-size:12.5px;text-align:center;}
   td.zaman{color:var(--muted);font-size:12px;white-space:nowrap;}
   .chip-custom{display:flex;align-items:center;gap:6px;}
@@ -847,10 +849,10 @@
         <div style="overflow-x:auto;">
           <table>
             <thead>
-              <tr><th>Kod</th><th>İstasyon</th><th>Bloklanan Kod</th><th>Adet</th><th>Tarih / Saat</th></tr>
+              <tr><th>Kod</th><th>İstasyon</th><th>Bloklanan Kod</th><th>Saat</th><th>Adet</th><th>Tarih / Saat</th></tr>
             </thead>
             <tbody id="logBody">
-              <tr><td colspan="5" class="empty">Yükleniyor...</td></tr>
+              <tr><td colspan="6" class="empty">Yükleniyor...</td></tr>
             </tbody>
           </table>
         </div>
@@ -1493,7 +1495,7 @@ function renderLog(){
   });
 
   if(filtreli.length === 0){
-    logBody.innerHTML = '<tr><td colspan="5" class="empty">Kayıt yok.</td></tr>';
+    logBody.innerHTML = '<tr><td colspan="6" class="empty">Kayıt yok.</td></tr>';
     return;
   }
 
@@ -1531,22 +1533,27 @@ function renderLog(){
 
   let html = '';
   gruplu.forEach(g=>{
-    const satirlar = [...g.blokluKodlar.entries()]
+    const siraliGirdiler = [...g.blokluKodlar.entries()]
       .sort((a,b)=>{
         const ta = a[1].sonTarih ? a[1].sonTarih.getTime() : 0;
         const tb = b[1].sonTarih ? b[1].sonTarih.getTime() : 0;
         return ta - tb;
-      })
+      });
+    const kodSatirlari = siraliGirdiler
+      .map(([kod])=> `<div class="bloklu-satir bloklu-kod">${escapeHtml(kod)}</div>`)
+      .join('');
+    const saatSatirlari = siraliGirdiler
       .map(([kod, bk])=>{
         const saat = bk.sonTarih ? bk.sonTarih.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'}) : '—';
-        const adetEtiketi = bk.adet > 1 ? ` (×${bk.adet})` : '';
-        return `<div class="bloklu-satir"><span class="bloklu-kod">${escapeHtml(kod)}</span>${adetEtiketi} <span class="bloklu-saat">${saat}</span></div>`;
+        const adetEtiketi = bk.adet > 1 ? ` <span class="bloklu-adet">×${bk.adet}</span>` : '';
+        return `<div class="bloklu-satir">${saat}${adetEtiketi}</div>`;
       })
       .join('');
     html += `<tr>
       <td class="kod">${escapeHtml(g.lastikKodu)}</td>
       <td class="istasyon">${escapeHtml(g.istasyon || '—')}</td>
-      <td class="bloklu">${satirlar}</td>
+      <td class="bloklu">${kodSatirlari}</td>
+      <td class="saat">${saatSatirlari}</td>
       <td class="adet">${g.adet}</td>
       <td class="zaman">${g.sonTarih ? formatTarih(g.sonTarih) : '—'}</td>
     </tr>`;
@@ -1602,7 +1609,7 @@ onSnapshot(qLog, snap=>{
   renderKodListe();
 }, err=>{
   setConn('err');
-  logBody.innerHTML = '<tr><td colspan="5" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
+  logBody.innerHTML = '<tr><td colspan="6" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
 });
 
 /* ---------- Yardımcılar ---------- */
