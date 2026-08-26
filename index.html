@@ -472,15 +472,17 @@
     text-transform:uppercase;
     letter-spacing:.07em;
     color:var(--muted);
-    padding:0 10px 8px;
-    border-bottom:1px solid var(--line);
+    padding:9px 10px;
+    background:rgba(255,255,255,.04);
+    border:1px solid var(--line);
   }
   tbody td{
     padding:11px 10px;
-    border-bottom:1px solid #2c313d;
+    border:1px solid var(--line);
     font-size:13.5px;
   }
-  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+  tbody tr:hover td{background:rgba(242,183,5,.06);}
   td.kod{font-family:var(--mono);color:var(--text);letter-spacing:.02em;}
   td.istasyon{color:var(--yellow);font-size:12.5px;}
   td.bloklu{font-family:var(--mono);color:var(--red);font-size:12.5px;}
@@ -608,12 +610,6 @@
   }
   .kabarik-panel table{
     background:transparent;
-  }
-  .kabarik-panel thead th{
-    border-bottom:1px solid rgba(255,255,255,.1);
-  }
-  .kabarik-panel tbody td{
-    border-bottom:1px solid rgba(0,0,0,.35);
   }
   .conn{
     position:fixed;bottom:14px;right:16px;
@@ -758,6 +754,33 @@
   .modal-msg{font-size:13px;margin:12px 0 0;min-height:16px;}
   .modal-msg.err{color:var(--red);}
   .modal-msg.ok{color:var(--green);}
+
+  /* ---------- Onay Modalı ---------- */
+  .confirm-card{max-width:380px;}
+  .confirm-card .modal-mesaj{
+    font-size:14px;
+    color:var(--text);
+    line-height:1.55;
+    margin:2px 0 0;
+  }
+  .btn-cancel{
+    flex:1;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    color:var(--muted);
+    padding:13px 20px;
+    font-size:14px;
+  }
+  .btn-cancel:hover{background:var(--navy-2);color:var(--text);}
+  .btn-danger-solid{
+    flex:1;
+    background:var(--red);
+    border:1px solid var(--red);
+    color:#fff;
+    padding:13px 20px;
+    font-size:14px;
+  }
+  .btn-danger-solid:hover{filter:brightness(1.1);}
 </style>
 </head>
 <body>
@@ -772,6 +795,7 @@
   <div class="tab active" data-view="ekle">Kod Ekle</div>
   <div class="tab" data-view="log">Bloklu Bulunan Lastikler</div>
 </div>
+
 
 <main>
   <div class="panel">
@@ -816,7 +840,6 @@
         <div class="chip chip-custom" data-open="aralik" data-target="log" id="chipAralik">Tarih Aralığı Seç</div>
         <div class="chip chip-custom" data-open="ay" data-target="log" id="chipAy">Ay Seç</div>
         <div class="chip chip-custom" data-open="yil" data-target="log" id="chipYil">Yıl Seç</div>
-        <div class="count-badge" id="logSayisi">0 okutma</div>
         <button class="btn-danger" id="btnLogTemizle" style="flex:0 0 auto;padding:7px 14px;font-size:12.5px;">Komple Temizle</button>
       </div>
       <p class="summary-title">Tüm Okutma Kayıtları</p>
@@ -890,6 +913,23 @@
 
 <div class="conn"><div class="dot" id="connDot"></div><span id="connText">bağlanıyor...</span></div>
 
+<div class="modal-overlay" id="confirmOverlay">
+  <div class="modal-card confirm-card">
+    <div class="modal-head">
+      <div>
+        <p class="tag">Onay Gerekli</p>
+        <p class="kodbaslik" id="confirmBaslik">Emin misin?</p>
+      </div>
+      <button class="modal-close" id="confirmClose" aria-label="Kapat">✕</button>
+    </div>
+    <p class="modal-mesaj" id="confirmMesaj"></p>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="confirmVazgec">Vazgeç</button>
+      <button class="btn-danger-solid" id="confirmOnayla">Evet, Sil</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
@@ -918,6 +958,31 @@ function setConn(state){
   connDot.className = 'dot ' + state;
   connText.textContent = state === 'ok' ? 'bağlı' : (state === 'err' ? 'bağlantı hatası' : 'bağlanıyor...');
 }
+
+/* ---------- Modern Onay Modalı (confirm() yerine) ---------- */
+const confirmOverlay = document.getElementById('confirmOverlay');
+const confirmBaslik = document.getElementById('confirmBaslik');
+const confirmMesaj = document.getElementById('confirmMesaj');
+const confirmVazgecBtn = document.getElementById('confirmVazgec');
+const confirmOnaylaBtn = document.getElementById('confirmOnayla');
+const confirmCloseBtn = document.getElementById('confirmClose');
+let confirmCozumle = null;
+
+function onayModal(mesaj, baslik = 'Emin misin?', onayMetni = 'Evet, Sil'){
+  confirmBaslik.textContent = baslik;
+  confirmMesaj.textContent = mesaj;
+  confirmOnaylaBtn.textContent = onayMetni;
+  confirmOverlay.classList.add('open');
+  return new Promise(resolve=>{ confirmCozumle = resolve; });
+}
+function onayModalKapat(sonuc){
+  confirmOverlay.classList.remove('open');
+  if(confirmCozumle){ confirmCozumle(sonuc); confirmCozumle = null; }
+}
+confirmOnaylaBtn.addEventListener('click', ()=> onayModalKapat(true));
+confirmVazgecBtn.addEventListener('click', ()=> onayModalKapat(false));
+confirmCloseBtn.addEventListener('click', ()=> onayModalKapat(false));
+confirmOverlay.addEventListener('click', (e)=>{ if(e.target === confirmOverlay) onayModalKapat(false); });
 
 /* ---------- Sekme geçişi ---------- */
 document.querySelectorAll('.tab').forEach(tab=>{
@@ -1062,7 +1127,8 @@ modalGuncelleBtn.addEventListener('click', async ()=>{
 
 modalSilBtn.addEventListener('click', async ()=>{
   if(modalIslemde || !modalAktifId) return;
-  if(!confirm(modalAktifKod + ' kaydını tamamen silmek istediğine emin misin?')) return;
+  const onayli = await onayModal(modalAktifKod + ' kaydını tamamen silmek istediğine emin misin?', 'Kaydı Sil');
+  if(!onayli) return;
 
   modalIslemde = true;
   modalGuncelleBtn.disabled = true;
@@ -1164,7 +1230,6 @@ function renderKodListe(){
 
 /* ---------- Bulunanlar (log) ---------- */
 const logBody = document.getElementById('logBody');
-const logSayisi = document.getElementById('logSayisi');
 let tumOkutmalar = [];
 
 /* ---------- Takvim (tarih / tarih aralığı / yıl seçici) ---------- */
@@ -1426,7 +1491,6 @@ function renderLog(){
     if(end && o.tarih >= end) return false;
     return true;
   });
-  logSayisi.textContent = filtreli.length + ' okutma';
 
   if(filtreli.length === 0){
     logBody.innerHTML = '<tr><td colspan="5" class="empty">Kayıt yok.</td></tr>';
@@ -1497,7 +1561,8 @@ let logTemizleniyor = false;
 btnLogTemizle.addEventListener('click', async ()=>{
   if(logTemizleniyor) return;
   if(tumOkutmalar.length === 0){ return; }
-  if(!confirm('Tüm okutma kayıtlarını komple silmek istediğine emin misin? Bu işlem geri alınamaz.')) return;
+  const onayli = await onayModal('Tüm okutma kayıtlarını komple silmek istediğine emin misin? Bu işlem geri alınamaz.', 'Komple Temizle');
+  if(!onayli) return;
 
   logTemizleniyor = true;
   btnLogTemizle.disabled = true;
