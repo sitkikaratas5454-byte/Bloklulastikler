@@ -1358,15 +1358,26 @@ function renderLog(){
     return;
   }
 
-  // Aynı kodları grupla
+  // Bloklanan kodun ait olduğu lastik kodunu bul
+  function lastikKoduBul(blokluKod){
+    for(const [k, v] of mevcutKodlar){
+      if(v.blokluKodlar.has(blokluKod)) return k;
+    }
+    return '—';
+  }
+
+  // Aynı lastik kodu + istasyon bazında grupla; o lastik koduna ait tüm
+  // bloklanan kodlar ayrı satırlar yerine tek satırda toplanır
   const gruplu = new Map();
   filtreli.forEach(o=>{
-    const anahtar = o.kod + '|' + (o.istasyon || '');
+    const lastikKodu = lastikKoduBul(o.kod);
+    const anahtar = lastikKodu + '|' + (o.istasyon || '');
     if(!gruplu.has(anahtar)){
-      gruplu.set(anahtar, { kod: o.kod, istasyon: o.istasyon, adet: 0, sonTarih: o.tarih });
+      gruplu.set(anahtar, { lastikKodu, istasyon: o.istasyon, blokluKodlar: new Map(), adet: 0, sonTarih: o.tarih });
     }
     const g = gruplu.get(anahtar);
     g.adet++;
+    g.blokluKodlar.set(o.kod, (g.blokluKodlar.get(o.kod) || 0) + 1);
     if(o.tarih && (!g.sonTarih || o.tarih > g.sonTarih)){
       g.sonTarih = o.tarih;
     }
@@ -1374,18 +1385,13 @@ function renderLog(){
 
   let html = '';
   gruplu.forEach(g=>{
-    // Bloklanan kodun ait olduğu lastik kodunu bul
-    let lastikKodu = '—';
-    for(const [k, v] of mevcutKodlar){
-      if(v.blokluKodlar.has(g.kod)){
-        lastikKodu = k;
-        break;
-      }
-    }
+    const blokluListesi = [...g.blokluKodlar.entries()]
+      .map(([kod, adet]) => adet > 1 ? `${escapeHtml(kod)} (×${adet})` : escapeHtml(kod))
+      .join(', ');
     html += `<tr>
-      <td class="kod">${escapeHtml(lastikKodu)}</td>
+      <td class="kod">${escapeHtml(g.lastikKodu)}</td>
       <td class="istasyon">${escapeHtml(g.istasyon || '—')}</td>
-      <td class="bloklu">${escapeHtml(g.kod)}</td>
+      <td class="bloklu">${blokluListesi}</td>
       <td class="adet">${g.adet}</td>
       <td class="zaman">${g.sonTarih ? formatTarih(g.sonTarih) : '—'}</td>
     </tr>`;
