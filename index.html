@@ -765,7 +765,6 @@
         <div class="chip chip-custom" data-open="aralik" data-target="log" id="chipAralik">Tarih Aralığı Seç</div>
         <div class="chip chip-custom" data-open="ay" data-target="log" id="chipAy">Ay Seç</div>
         <div class="chip chip-custom" data-open="yil" data-target="log" id="chipYil">Yıl Seç</div>
-        <div class="count-badge" id="logSayisi">0 okutma</div>
         <button class="btn-danger" id="btnLogTemizle" style="flex:0 0 auto;padding:7px 14px;font-size:12.5px;">Komple Temizle</button>
       </div>
       <p class="summary-title">Tüm Okutma Kayıtları</p>
@@ -773,10 +772,10 @@
         <div style="overflow-x:auto;">
           <table>
             <thead>
-              <tr><th>Kod</th><th>İstasyon</th><th>Bloklanan Kod</th><th>Adet</th><th>Tarih / Saat</th></tr>
+              <tr><th>Lastik Kodu</th><th>Toplam Çıkış</th></tr>
             </thead>
             <tbody id="logBody">
-              <tr><td colspan="5" class="empty">Yükleniyor...</td></tr>
+              <tr><td colspan="2" class="empty">Yükleniyor...</td></tr>
             </tbody>
           </table>
         </div>
@@ -1089,7 +1088,6 @@ function renderKodListe(){
 
 /* ---------- Bulunanlar (log) ---------- */
 const logBody = document.getElementById('logBody');
-const logSayisi = document.getElementById('logSayisi');
 let tumOkutmalar = [];
 
 /* ---------- Takvim (tarih / tarih aralığı / yıl seçici) ---------- */
@@ -1351,43 +1349,41 @@ function renderLog(){
     if(end && o.tarih >= end) return false;
     return true;
   });
-  logSayisi.textContent = filtreli.length + ' okutma';
 
   if(filtreli.length === 0){
-    logBody.innerHTML = '<tr><td colspan="5" class="empty">Kayıt yok.</td></tr>';
+    logBody.innerHTML = '<tr><td colspan="2" class="empty">Kayıt yok.</td></tr>';
     return;
   }
 
-  // Aynı kodları grupla
-  const gruplu = new Map();
+  // Lastik koduna göre grupla - her lastik kodu için toplam çıkış sayısı
+  const lastikGruplu = new Map();
   filtreli.forEach(o=>{
-    const anahtar = o.kod + '|' + (o.istasyon || '');
-    if(!gruplu.has(anahtar)){
-      gruplu.set(anahtar, { kod: o.kod, istasyon: o.istasyon, adet: 0, sonTarih: o.tarih });
-    }
-    const g = gruplu.get(anahtar);
-    g.adet++;
-    if(o.tarih && (!g.sonTarih || o.tarih > g.sonTarih)){
-      g.sonTarih = o.tarih;
-    }
-  });
-
-  let html = '';
-  gruplu.forEach(g=>{
     // Bloklanan kodun ait olduğu lastik kodunu bul
     let lastikKodu = '—';
     for(const [k, v] of mevcutKodlar){
-      if(v.blokluKodlar.has(g.kod)){
+      if(v.blokluKodlar.has(o.kod)){
         lastikKodu = k;
         break;
       }
     }
+    if(lastikKodu !== '—'){
+      if(!lastikGruplu.has(lastikKodu)){
+        lastikGruplu.set(lastikKodu, 0);
+      }
+      lastikGruplu.set(lastikKodu, lastikGruplu.get(lastikKodu) + 1);
+    }
+  });
+
+  if(lastikGruplu.size === 0){
+    logBody.innerHTML = '<tr><td colspan="2" class="empty">Kayıt yok.</td></tr>';
+    return;
+  }
+
+  let html = '';
+  lastikGruplu.forEach((adet, lastikKodu)=>{
     html += `<tr>
       <td class="kod">${escapeHtml(lastikKodu)}</td>
-      <td class="istasyon">${escapeHtml(g.istasyon || '—')}</td>
-      <td class="bloklu">${escapeHtml(g.kod)}</td>
-      <td class="adet">${g.adet}</td>
-      <td class="zaman">${g.sonTarih ? formatTarih(g.sonTarih) : '—'}</td>
+      <td class="adet">${adet}</td>
     </tr>`;
   });
   logBody.innerHTML = html;
@@ -1438,7 +1434,7 @@ onSnapshot(qLog, snap=>{
   renderLog();
 }, err=>{
   setConn('err');
-  logBody.innerHTML = '<tr><td colspan="5" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
+  logBody.innerHTML = '<tr><td colspan="2" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
 });
 
 /* ---------- Yardımcılar ---------- */
