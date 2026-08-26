@@ -57,6 +57,15 @@
     color:var(--text);
   }
   h1 span{color:var(--yellow);}
+  .on-ambar{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:15.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--yellow);
+    margin:6px 0 2px;
+  }
   .sub{color:var(--muted);font-size:13.5px;margin:0;}
   .tabs{
     display:flex;
@@ -416,6 +425,108 @@
       0 2px 4px rgba(0,0,0,.3),
       inset 0 1px 0 rgba(255,255,255,.1);
   }
+  .chip-custom{display:flex;align-items:center;gap:6px;}
+  .chip-custom::before{content:'📅';font-size:11px;}
+
+  /* ---------- Takvim Modal ---------- */
+  .takvim-nav{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:16px;
+  }
+  .takvim-ok{
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    color:var(--text);
+    width:34px;height:34px;
+    border-radius:8px;
+    font-size:18px;
+    line-height:1;
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+    transition:box-shadow .1s,transform .08s,background .15s;
+    box-shadow:
+      0 3px 0 rgba(0,0,0,.3),
+      0 4px 8px rgba(0,0,0,.3),
+      inset 0 1px 0 rgba(255,255,255,.08);
+  }
+  .takvim-ok:hover{background:var(--navy-2);}
+  .takvim-ok:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.3);}
+  .takvim-ay-yil{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:16px;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    color:var(--yellow);
+    text-align:center;
+    flex:1;
+  }
+  .takvim-gunler{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:4px;
+    margin-bottom:6px;
+  }
+  .takvim-gunler span{
+    text-align:center;
+    font-size:10.5px;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:.05em;
+  }
+  .takvim-grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:4px;
+  }
+  .takvim-grid.yil-grid{grid-template-columns:repeat(4,1fr);gap:8px;}
+  .takvim-gun{
+    aspect-ratio:1;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:8px;
+    color:var(--text);
+    font-size:13.5px;
+    font-family:var(--mono);
+    cursor:pointer;
+    transition:background .12s,color .12s;
+  }
+  .takvim-gun:hover{background:var(--navy-2);}
+  .takvim-gun.disiy{color:#454a63;border-color:transparent;background:transparent;cursor:default;}
+  .takvim-gun.bugun{border-color:var(--yellow);color:var(--yellow);}
+  .takvim-gun.secili{
+    background:var(--yellow);
+    color:#1c1f26;
+    border-color:var(--yellow);
+    font-weight:600;
+  }
+  .takvim-gun.aralikta{
+    background:rgba(242,183,5,.22);
+    border-color:transparent;
+    border-radius:0;
+  }
+  .takvim-gun.aralik-bas{border-radius:8px 0 0 8px;}
+  .takvim-gun.aralik-son{border-radius:0 8px 8px 0;}
+  .takvim-yil{
+    padding:15px 0;
+    text-align:center;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    font-size:15px;
+    color:var(--text);
+    cursor:pointer;
+    transition:background .12s,color .12s;
+  }
+  .takvim-yil:hover{background:var(--navy-2);}
+  .takvim-yil.secili{background:var(--yellow);color:#1c1f26;border-color:var(--yellow);}
+  .takvim-card .modal-hint{min-height:0;}
+  .takvim-card .modal-actions{margin-top:18px;}
+
   .conn{
     position:fixed;bottom:14px;right:16px;
     font-size:11px;color:var(--muted);
@@ -566,7 +677,8 @@
 <div class="stripe"></div>
 <header>
   <h1>Bloklu <span>Lastik</span> Paneli</h1>
-  <p class="sub">Ön Ambar &mdash; Beadcode blok listesi ve okutma kayıtları</p>
+  <p class="on-ambar">Ön Ambar</p>
+  <p class="sub">Beadcode blok listesi ve okutma kayıtları</p>
 </header>
 
 <div class="tabs">
@@ -611,6 +723,9 @@
         <div class="chip active" data-filter="bugun">Bugün</div>
         <div class="chip" data-filter="hafta">Bu Hafta</div>
         <div class="chip" data-filter="tum">Tümü</div>
+        <div class="chip chip-custom" data-open="gun" id="chipGun">Tarih Seç</div>
+        <div class="chip chip-custom" data-open="aralik" id="chipAralik">Tarih Aralığı Seç</div>
+        <div class="chip chip-custom" data-open="yil" id="chipYil">Yıl Seç</div>
         <div class="count-badge" id="logSayisi">0 okutma</div>
         <button class="btn-danger" id="btnLogTemizle" style="flex:0 0 auto;padding:7px 14px;font-size:12.5px;">Komple Temizle</button>
       </div>
@@ -655,6 +770,34 @@
       <button class="btn-add" id="modalGuncelle">Güncelle</button>
     </div>
     <p class="modal-msg" id="modalMsg"></p>
+  </div>
+</div>
+
+<div class="modal-overlay" id="takvimOverlay">
+  <div class="modal-card takvim-card">
+    <div class="modal-head">
+      <div>
+        <p class="tag" id="takvimTag">Bulunanlar Filtresi</p>
+        <p class="kodbaslik" id="takvimBaslik">Tarih Seç</p>
+      </div>
+      <button class="modal-close" id="takvimClose" aria-label="Kapat">✕</button>
+    </div>
+
+    <div class="takvim-nav">
+      <button class="takvim-ok" id="takvimGeri">‹</button>
+      <div class="takvim-ay-yil" id="takvimAyYil">—</div>
+      <button class="takvim-ok" id="takvimIleri">›</button>
+    </div>
+
+    <div class="takvim-gunler" id="takvimGunler"></div>
+    <div class="takvim-grid" id="takvimGrid"></div>
+
+    <p class="modal-hint" id="takvimHint"></p>
+
+    <div class="modal-actions">
+      <button class="btn-danger" id="takvimTemizle">Temizle</button>
+      <button class="btn-add" id="takvimUygula">Uygula</button>
+    </div>
   </div>
 </div>
 
@@ -895,7 +1038,7 @@ const logSayisi = document.getElementById('logSayisi');
 let aktifFiltre = 'bugun';
 let tumOkutmalar = [];
 
-document.querySelectorAll('.chip').forEach(chip=>{
+document.querySelectorAll('.chip[data-filter]').forEach(chip=>{
   chip.addEventListener('click', ()=>{
     document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
     chip.classList.add('active');
@@ -904,26 +1047,217 @@ document.querySelectorAll('.chip').forEach(chip=>{
   });
 });
 
-function baslangicZamani(filtre){
+/* ---------- Takvim (tarih / tarih aralığı / yıl seçici) ---------- */
+const takvimOverlay = document.getElementById('takvimOverlay');
+const takvimClose = document.getElementById('takvimClose');
+const takvimTag = document.getElementById('takvimTag');
+const takvimBaslik = document.getElementById('takvimBaslik');
+const takvimAyYilEl = document.getElementById('takvimAyYil');
+const takvimGunlerEl = document.getElementById('takvimGunler');
+const takvimGridEl = document.getElementById('takvimGrid');
+const takvimHint = document.getElementById('takvimHint');
+const takvimGeriBtn = document.getElementById('takvimGeri');
+const takvimIleriBtn = document.getElementById('takvimIleri');
+const takvimTemizleBtn = document.getElementById('takvimTemizle');
+const takvimUygulaBtn = document.getElementById('takvimUygula');
+
+const AY_ADLARI = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+const GUN_ADLARI = ['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+
+let takvimMod = 'gun';
+let takvimGosterilenAy = new Date();
+let takvimSeciliGun = null;
+let takvimAralikBas = null;
+let takvimAralikSon = null;
+let takvimYilBlokBaslangic = Math.floor(new Date().getFullYear() / 12) * 12;
+let takvimSeciliYil = null;
+
+function ayniGun(a, b){
+  return !!a && !!b && a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+}
+function formatTarihKisa(d){
+  return d.toLocaleDateString('tr-TR', {day:'2-digit', month:'2-digit', year:'2-digit'});
+}
+
+function takvimChipEtiketleriGuncelle(){
+  document.getElementById('chipGun').textContent = takvimSeciliGun ? formatTarihKisa(takvimSeciliGun) : 'Tarih Seç';
+  document.getElementById('chipAralik').textContent = (takvimAralikBas && takvimAralikSon)
+    ? (formatTarihKisa(takvimAralikBas) + ' – ' + formatTarihKisa(takvimAralikSon))
+    : 'Tarih Aralığı Seç';
+  document.getElementById('chipYil').textContent = takvimSeciliYil ? String(takvimSeciliYil) : 'Yıl Seç';
+}
+
+function takvimAc(mod){
+  takvimMod = mod;
+  takvimHint.textContent = '';
+  if(mod === 'gun'){
+    takvimBaslik.textContent = 'Tarih Seç';
+    takvimGosterilenAy = takvimSeciliGun ? new Date(takvimSeciliGun) : new Date();
+  }else if(mod === 'aralik'){
+    takvimBaslik.textContent = 'Tarih Aralığı Seç';
+    takvimGosterilenAy = takvimAralikBas ? new Date(takvimAralikBas) : new Date();
+    takvimHint.textContent = 'Önce başlangıç, sonra bitiş tarihine dokun.';
+  }else if(mod === 'yil'){
+    takvimBaslik.textContent = 'Yıl Seç';
+    takvimYilBlokBaslangic = Math.floor((takvimSeciliYil || new Date().getFullYear()) / 12) * 12;
+  }
+  takvimOverlay.classList.add('open');
+  takvimCiz();
+}
+takvimClose.addEventListener('click', ()=> takvimOverlay.classList.remove('open'));
+takvimOverlay.addEventListener('click', (e)=>{ if(e.target === takvimOverlay) takvimOverlay.classList.remove('open'); });
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && takvimOverlay.classList.contains('open')) takvimOverlay.classList.remove('open'); });
+
+document.querySelectorAll('.chip[data-open]').forEach(chip=>{
+  chip.addEventListener('click', ()=> takvimAc(chip.dataset.open));
+});
+
+function takvimCiz(){
+  if(takvimMod === 'yil'){
+    takvimGunlerEl.style.display = 'none';
+    takvimGridEl.classList.add('yil-grid');
+    takvimAyYilEl.textContent = takvimYilBlokBaslangic + ' – ' + (takvimYilBlokBaslangic + 11);
+    let html = '';
+    for(let y = takvimYilBlokBaslangic; y < takvimYilBlokBaslangic + 12; y++){
+      html += `<div class="takvim-yil ${takvimSeciliYil === y ? 'secili' : ''}" data-yil="${y}">${y}</div>`;
+    }
+    takvimGridEl.innerHTML = html;
+    takvimGridEl.querySelectorAll('.takvim-yil').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        takvimSeciliYil = parseInt(el.dataset.yil, 10);
+        takvimCiz();
+      });
+    });
+    return;
+  }
+
+  takvimGunlerEl.style.display = '';
+  takvimGridEl.classList.remove('yil-grid');
+  takvimGunlerEl.innerHTML = GUN_ADLARI.map(g=>`<span>${g}</span>`).join('');
+  takvimAyYilEl.textContent = AY_ADLARI[takvimGosterilenAy.getMonth()] + ' ' + takvimGosterilenAy.getFullYear();
+
+  const yil = takvimGosterilenAy.getFullYear();
+  const ay = takvimGosterilenAy.getMonth();
+  const ayinIlkGunu = new Date(yil, ay, 1);
+  const baslangicBosluk = (ayinIlkGunu.getDay() + 6) % 7; // Pazartesi = 0
+  const ayinGunSayisi = new Date(yil, ay + 1, 0).getDate();
+  const oncekiAyGunSayisi = new Date(yil, ay, 0).getDate();
+  const bugun = new Date(); bugun.setHours(0,0,0,0);
+
+  let html = '';
+  for(let i = 0; i < baslangicBosluk; i++){
+    html += `<div class="takvim-gun disiy">${oncekiAyGunSayisi - baslangicBosluk + i + 1}</div>`;
+  }
+  for(let g = 1; g <= ayinGunSayisi; g++){
+    const tarih = new Date(yil, ay, g);
+    const sinifs = ['takvim-gun'];
+    if(ayniGun(tarih, bugun)) sinifs.push('bugun');
+    if(takvimMod === 'gun' && ayniGun(tarih, takvimSeciliGun)) sinifs.push('secili');
+    if(takvimMod === 'aralik'){
+      if(takvimAralikBas && ayniGun(tarih, takvimAralikBas)) sinifs.push('secili', 'aralik-bas');
+      if(takvimAralikSon && ayniGun(tarih, takvimAralikSon)) sinifs.push('secili', 'aralik-son');
+      if(takvimAralikBas && takvimAralikSon && tarih > takvimAralikBas && tarih < takvimAralikSon) sinifs.push('aralikta');
+    }
+    html += `<div class="${sinifs.join(' ')}" data-tarih="${tarih.getTime()}">${g}</div>`;
+  }
+  const toplamHucre = baslangicBosluk + ayinGunSayisi;
+  const kalanBosluk = (7 - (toplamHucre % 7)) % 7;
+  for(let i = 1; i <= kalanBosluk; i++){
+    html += `<div class="takvim-gun disiy">${i}</div>`;
+  }
+  takvimGridEl.innerHTML = html;
+
+  takvimGridEl.querySelectorAll('.takvim-gun:not(.disiy)').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const tarih = new Date(parseInt(el.dataset.tarih, 10));
+      if(takvimMod === 'gun'){
+        takvimSeciliGun = tarih;
+      }else if(takvimMod === 'aralik'){
+        if(!takvimAralikBas || (takvimAralikBas && takvimAralikSon)){
+          takvimAralikBas = tarih;
+          takvimAralikSon = null;
+        }else if(tarih < takvimAralikBas){
+          takvimAralikSon = takvimAralikBas;
+          takvimAralikBas = tarih;
+        }else{
+          takvimAralikSon = tarih;
+        }
+      }
+      takvimCiz();
+    });
+  });
+}
+
+takvimGeriBtn.addEventListener('click', ()=>{
+  if(takvimMod === 'yil') takvimYilBlokBaslangic -= 12;
+  else takvimGosterilenAy = new Date(takvimGosterilenAy.getFullYear(), takvimGosterilenAy.getMonth() - 1, 1);
+  takvimCiz();
+});
+takvimIleriBtn.addEventListener('click', ()=>{
+  if(takvimMod === 'yil') takvimYilBlokBaslangic += 12;
+  else takvimGosterilenAy = new Date(takvimGosterilenAy.getFullYear(), takvimGosterilenAy.getMonth() + 1, 1);
+  takvimCiz();
+});
+takvimTemizleBtn.addEventListener('click', ()=>{
+  if(takvimMod === 'gun') takvimSeciliGun = null;
+  if(takvimMod === 'aralik'){ takvimAralikBas = null; takvimAralikSon = null; }
+  if(takvimMod === 'yil') takvimSeciliYil = null;
+  takvimCiz();
+});
+takvimUygulaBtn.addEventListener('click', ()=>{
+  if(takvimMod === 'gun'){
+    if(!takvimSeciliGun) return;
+    aktifFiltre = 'ozel-gun';
+  }else if(takvimMod === 'aralik'){
+    if(!takvimAralikBas || !takvimAralikSon) return;
+    aktifFiltre = 'ozel-aralik';
+  }else if(takvimMod === 'yil'){
+    if(!takvimSeciliYil) return;
+    aktifFiltre = 'ozel-yil';
+  }
+  takvimChipEtiketleriGuncelle();
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  document.querySelector(`.chip[data-open="${takvimMod}"]`).classList.add('active');
+  takvimOverlay.classList.remove('open');
+  renderLog();
+});
+
+function filtreAraligi(){
   const now = new Date();
-  if(filtre === 'bugun'){
-    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  if(aktifFiltre === 'bugun'){
+    return { start: new Date(now.getFullYear(), now.getMonth(), now.getDate()), end: null };
   }
-  if(filtre === 'hafta'){
-    const d = new Date(now);
-    d.setDate(d.getDate() - 7);
-    return d;
+  if(aktifFiltre === 'hafta'){
+    const start = new Date(now);
+    start.setDate(start.getDate() - 7);
+    return { start, end: null };
   }
-  return null;
+  if(aktifFiltre === 'ozel-gun' && takvimSeciliGun){
+    const start = new Date(takvimSeciliGun.getFullYear(), takvimSeciliGun.getMonth(), takvimSeciliGun.getDate());
+    const end = new Date(start); end.setDate(end.getDate() + 1);
+    return { start, end };
+  }
+  if(aktifFiltre === 'ozel-aralik' && takvimAralikBas && takvimAralikSon){
+    const start = new Date(takvimAralikBas.getFullYear(), takvimAralikBas.getMonth(), takvimAralikBas.getDate());
+    const end = new Date(takvimAralikSon.getFullYear(), takvimAralikSon.getMonth(), takvimAralikSon.getDate());
+    end.setDate(end.getDate() + 1);
+    return { start, end };
+  }
+  if(aktifFiltre === 'ozel-yil' && takvimSeciliYil){
+    return { start: new Date(takvimSeciliYil, 0, 1), end: new Date(takvimSeciliYil + 1, 0, 1) };
+  }
+  return { start: null, end: null };
 }
 
 const summaryListe = document.getElementById('summaryListe');
 
 function renderLog(){
-  const sinir = baslangicZamani(aktifFiltre);
+  const { start, end } = filtreAraligi();
   const filtreli = tumOkutmalar.filter(o=>{
-    if(!sinir) return true;
-    return o.tarih && o.tarih >= sinir;
+    if(!o.tarih) return !start;
+    if(start && o.tarih < start) return false;
+    if(end && o.tarih >= end) return false;
+    return true;
   });
   logSayisi.textContent = filtreli.length + ' okutma';
 
