@@ -437,6 +437,7 @@
   tbody tr:last-child td{border-bottom:none;}
   td.kod{font-family:var(--mono);color:var(--text);letter-spacing:.02em;}
   td.istasyon{color:var(--yellow);font-size:12.5px;}
+  td.bloklu{font-family:var(--mono);color:var(--red);font-size:12.5px;}
   td.zaman{color:var(--muted);font-size:12px;white-space:nowrap;}
   .summary-title{
     font-size:11.5px;
@@ -812,10 +813,10 @@
         <div style="overflow-x:auto;">
           <table>
             <thead>
-              <tr><th>Kod</th><th>İstasyon</th><th>Tarih / Saat</th></tr>
+              <tr><th>Kod</th><th>İstasyon</th><th>Bloklanan Kod</th><th>Tarih / Saat</th></tr>
             </thead>
             <tbody id="logBody">
-              <tr><td colspan="3" class="empty">Yükleniyor...</td></tr>
+              <tr><td colspan="4" class="empty">Yükleniyor...</td></tr>
             </tbody>
           </table>
         </div>
@@ -1401,20 +1402,31 @@ function renderLog(){
     summaryListe.innerHTML = '<li class="empty">Kayıt yok.</li>';
   }else{
     const siraliOzet = [...sayac.entries()].sort((a,b)=> b[1]-a[1]);
-    summaryListe.innerHTML = siraliOzet.map(([kod, adet])=>
-      `<li class="summary-item"><span class="kod">${escapeHtml(kod)}</span><span class="adet">${adet} adet bulundu</span></li>`
-    ).join('');
+    summaryListe.innerHTML = siraliOzet.map(([kod, adet])=>{
+      const blokluKodlar = mevcutKodlar.get(kod);
+      const blokluListe = blokluKodlar ? [...blokluKodlar.blokluKodlar].join(', ') : '—';
+      return `<li class="summary-item">
+        <div>
+          <span class="kod">${escapeHtml(kod)}</span>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Bloklanan: ${escapeHtml(blokluListe)}</div>
+        </div>
+        <span class="adet">${adet} adet bulundu</span>
+      </li>`;
+    }).join('');
   }
 
   if(filtreli.length === 0){
-    logBody.innerHTML = '<tr><td colspan="3" class="empty">Kayıt yok.</td></tr>';
+    logBody.innerHTML = '<tr><td colspan="4" class="empty">Kayıt yok.</td></tr>';
     return;
   }
   let html = '';
   filtreli.forEach(o=>{
+    const blokluKodlar = mevcutKodlar.get(o.kod);
+    const blokluListe = blokluKodlar ? [...blokluKodlar.blokluKodlar].join(', ') : '—';
     html += `<tr>
       <td class="kod">${escapeHtml(o.kod)}</td>
       <td class="istasyon">${escapeHtml(o.istasyon || '—')}</td>
+      <td class="bloklu">${escapeHtml(blokluListe)}</td>
       <td class="zaman">${o.tarih ? formatTarih(o.tarih) : '—'}</td>
     </tr>`;
   });
