@@ -78,7 +78,7 @@
     flex:1;
     padding:13px 10px;
     text-align:center;
-    background:var(--panel);
+    background:linear-gradient(160deg, rgba(255,255,255,.06), var(--panel) 55%);
     border:1px solid var(--line);
     color:var(--muted);
     font-family:'Oswald',sans-serif;
@@ -87,21 +87,36 @@
     text-transform:uppercase;
     font-size:14px;
     cursor:pointer;
-    border-radius:8px 8px 0 0;
-    transition:background .15s,color .15s,box-shadow .15s,transform .1s;
+    border-radius:10px 10px 0 0;
+    transition:background .15s,color .15s,box-shadow .15s,transform .08s;
     box-shadow:
-      0 4px 0 rgba(0,0,0,.35),
-      0 6px 10px rgba(0,0,0,.3),
-      inset 0 1px 0 rgba(255,255,255,.12);
+      0 6px 0 rgba(0,0,0,.4),
+      0 10px 18px rgba(0,0,0,.4),
+      inset 0 1px 0 rgba(255,255,255,.18),
+      inset 0 -3px 8px rgba(0,0,0,.35);
+  }
+  .tab:active{
+    transform:translateY(4px);
+    box-shadow:
+      0 2px 0 rgba(0,0,0,.4),
+      0 4px 8px rgba(0,0,0,.35),
+      inset 0 1px 0 rgba(255,255,255,.18);
   }
   .tab.active{
-    background:var(--yellow);
+    background:linear-gradient(160deg, var(--yellow), var(--yellow-2));
     color:#1c1f26;
     border-color:var(--yellow);
     box-shadow:
-      0 4px 0 var(--yellow-dim),
-      0 6px 10px rgba(0,0,0,.3),
-      inset 0 1px 0 rgba(255,255,255,.5);
+      0 6px 0 var(--yellow-dim),
+      0 10px 18px rgba(0,0,0,.4),
+      inset 0 1px 0 rgba(255,255,255,.6),
+      inset 0 -3px 8px rgba(0,0,0,.15);
+  }
+  .tab.active:active{
+    box-shadow:
+      0 2px 0 var(--yellow-dim),
+      0 4px 8px rgba(0,0,0,.3),
+      inset 0 1px 0 rgba(255,255,255,.55);
   }
   main{
     max-width:760px;
@@ -527,6 +542,27 @@
   .takvim-card .modal-hint{min-height:0;}
   .takvim-card .modal-actions{margin-top:18px;}
 
+  .kabarik-panel{
+    background:linear-gradient(160deg, var(--navy-2), var(--navy));
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:14px;
+    margin-bottom:22px;
+    box-shadow:
+      0 8px 0 rgba(0,0,0,.4),
+      0 14px 26px rgba(0,0,0,.45),
+      inset 0 1px 0 rgba(255,255,255,.14),
+      inset 0 -4px 10px rgba(0,0,0,.35);
+  }
+  .kabarik-panel table{
+    background:transparent;
+  }
+  .kabarik-panel thead th{
+    border-bottom:1px solid rgba(255,255,255,.1);
+  }
+  .kabarik-panel tbody td{
+    border-bottom:1px solid rgba(0,0,0,.35);
+  }
   .conn{
     position:fixed;bottom:14px;right:16px;
     font-size:11px;color:var(--muted);
@@ -683,7 +719,7 @@
 
 <div class="tabs">
   <div class="tab active" data-view="ekle">Kod Ekle</div>
-  <div class="tab" data-view="log">Bulunanlar</div>
+  <div class="tab" data-view="log">Bloklu Bulunan Lastikler</div>
 </div>
 
 <main>
@@ -720,9 +756,6 @@
 
     <section id="view-log" class="view">
       <div class="filter-row">
-        <div class="chip active" data-filter="bugun">Bugün</div>
-        <div class="chip" data-filter="hafta">Bu Hafta</div>
-        <div class="chip" data-filter="tum">Tümü</div>
         <div class="chip chip-custom" data-open="gun" id="chipGun">Tarih Seç</div>
         <div class="chip chip-custom" data-open="aralik" id="chipAralik">Tarih Aralığı Seç</div>
         <div class="chip chip-custom" data-open="yil" id="chipYil">Yıl Seç</div>
@@ -730,20 +763,24 @@
         <button class="btn-danger" id="btnLogTemizle" style="flex:0 0 auto;padding:7px 14px;font-size:12.5px;">Komple Temizle</button>
       </div>
       <p class="summary-title">Koda Göre Bulunma Sayısı</p>
-      <ul class="summary-list" id="summaryListe">
-        <li class="empty">Yükleniyor...</li>
-      </ul>
+      <div class="kabarik-panel">
+        <ul class="summary-list" id="summaryListe">
+          <li class="empty">Yükleniyor...</li>
+        </ul>
+      </div>
 
       <p class="summary-title">Tüm Okutma Kayıtları</p>
-      <div style="overflow-x:auto;">
-        <table>
-          <thead>
-            <tr><th>Kod</th><th>İstasyon</th><th>Tarih / Saat</th></tr>
-          </thead>
-          <tbody id="logBody">
-            <tr><td colspan="3" class="empty">Yükleniyor...</td></tr>
-          </tbody>
-        </table>
+      <div class="kabarik-panel">
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr><th>Kod</th><th>İstasyon</th><th>Tarih / Saat</th></tr>
+            </thead>
+            <tbody id="logBody">
+              <tr><td colspan="3" class="empty">Yükleniyor...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -777,7 +814,7 @@
   <div class="modal-card takvim-card">
     <div class="modal-head">
       <div>
-        <p class="tag" id="takvimTag">Bulunanlar Filtresi</p>
+        <p class="tag" id="takvimTag">Bloklu Bulunan Lastikler Filtresi</p>
         <p class="kodbaslik" id="takvimBaslik">Tarih Seç</p>
       </div>
       <button class="modal-close" id="takvimClose" aria-label="Kapat">✕</button>
@@ -1035,17 +1072,8 @@ onSnapshot(qKodlar, snap=>{
 /* ---------- Bulunanlar (log) ---------- */
 const logBody = document.getElementById('logBody');
 const logSayisi = document.getElementById('logSayisi');
-let aktifFiltre = 'bugun';
+let aktifFiltre = null;
 let tumOkutmalar = [];
-
-document.querySelectorAll('.chip[data-filter]').forEach(chip=>{
-  chip.addEventListener('click', ()=>{
-    document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
-    chip.classList.add('active');
-    aktifFiltre = chip.dataset.filter;
-    renderLog();
-  });
-});
 
 /* ---------- Takvim (tarih / tarih aralığı / yıl seçici) ---------- */
 const takvimOverlay = document.getElementById('takvimOverlay');
@@ -1223,15 +1251,6 @@ takvimUygulaBtn.addEventListener('click', ()=>{
 });
 
 function filtreAraligi(){
-  const now = new Date();
-  if(aktifFiltre === 'bugun'){
-    return { start: new Date(now.getFullYear(), now.getMonth(), now.getDate()), end: null };
-  }
-  if(aktifFiltre === 'hafta'){
-    const start = new Date(now);
-    start.setDate(start.getDate() - 7);
-    return { start, end: null };
-  }
   if(aktifFiltre === 'ozel-gun' && takvimSeciliGun){
     const start = new Date(takvimSeciliGun.getFullYear(), takvimSeciliGun.getMonth(), takvimSeciliGun.getDate());
     const end = new Date(start); end.setDate(end.getDate() + 1);
