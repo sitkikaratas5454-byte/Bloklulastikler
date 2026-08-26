@@ -217,7 +217,12 @@
       inset 0 -1px 0 rgba(0,0,0,.25);
   }
   .code-item .kod{font-family:var(--mono);font-size:15px;letter-spacing:.03em;color:var(--red);}
+  .bloklu-satir{white-space:nowrap;line-height:1.6;}
+  .bloklu-satir+.bloklu-satir{margin-top:2px;padding-top:2px;border-top:1px dashed var(--line);}
+  .bloklu-kod{font-family:var(--mono);}
+  .bloklu-saat{color:var(--muted);font-size:11.5px;}
   .code-item .meta{font-size:11px;color:var(--muted);margin-top:2px;}
+  .code-item .meta .bulundu{color:var(--green);font-weight:600;}
   .item-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
   .row-count{
     font-family:var(--mono);
@@ -444,33 +449,33 @@
   .chip-custom::before{content:'📅';font-size:11px;}
 
   /* ---------- Takvim Modal ---------- */
+  .takvim-card{
+    max-width:300px;
+    padding:16px 16px calc(14px + env(safe-area-inset-bottom));
+  }
   .takvim-nav{
     display:flex;align-items:center;justify-content:space-between;
-    margin-bottom:16px;
+    margin-bottom:10px;
   }
   .takvim-ok{
-    background:var(--panel-2);
+    background:transparent;
     border:1px solid var(--line);
     color:var(--text);
-    width:34px;height:34px;
-    border-radius:8px;
-    font-size:18px;
+    width:24px;height:24px;
+    border-radius:6px;
+    font-size:13px;
     line-height:1;
     cursor:pointer;
     display:flex;align-items:center;justify-content:center;
     flex-shrink:0;
-    transition:box-shadow .1s,transform .08s,background .15s;
-    box-shadow:
-      0 3px 0 rgba(0,0,0,.3),
-      0 4px 8px rgba(0,0,0,.3),
-      inset 0 1px 0 rgba(255,255,255,.08);
+    transition:background .15s;
   }
   .takvim-ok:hover{background:var(--navy-2);}
-  .takvim-ok:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.3);}
+  .takvim-ok:active{opacity:.7;}
   .takvim-ay-yil{
     font-family:'Oswald',sans-serif;
-    font-weight:700;
-    font-size:16px;
+    font-weight:600;
+    font-size:12.5px;
     letter-spacing:.03em;
     text-transform:uppercase;
     color:var(--yellow);
@@ -480,68 +485,73 @@
   .takvim-gunler{
     display:grid;
     grid-template-columns:repeat(7,1fr);
-    gap:4px;
-    margin-bottom:6px;
+    gap:2px;
+    margin-bottom:3px;
   }
   .takvim-gunler span{
     text-align:center;
-    font-size:10.5px;
+    font-size:9px;
     color:var(--muted);
     text-transform:uppercase;
-    letter-spacing:.05em;
+    letter-spacing:.03em;
   }
   .takvim-grid{
     display:grid;
     grid-template-columns:repeat(7,1fr);
-    gap:4px;
+    gap:2px;
   }
-  .takvim-grid.yil-grid{grid-template-columns:repeat(4,1fr);gap:8px;}
+  .takvim-grid.yil-grid{grid-template-columns:repeat(4,1fr);gap:6px;}
   .takvim-gun{
     aspect-ratio:1;
     display:flex;align-items:center;justify-content:center;
-    background:var(--panel-2);
-    border:1px solid var(--line);
-    border-radius:8px;
+    background:transparent;
+    border:1px solid transparent;
+    border-radius:6px;
     color:var(--text);
-    font-family:'Oswald',sans-serif;
-    font-weight:600;
-    font-size:14.5px;
+    font-family:'Inter',sans-serif;
+    font-weight:500;
+    font-size:11.5px;
     cursor:pointer;
     transition:background .12s,color .12s;
   }
-  .takvim-gun:hover{background:var(--navy-2);}
+  .takvim-gun:hover{background:var(--panel-2);}
   .takvim-gun.disiy{color:#454a63;border-color:transparent;background:transparent;cursor:default;}
-  .takvim-gun.bugun{border-color:var(--yellow);color:var(--yellow);}
+  .takvim-gun.bugun{border-color:var(--yellow);color:var(--yellow);font-weight:600;}
   .takvim-gun.secili{
     background:var(--yellow);
     color:#1c1f26;
     border-color:var(--yellow);
-    font-weight:600;
+    font-weight:700;
   }
   .takvim-gun.aralikta{
-    background:rgba(242,183,5,.22);
+    background:rgba(242,183,5,.2);
     border-color:transparent;
     border-radius:0;
   }
-  .takvim-gun.aralik-bas{border-radius:8px 0 0 8px;}
-  .takvim-gun.aralik-son{border-radius:0 8px 8px 0;}
+  .takvim-gun.aralik-bas{border-radius:6px 0 0 6px;}
+  .takvim-gun.aralik-son{border-radius:0 6px 6px 0;}
   .takvim-yil{
-    padding:15px 0;
+    padding:10px 0;
     text-align:center;
     background:var(--panel-2);
     border:1px solid var(--line);
-    border-radius:8px;
-    font-family:'Oswald',sans-serif;
-    font-weight:600;
-    font-size:15px;
+    border-radius:6px;
+    font-family:'Inter',sans-serif;
+    font-weight:500;
+    font-size:12px;
     color:var(--text);
     cursor:pointer;
     transition:background .12s,color .12s;
   }
   .takvim-yil:hover{background:var(--navy-2);}
   .takvim-yil.secili{background:var(--yellow);color:#1c1f26;border-color:var(--yellow);}
-  .takvim-card .modal-hint{min-height:0;}
-  .takvim-card .modal-actions{margin-top:18px;}
+  .takvim-card .modal-hint{min-height:0;font-size:11px;}
+  .takvim-card .modal-actions{margin-top:14px;gap:8px;}
+  .takvim-card .btn-danger,
+  .takvim-card .modal-actions .btn-add{padding:9px 14px;font-size:11.5px;}
+  @media (min-width:600px){
+    .takvim-card{transform:translateY(0) scale(1);}
+  }
 
   .kabarik-panel{
     background:linear-gradient(160deg, var(--navy-2), var(--navy));
@@ -882,6 +892,7 @@ document.querySelectorAll('.tab').forEach(tab=>{
 const kodListe = document.getElementById('kodListe');
 
 let mevcutKodlar = new Map(); // lastikKodu -> { id, blokluKodlar: Set }
+let bulunanBlokluKodlar = new Set(); // en az bir kez okutulup bulunmuş bloklu kodlar
 
 const kodInput = document.getElementById('kodInput');
 const bulkInput = document.getElementById('bulkInput');
@@ -1069,7 +1080,10 @@ function renderKodListe(){
     html += `<li class="code-item">
       <div>
         <div class="kod">Lastik Kodu: ${escapeHtml(k.lastikKodu)}</div>
-        <div class="meta">Bloklu Kodlar: ${k.blokluKodlar.map(escapeHtml).join(', ')}</div>
+        <div class="meta">Bloklu Kodlar: ${k.blokluKodlar.map(kd=>{
+          const cls = bulunanBlokluKodlar.has(kd) ? ' class="bulundu"' : '';
+          return `<span${cls}>${escapeHtml(kd)}</span>`;
+        }).join(', ')}</div>
         <div class="meta">eklendi: ${tarih}</div>
       </div>
       <div class="item-right">
@@ -1367,7 +1381,8 @@ function renderLog(){
   }
 
   // Aynı lastik kodu + istasyon bazında grupla; o lastik koduna ait tüm
-  // bloklanan kodlar ayrı satırlar yerine tek satırda toplanır
+  // bloklanan kodlar ayrı satırlar yerine tek satırda, her biri kendi
+  // saatiyle birlikte listelenir
   const gruplu = new Map();
   filtreli.forEach(o=>{
     const lastikKodu = lastikKoduBul(o.kod);
@@ -1377,7 +1392,13 @@ function renderLog(){
     }
     const g = gruplu.get(anahtar);
     g.adet++;
-    g.blokluKodlar.set(o.kod, (g.blokluKodlar.get(o.kod) || 0) + 1);
+    if(!g.blokluKodlar.has(o.kod)){
+      g.blokluKodlar.set(o.kod, { adet: 0, ilkTarih: o.tarih, sonTarih: o.tarih });
+    }
+    const bk = g.blokluKodlar.get(o.kod);
+    bk.adet++;
+    if(o.tarih && (!bk.ilkTarih || o.tarih < bk.ilkTarih)) bk.ilkTarih = o.tarih;
+    if(o.tarih && (!bk.sonTarih || o.tarih > bk.sonTarih)) bk.sonTarih = o.tarih;
     if(o.tarih && (!g.sonTarih || o.tarih > g.sonTarih)){
       g.sonTarih = o.tarih;
     }
@@ -1385,13 +1406,22 @@ function renderLog(){
 
   let html = '';
   gruplu.forEach(g=>{
-    const blokluListesi = [...g.blokluKodlar.entries()]
-      .map(([kod, adet]) => adet > 1 ? `${escapeHtml(kod)} (×${adet})` : escapeHtml(kod))
-      .join(', ');
+    const satirlar = [...g.blokluKodlar.entries()]
+      .sort((a,b)=>{
+        const ta = a[1].sonTarih ? a[1].sonTarih.getTime() : 0;
+        const tb = b[1].sonTarih ? b[1].sonTarih.getTime() : 0;
+        return ta - tb;
+      })
+      .map(([kod, bk])=>{
+        const saat = bk.sonTarih ? bk.sonTarih.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'}) : '—';
+        const adetEtiketi = bk.adet > 1 ? ` (×${bk.adet})` : '';
+        return `<div class="bloklu-satir"><span class="bloklu-kod">${escapeHtml(kod)}</span>${adetEtiketi} <span class="bloklu-saat">${saat}</span></div>`;
+      })
+      .join('');
     html += `<tr>
       <td class="kod">${escapeHtml(g.lastikKodu)}</td>
       <td class="istasyon">${escapeHtml(g.istasyon || '—')}</td>
-      <td class="bloklu">${blokluListesi}</td>
+      <td class="bloklu">${satirlar}</td>
       <td class="adet">${g.adet}</td>
       <td class="zaman">${g.sonTarih ? formatTarih(g.sonTarih) : '—'}</td>
     </tr>`;
@@ -1441,7 +1471,9 @@ onSnapshot(qLog, snap=>{
       tarih: data.tarih && data.tarih.toDate ? data.tarih.toDate() : null
     });
   });
+  bulunanBlokluKodlar = new Set(tumOkutmalar.map(o=>o.kod));
   renderLog();
+  renderKodListe();
 }, err=>{
   setConn('err');
   logBody.innerHTML = '<tr><td colspan="5" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
