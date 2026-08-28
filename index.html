@@ -42,6 +42,80 @@
     background:repeating-linear-gradient(135deg, var(--yellow) 0 18px, #0d0f2b 18px 36px);
     opacity:.9;
   }
+  .giris-overlay{
+    position:fixed;
+    inset:0;
+    z-index:5000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:
+      radial-gradient(circle at 18% 15%, rgba(60,70,160,.35) 0%, rgba(14,17,48,0) 45%),
+      linear-gradient(135deg, #0d0f2b 0%, #171b46 30%, #2b2d4a 55%, #4a4530 78%, #59512c 100%);
+  }
+  .giris-panel{
+    width:100%;
+    max-width:320px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:28px 24px;
+    text-align:center;
+    box-shadow:0 10px 40px rgba(0,0,0,.4);
+  }
+  .giris-panel .giris-baslik{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:20px;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    color:var(--text);
+    margin:0 0 4px;
+  }
+  .giris-panel .giris-alt{
+    color:var(--muted);
+    font-size:13px;
+    margin:0 0 18px;
+  }
+  .giris-panel input{
+    width:100%;
+    padding:12px 14px;
+    border-radius:10px;
+    border:1px solid var(--line);
+    background:var(--panel-2);
+    color:var(--text);
+    font-size:16px;
+    text-align:center;
+    letter-spacing:.1em;
+    margin-bottom:12px;
+  }
+  .giris-panel input:focus{
+    outline:none;
+    border-color:var(--yellow);
+  }
+  .giris-panel button{
+    width:100%;
+    padding:12px 14px;
+    border-radius:10px;
+    border:none;
+    background:var(--yellow);
+    color:#1a1a1a;
+    font-weight:600;
+    font-size:14.5px;
+    cursor:pointer;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+  }
+  .giris-panel button:active{
+    background:var(--yellow-2);
+  }
+  .giris-hata{
+    color:var(--red);
+    font-size:12.5px;
+    margin:10px 0 0;
+    min-height:16px;
+  }
   header{
     padding:22px 20px 14px;
     max-width:760px;
@@ -747,6 +821,16 @@
 </head>
 <body>
 
+<div id="girisOverlay" class="giris-overlay">
+  <div class="giris-panel">
+    <p class="giris-baslik">🔒 Giriş</p>
+    <p class="giris-alt">Devam etmek için şifreyi gir</p>
+    <input type="password" id="girisSifre" placeholder="Şifre" autocomplete="off" inputmode="numeric">
+    <button id="girisBtn">Giriş Yap</button>
+    <p class="giris-hata" id="girisHata"></p>
+  </div>
+</div>
+
 <div class="stripe"></div>
 <header>
   <h1>Bitmiş Ürün Ambarı <span>Bloklu Lastik</span> Paneli</h1>
@@ -897,6 +981,29 @@ import {
   getFirestore, collection, addDoc, updateDoc, deleteDoc, doc,
   onSnapshot, query, orderBy, serverTimestamp, Timestamp, getDocs, writeBatch
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* ---------- Giriş şifresi ---------- */
+const GIRIS_SIFRE = "2515";
+const girisOverlay = document.getElementById('girisOverlay');
+const girisSifreInput = document.getElementById('girisSifre');
+const girisBtn = document.getElementById('girisBtn');
+const girisHata = document.getElementById('girisHata');
+
+function girisDeneme(){
+  if(girisSifreInput.value.trim() === GIRIS_SIFRE){
+    sessionStorage.setItem('blokluGiris', '1');
+    girisOverlay.style.display = 'none';
+  }else{
+    girisHata.textContent = 'Şifre yanlış.';
+    girisSifreInput.value = '';
+    girisSifreInput.focus();
+  }
+}
+if(sessionStorage.getItem('blokluGiris') === '1'){
+  girisOverlay.style.display = 'none';
+}
+girisBtn.addEventListener('click', girisDeneme);
+girisSifreInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') girisDeneme(); });
 
 const firebaseConfig = {
   apiKey: "AIzaSyCTULPTsI4Lvof8YnZCJCWR5mn-BtES_Iw",
