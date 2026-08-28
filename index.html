@@ -333,108 +333,60 @@
   .btn-upd:active{box-shadow:0 1px 0 rgba(0,0,0,.3),0 2px 4px rgba(0,0,0,.25);}
   .empty{color:var(--muted);font-size:13.5px;padding:20px 0;text-align:center;}
 
-  .field-grid{
-    display:flex;
-    flex-wrap:nowrap;
-    gap:8px;
-    margin-bottom:22px;
-  }
-  .field-card{
-    flex:1 1 0;
-    min-width:0;
+  .entry-card{
     border-radius:12px;
-    padding:16px 16px 18px;
+    padding:22px 22px 24px;
+    margin-bottom:24px;
     border:1px solid var(--line);
-    background:linear-gradient(160deg, var(--navy-2), var(--navy));
+    background:linear-gradient(160deg, rgba(255,255,255,.045), rgba(255,255,255,.01));
     box-shadow:
-      0 6px 14px rgba(0,0,0,.35),
-      inset 0 1px 0 rgba(255,255,255,.1),
-      inset 0 -2px 5px rgba(0,0,0,.3);
+      0 6px 16px rgba(0,0,0,.3),
+      inset 0 1px 0 rgba(255,255,255,.06);
   }
-  .field-card.gold{flex:1.5 1 0;}
-  .field-card.save-card{
-    flex:0 0 auto;
-    width:52px;
-    padding:0;
-    border:none;
-    background:transparent;
-    box-shadow:none;
+  .entry-field{margin-bottom:18px;}
+  .entry-field:last-of-type{margin-bottom:0;}
+  .entry-label{
+    display:block;
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    font-size:12.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin:0 0 8px;
+  }
+  .entry-field input[type=text]{width:100%;}
+  .entry-actions{
     display:flex;
-    align-items:flex-end;
-    justify-content:center;
+    align-items:center;
+    gap:16px;
+    margin-top:20px;
   }
-  .btn-save-icon{
-    width:100%;
-    height:44px;
+  .btn-kaydet-full{
+    flex:1;
+    padding:14px 18px;
+    border-radius:8px;
     border:none;
-    border-radius:10px;
     background:var(--yellow);
     color:#1c1f26;
-    font-size:20px;
-    font-weight:800;
-    cursor:pointer;
-    box-shadow:
-      0 4px 0 var(--yellow-dim),
-      0 6px 12px rgba(0,0,0,.35),
-      inset 0 1px 0 rgba(255,255,255,.5);
-  }
-  .btn-save-icon:hover{filter:brightness(1.08);}
-  .btn-save-icon:active{
-    box-shadow:
-      0 1px 0 var(--yellow-dim),
-      0 2px 4px rgba(0,0,0,.3),
-      inset 0 1px 0 rgba(255,255,255,.5);
-  }
-  @media (max-width:600px){
-    .field-grid{gap:6px;}
-    .field-card{padding:9px 8px 10px;border-radius:9px;}
-    .field-card .tag{font-size:8.5px;margin:0 0 3px;}
-    .field-card .ttl{font-size:10.5px;margin:0 0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .field-card input[type=text]{padding:6px 8px;font-size:12.5px;}
-    .bulk-box textarea{min-height:38px;padding:6px 8px;font-size:12.5px;}
-    .field-card.save-card{width:40px;}
-    .btn-save-icon{height:36px;font-size:16px;border-radius:8px;}
-  }
-  .field-card.gold{
-    background:linear-gradient(160deg, var(--yellow), var(--yellow-2));
-    border-color:var(--yellow-2);
-    box-shadow:
-      0 6px 14px rgba(0,0,0,.35),
-      inset 0 1px 0 rgba(255,255,255,.5),
-      inset 0 -2px 5px rgba(0,0,0,.15);
-  }
-  .field-card .tag{
-    font-size:10.5px;
-    text-transform:uppercase;
-    letter-spacing:.08em;
-    color:var(--muted);
-    margin:0 0 6px;
-  }
-  .field-card.gold .tag{color:#5c4a04;}
-  .field-card .ttl{
     font-family:'Oswald',sans-serif;
     font-weight:700;
-    font-size:15px;
-    letter-spacing:.02em;
+    font-size:14.5px;
+    letter-spacing:.04em;
     text-transform:uppercase;
-    margin:0 0 12px;
-    color:var(--text);
+    cursor:pointer;
+    box-shadow:0 3px 10px rgba(0,0,0,.3);
+    transition:filter .15s, transform .08s;
   }
-  .field-card.gold .ttl{color:#1c1f26;}
-  .field-card input[type=text]{
-    width:100%;
-    background:rgba(0,0,0,.28);
-    border:1px solid rgba(255,255,255,.18);
-    color:var(--text);
+  .btn-kaydet-full:hover{filter:brightness(1.07);}
+  .btn-kaydet-full:active{transform:translateY(1px);}
+  .btn-kaydet-full:disabled{opacity:.55;cursor:not-allowed;filter:none;}
+  .entry-card .msg{flex:0 0 auto;margin:0;min-height:16px;}
+  @media (max-width:600px){
+    .entry-card{padding:16px 16px 18px;}
+    .entry-actions{flex-wrap:wrap;}
+    .entry-card .msg{flex-basis:100%;order:2;}
   }
-  .field-card.gold input[type=text],
-  .field-card.gold textarea{
-    background:rgba(255,255,255,.55);
-    border:1px solid rgba(0,0,0,.15);
-    color:#1c1f26;
-  }
-  .field-card.gold textarea::placeholder{color:#6b5c1f;}
-  .field-card .msg{margin:8px 0 0;min-height:16px;}
   .bulk-box textarea{
     width:100%;
     min-height:110px;
@@ -846,24 +798,22 @@
   <div class="panel">
 
     <section id="view-ekle" class="view active">
-      <div class="field-grid">
-        <div class="field-card">
-          <p class="tag">Saha Girişi</p>
-          <p class="ttl">Lastik Kodu Giriniz</p>
+      <div class="entry-card">
+        <div class="entry-field">
+          <label class="entry-label" for="kodInput">Lastik Kodu Giriniz</label>
           <input id="kodInput" type="text" autocomplete="off">
         </div>
-        <div class="field-card gold">
-          <p class="tag">Toplu Blokla</p>
-          <p class="ttl">Blokeli Kodları Giriniz</p>
+        <div class="entry-field">
+          <label class="entry-label" for="bulkInput">Blokeli Kodları Giriniz</label>
           <div class="bulk-box open" id="bulkBox">
             <textarea id="bulkInput"></textarea>
           </div>
         </div>
-        <div class="field-card save-card">
-          <button class="btn-save-icon" id="btnKaydet" aria-label="Kaydet">✓</button>
+        <div class="entry-actions">
+          <button class="btn-kaydet-full" id="btnKaydet">Kaydet</button>
+          <span class="msg" id="kaydetMsg"></span>
         </div>
       </div>
-      <span class="msg" id="kaydetMsg"></span>
 
       <p class="list-title">
         <span>Bloklu Kod Listesi</span>
