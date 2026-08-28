@@ -43,9 +43,9 @@
     opacity:.9;
   }
   header{
-    padding:22px clamp(20px,4vw,64px) 14px;
-    max-width:none;
-    margin:0;
+    padding:22px 20px 14px;
+    max-width:760px;
+    margin:0 auto;
   }
   h1{
     font-family:'Oswald',sans-serif;
@@ -60,9 +60,9 @@
   .sub{color:var(--red);font-size:13.5px;margin:0;font-style:italic;}
   .tabs{
     display:flex;
-    max-width:none;
-    margin:18px 0 0;
-    padding:0 clamp(20px,4vw,64px);
+    max-width:760px;
+    margin:18px auto 0;
+    padding:0 20px;
     gap:8px;
   }
   .tab{
@@ -110,16 +110,20 @@
       inset 0 1px 0 rgba(255,255,255,.55);
   }
   main{
-    max-width:none;
-    margin:0;
-    padding:0 clamp(20px,4vw,64px) 60px;
+    max-width:760px;
+    margin:0 auto;
+    padding:0 20px 60px;
   }
   .panel{
-    background:transparent;
-    border:none;
-    border-radius:0;
-    padding:24px 0 0;
-    box-shadow:none;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:0 10px 10px 10px;
+    padding:20px;
+    backdrop-filter:blur(10px);
+    box-shadow:
+      0 10px 24px rgba(0,0,0,.4),
+      inset 0 1px 0 rgba(255,255,255,.08),
+      inset 0 -2px 6px rgba(0,0,0,.3);
   }
   .view{display:none;}
   .view.active{display:block;}
@@ -198,16 +202,11 @@
     justify-content:space-between;
   }
   .list-title span{color:var(--yellow);}
-  .code-list{
-    list-style:none;margin:0;padding:0;
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(360px, 1fr));
-    align-content:start;
-    gap:10px;
-    max-height:640px;overflow-y:auto;
-  }
+  .code-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;max-height:420px;overflow-y:auto;}
   .code-item{
-    display:block;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
     background:var(--panel-2);
     border:1px solid var(--line);
     border-radius:7px;
@@ -217,53 +216,8 @@
       inset 0 1px 0 rgba(255,255,255,.06),
       inset 0 -1px 0 rgba(0,0,0,.25);
   }
-  .code-item-head{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    flex-wrap:wrap;
-    margin-bottom:9px;
-  }
   .code-item .kod{font-family:var(--mono);font-size:15px;letter-spacing:.03em;color:var(--red);}
-  .chip-grid{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;}
-  .chip-kod{
-    font-family:var(--mono);
-    font-size:10.5px;
-    letter-spacing:.02em;
-    color:var(--muted);
-    background:rgba(255,255,255,.04);
-    border:1px solid var(--line);
-    border-radius:5px;
-    padding:3px 7px;
-    white-space:nowrap;
-    line-height:1.4;
-  }
-  .chip-kod.bulundu{
-    color:var(--green);
-    border-color:rgba(76,174,109,.45);
-    background:rgba(76,174,109,.1);
-    font-weight:600;
-  }
-  .chip-more{
-    font-family:var(--mono);
-    font-size:10.5px;
-    color:#1c1f26;
-    background:var(--yellow);
-    border:none;
-    border-radius:5px;
-    padding:3px 9px;
-    cursor:pointer;
-    white-space:nowrap;
-    line-height:1.4;
-  }
-  .chip-more:hover{filter:brightness(1.08);}
-  .bloklu-satir{white-space:nowrap;line-height:1.6;}
-  .bloklu-satir+.bloklu-satir{margin-top:2px;padding-top:2px;border-top:1px dashed var(--line);}
-  .bloklu-kod{font-family:var(--mono);}
-  .bloklu-saat{color:var(--muted);font-size:11.5px;}
   .code-item .meta{font-size:11px;color:var(--muted);margin-top:2px;}
-  .code-item .meta .bulundu{color:var(--green);font-weight:600;}
   .item-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
   .row-count{
     font-family:var(--mono);
@@ -472,55 +426,87 @@
     text-transform:uppercase;
     letter-spacing:.07em;
     color:var(--muted);
-    padding:9px 10px;
-    background:rgba(255,255,255,.04);
-    border:1px solid var(--line);
+    padding:0 10px 8px;
+    border-bottom:1px solid var(--line);
   }
   tbody td{
     padding:11px 10px;
-    border:1px solid var(--line);
+    border-bottom:1px solid #2c313d;
     font-size:13.5px;
   }
-  tbody tr:nth-child(even) td{background:rgba(255,255,255,.02);}
-  tbody tr:hover td{background:rgba(242,183,5,.06);}
+  tbody tr:last-child td{border-bottom:none;}
   td.kod{font-family:var(--mono);color:var(--text);letter-spacing:.02em;}
   td.istasyon{color:var(--yellow);font-size:12.5px;}
-  td.bloklu{font-family:var(--mono);color:var(--red);font-size:12.5px;}
-  td.saat{font-family:var(--mono);color:var(--muted);font-size:12px;white-space:nowrap;}
-  .bloklu-adet{color:var(--yellow);font-size:10.5px;}
-  td.adet{font-family:var(--mono);color:var(--yellow);font-size:12.5px;text-align:center;}
   td.zaman{color:var(--muted);font-size:12px;white-space:nowrap;}
+  td.sira{color:var(--muted);font-family:var(--mono);font-size:12px;}
+  td.tarih{color:var(--muted);font-size:12px;white-space:nowrap;}
+  td.saat{color:var(--muted);font-size:12px;white-space:nowrap;}
+  td.adet{font-family:var(--mono);color:var(--yellow);font-size:12.5px;text-align:center;}
+  .summary-title{
+    font-size:11.5px;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    margin:22px 0 10px;
+  }
+  .summary-list{list-style:none;margin:0 0 6px;padding:0;display:flex;flex-direction:column;gap:6px;}
+  .summary-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:7px;
+    padding:9px 12px;
+    box-shadow:
+      0 3px 8px rgba(0,0,0,.3),
+      inset 0 1px 0 rgba(255,255,255,.06),
+      inset 0 -1px 0 rgba(0,0,0,.25);
+  }
+  .summary-item .kod{font-family:var(--mono);font-size:14px;letter-spacing:.02em;}
+  .summary-item .adet{
+    font-family:var(--mono);
+    font-size:12.5px;
+    color:var(--yellow);
+    background:#3a2f06;
+    padding:4px 10px;
+    border-radius:14px;
+    white-space:nowrap;
+    box-shadow:
+      0 2px 4px rgba(0,0,0,.3),
+      inset 0 1px 0 rgba(255,255,255,.1);
+  }
   .chip-custom{display:flex;align-items:center;gap:6px;}
   .chip-custom::before{content:'📅';font-size:11px;}
 
   /* ---------- Takvim Modal ---------- */
-  .modal-card.takvim-card{
-    max-width:300px;
-    padding:16px 16px calc(14px + env(safe-area-inset-bottom));
-  }
   .takvim-nav{
     display:flex;align-items:center;justify-content:space-between;
-    margin-bottom:10px;
+    margin-bottom:16px;
   }
   .takvim-ok{
-    background:transparent;
+    background:var(--panel-2);
     border:1px solid var(--line);
     color:var(--text);
-    width:24px;height:24px;
-    border-radius:6px;
-    font-size:13px;
+    width:34px;height:34px;
+    border-radius:8px;
+    font-size:18px;
     line-height:1;
     cursor:pointer;
     display:flex;align-items:center;justify-content:center;
     flex-shrink:0;
-    transition:background .15s;
+    transition:box-shadow .1s,transform .08s,background .15s;
+    box-shadow:
+      0 3px 0 rgba(0,0,0,.3),
+      0 4px 8px rgba(0,0,0,.3),
+      inset 0 1px 0 rgba(255,255,255,.08);
   }
   .takvim-ok:hover{background:var(--navy-2);}
-  .takvim-ok:active{opacity:.7;}
+  .takvim-ok:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.3);}
   .takvim-ay-yil{
     font-family:'Oswald',sans-serif;
-    font-weight:600;
-    font-size:12.5px;
+    font-weight:700;
+    font-size:16px;
     letter-spacing:.03em;
     text-transform:uppercase;
     color:var(--yellow);
@@ -530,73 +516,68 @@
   .takvim-gunler{
     display:grid;
     grid-template-columns:repeat(7,1fr);
-    gap:2px;
-    margin-bottom:3px;
+    gap:4px;
+    margin-bottom:6px;
   }
   .takvim-gunler span{
     text-align:center;
-    font-size:9px;
+    font-size:10.5px;
     color:var(--muted);
     text-transform:uppercase;
-    letter-spacing:.03em;
+    letter-spacing:.05em;
   }
   .takvim-grid{
     display:grid;
     grid-template-columns:repeat(7,1fr);
-    gap:2px;
+    gap:4px;
   }
-  .takvim-grid.yil-grid{grid-template-columns:repeat(4,1fr);gap:6px;}
+  .takvim-grid.yil-grid{grid-template-columns:repeat(4,1fr);gap:8px;}
   .takvim-gun{
     aspect-ratio:1;
     display:flex;align-items:center;justify-content:center;
-    background:transparent;
-    border:1px solid transparent;
-    border-radius:6px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:8px;
     color:var(--text);
-    font-family:'Inter',sans-serif;
-    font-weight:500;
-    font-size:11.5px;
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    font-size:14.5px;
     cursor:pointer;
     transition:background .12s,color .12s;
   }
-  .takvim-gun:hover{background:var(--panel-2);}
+  .takvim-gun:hover{background:var(--navy-2);}
   .takvim-gun.disiy{color:#454a63;border-color:transparent;background:transparent;cursor:default;}
-  .takvim-gun.bugun{border-color:var(--yellow);color:var(--yellow);font-weight:600;}
+  .takvim-gun.bugun{border-color:var(--yellow);color:var(--yellow);}
   .takvim-gun.secili{
     background:var(--yellow);
     color:#1c1f26;
     border-color:var(--yellow);
-    font-weight:700;
+    font-weight:600;
   }
   .takvim-gun.aralikta{
-    background:rgba(242,183,5,.2);
+    background:rgba(242,183,5,.22);
     border-color:transparent;
     border-radius:0;
   }
-  .takvim-gun.aralik-bas{border-radius:6px 0 0 6px;}
-  .takvim-gun.aralik-son{border-radius:0 6px 6px 0;}
+  .takvim-gun.aralik-bas{border-radius:8px 0 0 8px;}
+  .takvim-gun.aralik-son{border-radius:0 8px 8px 0;}
   .takvim-yil{
-    padding:10px 0;
+    padding:15px 0;
     text-align:center;
     background:var(--panel-2);
     border:1px solid var(--line);
-    border-radius:6px;
-    font-family:'Inter',sans-serif;
-    font-weight:500;
-    font-size:12px;
+    border-radius:8px;
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    font-size:15px;
     color:var(--text);
     cursor:pointer;
     transition:background .12s,color .12s;
   }
   .takvim-yil:hover{background:var(--navy-2);}
   .takvim-yil.secili{background:var(--yellow);color:#1c1f26;border-color:var(--yellow);}
-  .takvim-card .modal-hint{min-height:0;font-size:11px;}
-  .takvim-card .modal-actions{margin-top:14px;gap:8px;}
-  .takvim-card .btn-danger,
-  .takvim-card .modal-actions .btn-add{padding:9px 14px;font-size:11.5px;}
-  @media (min-width:600px){
-    .takvim-card{transform:translateY(0) scale(1);}
-  }
+  .takvim-card .modal-hint{min-height:0;}
+  .takvim-card .modal-actions{margin-top:18px;}
 
   .kabarik-panel{
     background:linear-gradient(160deg, var(--navy-2), var(--navy));
@@ -612,6 +593,12 @@
   }
   .kabarik-panel table{
     background:transparent;
+  }
+  .kabarik-panel thead th{
+    border-bottom:1px solid rgba(255,255,255,.1);
+  }
+  .kabarik-panel tbody td{
+    border-bottom:1px solid rgba(0,0,0,.35);
   }
   .conn{
     position:fixed;bottom:14px;right:16px;
@@ -756,33 +743,6 @@
   .modal-msg{font-size:13px;margin:12px 0 0;min-height:16px;}
   .modal-msg.err{color:var(--red);}
   .modal-msg.ok{color:var(--green);}
-
-  /* ---------- Onay Modalı ---------- */
-  .confirm-card{max-width:380px;}
-  .confirm-card .modal-mesaj{
-    font-size:14px;
-    color:var(--text);
-    line-height:1.55;
-    margin:2px 0 0;
-  }
-  .btn-cancel{
-    flex:1;
-    background:var(--panel-2);
-    border:1px solid var(--line);
-    color:var(--muted);
-    padding:13px 20px;
-    font-size:14px;
-  }
-  .btn-cancel:hover{background:var(--navy-2);color:var(--text);}
-  .btn-danger-solid{
-    flex:1;
-    background:var(--red);
-    border:1px solid var(--red);
-    color:#fff;
-    padding:13px 20px;
-    font-size:14px;
-  }
-  .btn-danger-solid:hover{filter:brightness(1.1);}
 </style>
 </head>
 <body>
@@ -797,7 +757,6 @@
   <div class="tab active" data-view="ekle">Kod Ekle</div>
   <div class="tab" data-view="log">Bloklu Bulunan Lastikler</div>
 </div>
-
 
 <main>
   <div class="panel">
@@ -842,17 +801,34 @@
         <div class="chip chip-custom" data-open="aralik" data-target="log" id="chipAralik">Tarih Aralığı Seç</div>
         <div class="chip chip-custom" data-open="ay" data-target="log" id="chipAy">Ay Seç</div>
         <div class="chip chip-custom" data-open="yil" data-target="log" id="chipYil">Yıl Seç</div>
+        <div class="count-badge" id="logSayisi">0 okutma</div>
         <button class="btn-danger" id="btnLogTemizle" style="flex:0 0 auto;padding:7px 14px;font-size:12.5px;">Komple Temizle</button>
       </div>
+      <p class="summary-title" style="margin-top:0;">Koda Göre Ara</p>
+      <div class="kabarik-panel">
+        <div class="add-row" style="margin-bottom:0;">
+          <input type="text" id="aramaInput" placeholder="Lastik kodu gir..." autocomplete="off">
+          <button class="btn-add" id="btnAra">Ara</button>
+        </div>
+        <ul class="summary-list" id="aramaSonuc" style="margin-top:14px;"></ul>
+      </div>
+
+      <p class="summary-title">Koda Göre Bulunma Sayısı</p>
+      <div class="kabarik-panel">
+        <ul class="summary-list" id="summaryListe">
+          <li class="empty">Yükleniyor...</li>
+        </ul>
+      </div>
+
       <p class="summary-title">Tüm Okutma Kayıtları</p>
       <div class="kabarik-panel">
         <div style="overflow-x:auto;">
           <table>
             <thead>
-              <tr><th>Kod</th><th>İstasyon</th><th>Bloklanan Kod</th><th>Saat</th><th>Adet</th><th>Tarih / Saat</th></tr>
+              <tr><th>Sıra No</th><th>Tarih</th><th>Lastik Kodu</th><th>İstasyon</th><th>Bloklanan Kod</th><th>Saat</th><th>Adet</th></tr>
             </thead>
             <tbody id="logBody">
-              <tr><td colspan="6" class="empty">Yükleniyor...</td></tr>
+              <tr><td colspan="7" class="empty">Yükleniyor...</td></tr>
             </tbody>
           </table>
         </div>
@@ -915,23 +891,6 @@
 
 <div class="conn"><div class="dot" id="connDot"></div><span id="connText">bağlanıyor...</span></div>
 
-<div class="modal-overlay" id="confirmOverlay">
-  <div class="modal-card confirm-card">
-    <div class="modal-head">
-      <div>
-        <p class="tag">Onay Gerekli</p>
-        <p class="kodbaslik" id="confirmBaslik">Emin misin?</p>
-      </div>
-      <button class="modal-close" id="confirmClose" aria-label="Kapat">✕</button>
-    </div>
-    <p class="modal-mesaj" id="confirmMesaj"></p>
-    <div class="modal-actions">
-      <button class="btn-cancel" id="confirmVazgec">Vazgeç</button>
-      <button class="btn-danger-solid" id="confirmOnayla">Evet, Sil</button>
-    </div>
-  </div>
-</div>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
@@ -961,31 +920,6 @@ function setConn(state){
   connText.textContent = state === 'ok' ? 'bağlı' : (state === 'err' ? 'bağlantı hatası' : 'bağlanıyor...');
 }
 
-/* ---------- Modern Onay Modalı (confirm() yerine) ---------- */
-const confirmOverlay = document.getElementById('confirmOverlay');
-const confirmBaslik = document.getElementById('confirmBaslik');
-const confirmMesaj = document.getElementById('confirmMesaj');
-const confirmVazgecBtn = document.getElementById('confirmVazgec');
-const confirmOnaylaBtn = document.getElementById('confirmOnayla');
-const confirmCloseBtn = document.getElementById('confirmClose');
-let confirmCozumle = null;
-
-function onayModal(mesaj, baslik = 'Emin misin?', onayMetni = 'Evet, Sil'){
-  confirmBaslik.textContent = baslik;
-  confirmMesaj.textContent = mesaj;
-  confirmOnaylaBtn.textContent = onayMetni;
-  confirmOverlay.classList.add('open');
-  return new Promise(resolve=>{ confirmCozumle = resolve; });
-}
-function onayModalKapat(sonuc){
-  confirmOverlay.classList.remove('open');
-  if(confirmCozumle){ confirmCozumle(sonuc); confirmCozumle = null; }
-}
-confirmOnaylaBtn.addEventListener('click', ()=> onayModalKapat(true));
-confirmVazgecBtn.addEventListener('click', ()=> onayModalKapat(false));
-confirmCloseBtn.addEventListener('click', ()=> onayModalKapat(false));
-confirmOverlay.addEventListener('click', (e)=>{ if(e.target === confirmOverlay) onayModalKapat(false); });
-
 /* ---------- Sekme geçişi ---------- */
 document.querySelectorAll('.tab').forEach(tab=>{
   tab.addEventListener('click', ()=>{
@@ -1000,7 +934,6 @@ document.querySelectorAll('.tab').forEach(tab=>{
 const kodListe = document.getElementById('kodListe');
 
 let mevcutKodlar = new Map(); // lastikKodu -> { id, blokluKodlar: Set }
-let bulunanBlokluKodlar = new Set(); // en az bir kez okutulup bulunmuş bloklu kodlar
 
 const kodInput = document.getElementById('kodInput');
 const bulkInput = document.getElementById('bulkInput');
@@ -1129,8 +1062,7 @@ modalGuncelleBtn.addEventListener('click', async ()=>{
 
 modalSilBtn.addEventListener('click', async ()=>{
   if(modalIslemde || !modalAktifId) return;
-  const onayli = await onayModal(modalAktifKod + ' kaydını tamamen silmek istediğine emin misin?', 'Kaydı Sil');
-  if(!onayli) return;
+  if(!confirm(modalAktifKod + ' kaydını tamamen silmek istediğine emin misin?')) return;
 
   modalIslemde = true;
   modalGuncelleBtn.disabled = true;
@@ -1171,9 +1103,6 @@ onSnapshot(qKodlar, snap=>{
   kodListe.innerHTML = '<li class="empty">Bağlantı hatası: ' + err.message + '</li>';
 });
 
-let genisletilmisKodlar = new Set(); // "tümünü göster" açık olan kayıt id'leri
-const CHIP_LIMIT = 40;
-
 function renderKodListe(){
   const { start, end } = filtreAraligi('kod');
   const filtreli = tumKodKayitlari.filter(k=>{
@@ -1189,39 +1118,19 @@ function renderKodListe(){
   let html = '';
   filtreli.forEach(k=>{
     const tarih = k.tarih ? formatTarih(k.tarih) : '—';
-    const genisletilmis = genisletilmisKodlar.has(k.id);
-    const gosterilecekler = genisletilmis ? k.blokluKodlar : k.blokluKodlar.slice(0, CHIP_LIMIT);
-    const kalanSayi = k.blokluKodlar.length - gosterilecekler.length;
-    const chips = gosterilecekler.map(kd=>{
-      const cls = bulunanBlokluKodlar.has(kd) ? ' chip-kod bulundu' : ' chip-kod';
-      return `<span class="${cls}">${escapeHtml(kd)}</span>`;
-    }).join('');
-    const toggleBtn = kalanSayi > 0
-      ? `<button class="chip-more" data-toggle="${k.id}">+${kalanSayi} daha göster</button>`
-      : (genisletilmis && k.blokluKodlar.length > CHIP_LIMIT
-        ? `<button class="chip-more" data-toggle="${k.id}">Gizle</button>`
-        : '');
     html += `<li class="code-item">
-      <div class="code-item-head">
+      <div>
         <div class="kod">Lastik Kodu: ${escapeHtml(k.lastikKodu)}</div>
-        <div class="item-right">
-          <span class="row-count">${k.blokluKodlar.length} blokeli kod</span>
-          <button class="btn-upd" data-id="${k.id}">Güncelle</button>
-        </div>
+        <div class="meta">Bloklu Kodlar: ${k.blokluKodlar.map(escapeHtml).join(', ')}</div>
+        <div class="meta">eklendi: ${tarih}</div>
       </div>
-      <div class="chip-grid">${chips}${toggleBtn}</div>
-      <div class="meta">eklendi: ${tarih}</div>
+      <div class="item-right">
+        <span class="row-count">${k.blokluKodlar.length} blokeli kod</span>
+        <button class="btn-upd" data-id="${k.id}">Güncelle</button>
+      </div>
     </li>`;
   });
   kodListe.innerHTML = html;
-  kodListe.querySelectorAll('.chip-more').forEach(b=>{
-    b.addEventListener('click', ()=>{
-      const id = b.dataset.toggle;
-      if(genisletilmisKodlar.has(id)) genisletilmisKodlar.delete(id);
-      else genisletilmisKodlar.add(id);
-      renderKodListe();
-    });
-  });
   kodListe.querySelectorAll('.btn-upd').forEach(b=>{
     b.addEventListener('click', ()=>{
       const kayit = tumKodKayitlari.find(k=>k.id === b.dataset.id);
@@ -1232,6 +1141,7 @@ function renderKodListe(){
 
 /* ---------- Bulunanlar (log) ---------- */
 const logBody = document.getElementById('logBody');
+const logSayisi = document.getElementById('logSayisi');
 let tumOkutmalar = [];
 
 /* ---------- Takvim (tarih / tarih aralığı / yıl seçici) ---------- */
@@ -1493,69 +1403,36 @@ function renderLog(){
     if(end && o.tarih >= end) return false;
     return true;
   });
+  logSayisi.textContent = filtreli.length + ' okutma';
+
+  /* Koda göre bulunma sayısı özeti */
+  const sayac = new Map();
+  filtreli.forEach(o=>{
+    sayac.set(o.kod, (sayac.get(o.kod) || 0) + 1);
+  });
+  if(sayac.size === 0){
+    summaryListe.innerHTML = '<li class="empty">Kayıt yok.</li>';
+  }else{
+    const siraliOzet = [...sayac.entries()].sort((a,b)=> b[1]-a[1]);
+    summaryListe.innerHTML = siraliOzet.map(([kod, adet])=>
+      `<li class="summary-item"><span class="kod">${escapeHtml(kod)}</span><span class="adet">${adet} adet bulundu</span></li>`
+    ).join('');
+  }
 
   if(filtreli.length === 0){
-    logBody.innerHTML = '<tr><td colspan="6" class="empty">Kayıt yok.</td></tr>';
+    logBody.innerHTML = '<tr><td colspan="7" class="empty">Kayıt yok.</td></tr>';
     return;
   }
-
-  // Bloklanan kodun ait olduğu lastik kodunu bul
-  function lastikKoduBul(blokluKod){
-    for(const [k, v] of mevcutKodlar){
-      if(v.blokluKodlar.has(blokluKod)) return k;
-    }
-    return '—';
-  }
-
-  // Aynı lastik kodu + istasyon bazında grupla; o lastik koduna ait tüm
-  // bloklanan kodlar ayrı satırlar yerine tek satırda, her biri kendi
-  // saatiyle birlikte listelenir
-  const gruplu = new Map();
-  filtreli.forEach(o=>{
-    const lastikKodu = lastikKoduBul(o.kod);
-    const anahtar = lastikKodu + '|' + (o.istasyon || '');
-    if(!gruplu.has(anahtar)){
-      gruplu.set(anahtar, { lastikKodu, istasyon: o.istasyon, blokluKodlar: new Map(), adet: 0, sonTarih: o.tarih });
-    }
-    const g = gruplu.get(anahtar);
-    g.adet++;
-    if(!g.blokluKodlar.has(o.kod)){
-      g.blokluKodlar.set(o.kod, { adet: 0, ilkTarih: o.tarih, sonTarih: o.tarih });
-    }
-    const bk = g.blokluKodlar.get(o.kod);
-    bk.adet++;
-    if(o.tarih && (!bk.ilkTarih || o.tarih < bk.ilkTarih)) bk.ilkTarih = o.tarih;
-    if(o.tarih && (!bk.sonTarih || o.tarih > bk.sonTarih)) bk.sonTarih = o.tarih;
-    if(o.tarih && (!g.sonTarih || o.tarih > g.sonTarih)){
-      g.sonTarih = o.tarih;
-    }
-  });
-
   let html = '';
-  gruplu.forEach(g=>{
-    const siraliGirdiler = [...g.blokluKodlar.entries()]
-      .sort((a,b)=>{
-        const ta = a[1].sonTarih ? a[1].sonTarih.getTime() : 0;
-        const tb = b[1].sonTarih ? b[1].sonTarih.getTime() : 0;
-        return ta - tb;
-      });
-    const kodSatirlari = siraliGirdiler
-      .map(([kod])=> `<div class="bloklu-satir bloklu-kod">${escapeHtml(kod)}</div>`)
-      .join('');
-    const saatSatirlari = siraliGirdiler
-      .map(([kod, bk])=>{
-        const saat = bk.sonTarih ? bk.sonTarih.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'}) : '—';
-        const adetEtiketi = bk.adet > 1 ? ` <span class="bloklu-adet">×${bk.adet}</span>` : '';
-        return `<div class="bloklu-satir">${saat}${adetEtiketi}</div>`;
-      })
-      .join('');
+  filtreli.forEach((o, i)=>{
     html += `<tr>
-      <td class="kod">${escapeHtml(g.lastikKodu)}</td>
-      <td class="istasyon">${escapeHtml(g.istasyon || '—')}</td>
-      <td class="bloklu">${kodSatirlari}</td>
-      <td class="saat">${saatSatirlari}</td>
-      <td class="adet">${g.adet}</td>
-      <td class="zaman">${g.sonTarih ? formatTarih(g.sonTarih) : '—'}</td>
+      <td class="sira">${i + 1}</td>
+      <td class="tarih">${o.tarih ? formatTarihSadece(o.tarih) : '—'}</td>
+      <td class="kod">${escapeHtml(o.kod)}</td>
+      <td class="istasyon">${escapeHtml(o.istasyon || '—')}</td>
+      <td class="kod">${escapeHtml(o.kod)}</td>
+      <td class="saat">${o.tarih ? formatSaatSadece(o.tarih) : '—'}</td>
+      <td class="adet">${sayac.get(o.kod) || 1}</td>
     </tr>`;
   });
   logBody.innerHTML = html;
@@ -1568,8 +1445,7 @@ let logTemizleniyor = false;
 btnLogTemizle.addEventListener('click', async ()=>{
   if(logTemizleniyor) return;
   if(tumOkutmalar.length === 0){ return; }
-  const onayli = await onayModal('Tüm okutma kayıtlarını komple silmek istediğine emin misin? Bu işlem geri alınamaz.', 'Komple Temizle');
-  if(!onayli) return;
+  if(!confirm('Tüm okutma kayıtlarını komple silmek istediğine emin misin? Bu işlem geri alınamaz.')) return;
 
   logTemizleniyor = true;
   btnLogTemizle.disabled = true;
@@ -1604,21 +1480,55 @@ onSnapshot(qLog, snap=>{
       tarih: data.tarih && data.tarih.toDate ? data.tarih.toDate() : null
     });
   });
-  bulunanBlokluKodlar = new Set(tumOkutmalar.map(o=>o.kod));
   renderLog();
-  renderKodListe();
 }, err=>{
   setConn('err');
-  logBody.innerHTML = '<tr><td colspan="6" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
+  logBody.innerHTML = '<tr><td colspan="7" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
 });
 
 /* ---------- Yardımcılar ---------- */
 function formatTarih(d){
   return d.toLocaleDateString('tr-TR') + ' ' + d.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
 }
+function formatTarihSadece(d){
+  return d.toLocaleDateString('tr-TR');
+}
+function formatSaatSadece(d){
+  return d.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
+}
+function formatTarihSaniye(d){
+  return d.toLocaleDateString('tr-TR') + ' ' + d.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+}
 function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
+
+/* ---------- Koda göre ara ---------- */
+const aramaInput = document.getElementById('aramaInput');
+const btnAra = document.getElementById('btnAra');
+const aramaSonuc = document.getElementById('aramaSonuc');
+
+function kodAra(){
+  const aranan = aramaInput.value.trim().toUpperCase();
+  if(!aranan){
+    aramaSonuc.innerHTML = '<li class="empty">Aramak için bir kod gir.</li>';
+    return;
+  }
+  const sonuclar = tumOkutmalar.filter(o => (o.kod || '').toUpperCase() === aranan);
+  if(sonuclar.length === 0){
+    aramaSonuc.innerHTML = '<li class="empty">"' + escapeHtml(aranan) + '" kodunda kayıt bulunamadı.</li>';
+    return;
+  }
+  aramaSonuc.innerHTML = sonuclar.map(o => `
+    <li class="summary-item">
+      <span class="kod">${o.tarih ? formatTarihSaniye(o.tarih) : '—'}</span>
+      <span class="adet">${escapeHtml(o.istasyon || '—')}</span>
+    </li>
+  `).join('');
+}
+
+btnAra.addEventListener('click', kodAra);
+aramaInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') kodAra(); });
 </script>
 </body>
 </html>
