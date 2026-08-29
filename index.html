@@ -806,4 +806,1289 @@
   #view-log tbody td,
   #view-ekle tbody td{color:#e9edf7;border-bottom-color:rgba(255,255,255,.1);}
   #view-log tbody tr:hover td,
-  #view-ekle t
+  #view-ekle tbody tr:hover td{background:rgba(255,255,255,.06);}
+  #view-log td.kod,
+  #view-ekle td.kod{color:var(--accent);}
+  #view-log td.istasyon,
+  #view-ekle td.istasyon{color:#ffd873;}
+  #view-log td.sira,
+  #view-log td.tarih,
+  #view-log td.saat,
+  #view-ekle td.sira,
+  #view-ekle td.tarih,
+  #view-ekle td.saat{color:#9fb0d6;}
+  #view-log td.adet,
+  #view-ekle td.adet{color:var(--accent);}
+  #view-log .empty,
+  #view-ekle .empty{color:#9fb0d6;}
+  #view-log input[type=text],
+  #view-ekle input[type=text],
+  #view-ekle textarea{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.22);
+    color:#fff;
+  }
+  #view-log input[type=text]::placeholder,
+  #view-ekle input[type=text]::placeholder,
+  #view-ekle textarea::placeholder{color:#a9b3cc;}
+  #view-log input[type=text]:focus,
+  #view-ekle input[type=text]:focus,
+  #view-ekle textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(240,179,35,.25);}
+  #view-log .btn-secondary{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.24);
+    color:#fff;
+  }
+  #view-log .btn-secondary:hover{border-color:var(--accent);color:var(--accent);background:rgba(240,179,35,.12);}
+
+  /* ---------- Güncelle Modal shell ---------- */
+  .modal-overlay{
+    position:fixed;inset:0;
+    background:rgba(12,20,40,.5);
+    backdrop-filter:blur(3px);
+    display:none;
+    align-items:flex-end;
+    justify-content:center;
+    z-index:1000;
+    opacity:0;
+    transition:opacity .18s ease;
+  }
+  .modal-overlay.open{display:flex;opacity:1;}
+  @media (min-width:600px){
+    .modal-overlay{align-items:center;padding:20px;}
+  }
+  .modal-card{
+    width:100%;
+    max-width:480px;
+    max-height:92vh;
+    overflow-y:auto;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+    padding:24px 24px calc(22px + env(safe-area-inset-bottom));
+    transform:translateY(24px);
+    transition:transform .2s ease;
+    box-shadow:var(--shadow-lg);
+  }
+  .modal-overlay.open .modal-card{transform:translateY(0);}
+  @media (min-width:600px){
+    .modal-card{border-radius:var(--radius-lg);transform:translateY(0) scale(.97);}
+    .modal-overlay.open .modal-card{transform:translateY(0) scale(1);}
+  }
+
+  /* ---------- Takvim modalı: sayfa arka planına uygun (beyaz değil) ---------- */
+  .takvim-modal-card{
+    background:linear-gradient(160deg, var(--primary) 0%, var(--bg-dark) 55%, #4b4420 100%);
+    border:1px solid rgba(255,255,255,.16);
+  }
+  .takvim-modal-card .modal-head .tag{color:#c3cce3;}
+  .takvim-modal-card .modal-head .kodbaslik{color:#fff;}
+  .takvim-modal-card .modal-close{
+    background:rgba(255,255,255,.1);
+    border:1px solid rgba(255,255,255,.2);
+    color:#fff;
+  }
+  .takvim-modal-card .takvim-nav-btn{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.2);
+    color:#fff;
+  }
+  .takvim-modal-card .takvim-nav-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(240,179,35,.12);}
+  .takvim-modal-card .takvim-ay-yil{color:#fff;}
+  .takvim-modal-card .takvim-gun-basliklari{color:#9fb0d6;}
+  .takvim-modal-card .takvim-gun{color:#e9edf7;}
+  .takvim-modal-card .takvim-gun:hover{border-color:var(--accent);background:rgba(240,179,35,.14);}
+  .takvim-modal-card .takvim-gun.disi{color:#7d88a6;}
+  .takvim-modal-card .takvim-gun.bugun{border-color:var(--accent);color:var(--accent);}
+  .takvim-modal-card .takvim-gun.secili{background:var(--accent);border-color:var(--accent);color:var(--navy);}
+  .modal-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    margin-bottom:20px;
+  }
+  .modal-head .tag{
+    font-size:11px;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:.07em;
+    margin:0 0 5px;
+    font-weight:600;
+  }
+  .modal-head .kodbaslik{
+    font-family:var(--font-head);
+    font-weight:800;
+    font-size:21px;
+    letter-spacing:.005em;
+    color:var(--heading);
+    word-break:break-all;
+  }
+  .modal-close{
+    background:var(--surface-2);
+    border:1px solid var(--line-strong);
+    color:var(--muted);
+    width:34px;height:34px;
+    border-radius:50%;
+    font-size:16px;
+    line-height:1;
+    cursor:pointer;
+    flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    transition:color .15s, border-color .15s, background .15s;
+  }
+  .modal-close:hover{color:var(--text);border-color:var(--muted-2);background:var(--surface-3);}
+  .modal-label{
+    font-size:11.5px;
+    font-weight:600;
+    color:var(--text);
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    margin:0 0 8px;
+  }
+  .modal-card textarea{
+    min-height:130px;
+    font-size:14.5px;
+    letter-spacing:.01em;
+    border-radius:var(--radius-sm);
+  }
+  .modal-hint{font-size:12px;color:var(--muted);margin:9px 0 0;line-height:1.5;}
+  .modal-count{
+    display:inline-flex;
+    font-family:var(--mono);
+    font-size:11.5px;
+    font-weight:600;
+    color:var(--primary);
+    background:var(--accent-tint);
+    padding:4px 12px;
+    border-radius:14px;
+    margin-top:10px;
+  }
+  .modal-actions{
+    display:flex;
+    gap:10px;
+    margin-top:24px;
+  }
+  .modal-actions .btn-add{flex:1;}
+  .modal-actions .btn-danger{flex:1;}
+  .modal-msg{font-size:12.5px;margin:12px 0 0;min-height:16px;}
+  .modal-msg.err{color:var(--red);}
+  .modal-msg.ok{color:var(--green);}
+
+  @media (max-width:900px){
+    .navbar-inner{padding:14px 20px;}
+    .tabbar-inner{padding:0 20px;}
+    main{padding:22px 20px 60px;}
+  }
+  @media (max-width:600px){
+    .entry-card{padding:20px 18px 22px;}
+    .entry-actions{flex-wrap:wrap;}
+  }
+</style>
+</head>
+<body>
+
+<div id="girisOverlay" class="giris-overlay">
+  <div class="giris-panel">
+    <p class="giris-baslik">Panele Giriş</p>
+    <p class="giris-alt">Devam etmek için şifreni gir</p>
+    <input type="password" id="girisSifre" placeholder="Şifre" autocomplete="off" inputmode="numeric">
+    <button id="girisBtn">Giriş Yap</button>
+    <p class="giris-hata" id="girisHata"></p>
+  </div>
+</div>
+
+<header class="navbar">
+  <div class="navbar-inner">
+    <div class="navbar-brand">
+      <div class="brand-text">
+        <span class="brand-title">GOODYEAR BLOKELİ BEADCODE TAKİBİ</span>
+      </div>
+    </div>
+    <div class="navbar-right">
+      <button type="button" class="navbar-date" id="navTarihBtn" aria-label="Tarih Filtresi">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        <span id="navTarihLabel">Bugün</span>
+      </button>
+      <button type="button" class="navbar-date" id="navAyYilBtn" aria-label="Ay ve Yıl Seç">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        <span>Ay ve Yıl Seç</span>
+      </button>
+      <div class="conn-badge"><span class="dot" id="connDot"></span><span id="connText">bağlanıyor...</span></div>
+      <button class="btn-danger" id="btnLogTemizle">Komple Temizle</button>
+    </div>
+  </div>
+  <nav class="tabbar">
+    <div class="tabbar-inner">
+      <div class="tabs">
+        <div class="tab active" data-view="ekle">Kod Ekle</div>
+        <div class="tab" data-view="log">Bloklu Bulunan Lastikler</div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+  <section id="view-ekle" class="view active">
+
+    <div class="card entry-card">
+      <div class="entry-row">
+        <div class="entry-field">
+          <label class="entry-label" for="kodInput">Lastik Kodu</label>
+          <input id="kodInput" type="text" autocomplete="off" maxlength="10" placeholder="" aria-label="Lastik Kodu Giriniz" class="entry-kod-input">
+        </div>
+        <div class="entry-field entry-field-bulk">
+          <label class="entry-label" for="bulkInput">Blokeli Kodları Giriniz</label>
+          <div class="bulk-box" id="bulkBox">
+            <textarea id="bulkInput" placeholder="" aria-label="Blokeli Kodları Giriniz"></textarea>
+            <button type="button" class="bulk-expand-btn" id="btnBulkTumunuGor" title="Tümünü Gör">⤢</button>
+          </div>
+        </div>
+        <div class="entry-field entry-field-save">
+          <label class="entry-label entry-label-hidden">Kaydet</label>
+          <button class="btn-kaydet-full" id="btnKaydet">Kaydet</button>
+        </div>
+      </div>
+      <div class="entry-actions">
+        <span class="msg" id="kaydetMsg"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title kod-listesi-baslik">Bloklu Kod Listesi</h2>
+      </div>
+      <div class="tablo-3d" style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr><th>Eklenme Tarihi</th><th>Lastik Kodu</th><th>Bloklu Beadcodlar</th><th>Bloklu Kod Adedi</th><th></th></tr>
+          </thead>
+          <tbody id="kodListe">
+            <tr><td colspan="5" class="empty">Yükleniyor...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-log" class="view">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title" style="font-size:26px;text-transform:uppercase;color:var(--accent);">Kod Ara</h2>
+        <button type="button" class="btn-secondary" id="btnKopyalaBloklanan" style="display:none;">📋 Bloklanan Kodları Kopyala</button>
+      </div>
+      <div class="add-row">
+        <input type="text" id="logAramaInput" placeholder="Kod giriniz..." autocomplete="off">
+      </div>
+      <div class="tablo-3d" style="overflow-x:auto;margin-top:16px;">
+        <table>
+          <thead>
+            <tr><th>Sıra No</th><th>Tarih</th><th>Lastik Kodu</th><th>İstasyon</th><th>Bloklanan Kod</th><th>Saat</th><th>Adet</th></tr>
+          </thead>
+          <tbody id="logAramaBody">
+            <tr><td colspan="7" class="empty">Aramak için bir kod gir.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" id="logTumKayitlarCard" style="display:none;">
+      <div class="card-header">
+        <h2 class="card-title">Tüm Okutma Kayıtları</h2>
+      </div>
+      <div class="tablo-3d" style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr><th>Sıra No</th><th>Tarih</th><th>Lastik Kodu</th><th>İstasyon</th><th>Bloklanan Kod</th><th>Saat</th><th>Adet</th></tr>
+          </thead>
+          <tbody id="logBody">
+            <tr><td colspan="7" class="empty">Yükleniyor...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <p class="tag">Lastik Kodu</p>
+        <p class="kodbaslik" id="modalKod">—</p>
+      </div>
+      <button class="modal-close" id="modalClose" aria-label="Kapat">✕</button>
+    </div>
+
+    <p class="modal-label">Blokeli Kodlar <span style="color:var(--muted);text-transform:none;letter-spacing:0;font-weight:400;">(virgülle ayır)</span></p>
+    <textarea id="modalTextarea" autocomplete="off"></textarea>
+    <p class="modal-hint">Kutuyu tamamen boşaltıp Güncelle'ye basarsan tüm blokeli kodlar silinir. Lastik kodunu komple kaldırmak için aşağıdaki "Kaydı Sil" butonunu kullan.</p>
+    <span class="modal-count" id="modalCount">0 blokeli kod</span>
+
+    <div class="modal-actions">
+      <button class="btn-danger" id="modalSil">Kaydı Sil</button>
+      <button class="btn-add" id="modalGuncelle">Güncelle</button>
+    </div>
+    <p class="modal-msg" id="modalMsg"></p>
+  </div>
+</div>
+
+<div class="modal-overlay" id="onayModalOverlay">
+  <div class="modal-card onay-modal-card">
+    <div class="onay-ikon">!</div>
+    <p class="onay-baslik" id="onayBaslik">Emin misin?</p>
+    <p class="onay-metin" id="onayMetin">Bu işlem geri alınamaz.</p>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="onayVazgec">Vazgeç</button>
+      <button class="btn-danger" id="onayOnayla">Evet, Sil</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="bulkModalOverlay">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <p class="tag">Kod Ekle</p>
+        <p class="kodbaslik">Blokeli Kodlar</p>
+      </div>
+      <button class="modal-close" id="bulkModalClose" aria-label="Kapat">✕</button>
+    </div>
+
+    <p class="modal-label">Blokeli Kodlar <span style="color:var(--muted);text-transform:none;letter-spacing:0;font-weight:400;">(virgül, boşluk veya satır ile ayır)</span></p>
+    <textarea id="bulkModalTextarea" autocomplete="off" style="min-height:320px;"></textarea>
+    <span class="modal-count" id="bulkModalCount">0 blokeli kod</span>
+
+    <div class="modal-actions">
+      <button class="btn-add" id="bulkModalTamam">Tamam</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="takvimModalOverlay">
+  <div class="modal-card takvim-modal-card">
+    <div class="modal-head">
+      <div>
+        <p class="tag">Tarih Filtresi</p>
+        <p class="kodbaslik" id="takvimBaslik">—</p>
+      </div>
+      <button class="modal-close" id="takvimModalClose" aria-label="Kapat">✕</button>
+    </div>
+
+    <div class="takvim-nav">
+      <button type="button" class="takvim-nav-btn" id="takvimOnceki" aria-label="Önceki Ay">‹</button>
+      <span class="takvim-ay-yil" id="takvimAyYil">—</span>
+      <button type="button" class="takvim-nav-btn" id="takvimSonraki" aria-label="Sonraki Ay">›</button>
+    </div>
+    <div class="takvim-gun-basliklari">
+      <span>Pt</span><span>Sa</span><span>Ça</span><span>Pe</span><span>Cu</span><span>Ct</span><span>Pz</span>
+    </div>
+    <div class="takvim-grid" id="takvimGrid"></div>
+
+    <div class="modal-actions">
+      <button class="btn-danger" id="takvimTumunuGoster">Tüm Tarihler</button>
+      <button class="btn-add" id="takvimBugun">Bugün</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="ayYilModalOverlay">
+  <div class="modal-card takvim-modal-card">
+    <div class="modal-head">
+      <div>
+        <p class="tag">Ay ve Yıl Seç</p>
+        <p class="kodbaslik">Filtrelemek istediğin ay veya yılı seç</p>
+      </div>
+      <button class="modal-close" id="ayYilModalClose" aria-label="Kapat">✕</button>
+    </div>
+
+    <div class="takvim-nav">
+      <button type="button" class="takvim-nav-btn" id="ayYilOnceki" aria-label="Önceki Yıl">‹</button>
+      <span class="takvim-ay-yil" id="ayYilBaslik">—</span>
+      <button type="button" class="takvim-nav-btn" id="ayYilSonraki" aria-label="Sonraki Yıl">›</button>
+    </div>
+    <div class="ay-grid" id="ayGrid"></div>
+
+    <div class="modal-actions">
+      <button class="btn-danger" id="ayYilTumunuGoster">Tüm Tarihler</button>
+      <button class="btn-add" id="ayYilYiliSec">Bu Yılın Tamamı</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="beadcodGoruntuleOverlay">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <p class="tag">Lastik Kodu</p>
+        <p class="kodbaslik" id="beadcodGoruntuleKod">—</p>
+      </div>
+      <button class="modal-close" id="beadcodGoruntuleClose" aria-label="Kapat">✕</button>
+    </div>
+
+    <p class="modal-label">Bloklu Beadcodlar</p>
+    <div class="beadcod-goruntule-liste" id="beadcodGoruntuleListe"></div>
+    <span class="modal-count" id="beadcodGoruntuleSayac">0 bloklu kod</span>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore, collection, addDoc, updateDoc, deleteDoc, doc,
+  onSnapshot, query, orderBy, serverTimestamp, Timestamp, getDocs, writeBatch
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* ---------- Giriş şifresi ---------- */
+const GIRIS_SIFRE = "2515";
+const girisOverlay = document.getElementById('girisOverlay');
+const girisSifreInput = document.getElementById('girisSifre');
+const girisBtn = document.getElementById('girisBtn');
+const girisHata = document.getElementById('girisHata');
+
+function girisDeneme(){
+  if(girisSifreInput.value.trim() === GIRIS_SIFRE){
+    sessionStorage.setItem('blokluGiris', '1');
+    girisOverlay.style.display = 'none';
+  }else{
+    girisHata.textContent = 'Şifre yanlış.';
+    girisSifreInput.value = '';
+    girisSifreInput.focus();
+  }
+}
+if(sessionStorage.getItem('blokluGiris') === '1'){
+  girisOverlay.style.display = 'none';
+}
+girisBtn.addEventListener('click', girisDeneme);
+girisSifreInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') girisDeneme(); });
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCTULPTsI4Lvof8YnZCJCWR5mn-BtES_Iw",
+  authDomain: "goodyear-bloklu-lastik.firebaseapp.com",
+  projectId: "goodyear-bloklu-lastik",
+  storageBucket: "goodyear-bloklu-lastik.firebasestorage.app",
+  messagingSenderId: "833148313804",
+  appId: "1:833148313804:web:dc41c4644f8d428e58a269"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const kodlarCol = collection(db, "bloklu_kodlar");
+const okutmalarCol = collection(db, "bloklu_okutmalar");
+
+const connDot = document.getElementById('connDot');
+const connText = document.getElementById('connText');
+function setConn(state){
+  connDot.className = 'dot ' + state;
+  connText.textContent = state === 'ok' ? 'bağlı' : (state === 'err' ? 'bağlantı hatası' : 'bağlanıyor...');
+}
+
+/* ---------- Sekme geçişi ---------- */
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('view-' + tab.dataset.view).classList.add('active');
+    document.getElementById('btnLogTemizle').style.display = (tab.dataset.view === 'log') ? '' : 'none';
+  });
+});
+document.getElementById('btnLogTemizle').style.display = 'none';
+
+/* ---------- Kod Ekle: tekli + toplu (otomatik kaydet) ---------- */
+const kodListe = document.getElementById('kodListe');
+
+let mevcutKodlar = new Map(); // lastikKodu -> { id, blokluKodlar: Set }
+
+const kodInput = document.getElementById('kodInput');
+const bulkInput = document.getElementById('bulkInput');
+const btnKaydet = document.getElementById('btnKaydet');
+const kaydetMsg = document.getElementById('kaydetMsg');
+let kaydediliyor = false;
+
+function showMsg(text, type){
+  kaydetMsg.textContent = text;
+  kaydetMsg.className = 'msg ' + (type || '');
+  if(text){ setTimeout(()=>{ kaydetMsg.textContent=''; kaydetMsg.className='msg'; }, 3000); }
+}
+
+async function hepsiniKaydet(){
+  if(kaydediliyor) return;
+
+  const lastikKodu = kodInput.value.trim().toUpperCase();
+  // virgül, boşluk, noktalı virgül, satır sonu -- hepsini ayırıcı say
+  const girilenBlokluKodlar = bulkInput.value.split(/[\s,;]+/).map(s=>s.trim().toUpperCase()).filter(Boolean);
+  const benzersizBlokluKodlar = [...new Set(girilenBlokluKodlar)];
+
+  if(!lastikKodu){ showMsg('Lastik kodu girmelisin.', 'err'); return; }
+  if(benzersizBlokluKodlar.length === 0){ showMsg('En az bir blokeli kod girmelisin.', 'err'); return; }
+
+  kaydediliyor = true;
+  btnKaydet.disabled = true;
+  showMsg('Kaydediliyor...', '');
+  try{
+    const mevcut = mevcutKodlar.get(lastikKodu);
+    if(mevcut){
+      const yeniler = benzersizBlokluKodlar.filter(k=>!mevcut.blokluKodlar.has(k));
+      if(yeniler.length === 0){
+        showMsg('Girdiğin blokeli kodların hepsi zaten ' + lastikKodu + ' kodunda kayıtlı.', 'err');
+      }else{
+        const birlesikListe = [...mevcut.blokluKodlar, ...yeniler];
+        await updateDoc(doc(db, 'bloklu_kodlar', mevcut.id), { blokluKodlar: birlesikListe });
+        showMsg(yeniler.length + ' yeni blokeli kod ' + lastikKodu + ' koduna eklendi.', 'ok');
+      }
+    }else{
+      await addDoc(kodlarCol, { lastikKodu, blokluKodlar: benzersizBlokluKodlar, eklenme: serverTimestamp() });
+      showMsg(lastikKodu + ' lastik kodu ve ' + benzersizBlokluKodlar.length + ' blokeli kod kaydedildi.', 'ok');
+    }
+    kodInput.value = '';
+    bulkInput.value = '';
+  }catch(e){
+    showMsg('Hata: ' + e.message, 'err');
+  }finally{
+    kaydediliyor = false;
+    btnKaydet.disabled = false;
+    kodInput.focus();
+  }
+}
+btnKaydet.addEventListener('click', hepsiniKaydet);
+
+/* ---------- Blokeli Kodlar: Tümünü Gör modalı ---------- */
+const bulkModalOverlay = document.getElementById('bulkModalOverlay');
+const bulkModalTextarea = document.getElementById('bulkModalTextarea');
+const bulkModalCount = document.getElementById('bulkModalCount');
+const bulkModalClose = document.getElementById('bulkModalClose');
+const bulkModalTamam = document.getElementById('bulkModalTamam');
+const btnBulkTumunuGor = document.getElementById('btnBulkTumunuGor');
+
+function bulkModalSayacGuncelle(){
+  const adet = bulkModalTextarea.value.split(/[\s,;]+/).map(s=>s.trim()).filter(Boolean).length;
+  bulkModalCount.textContent = adet + ' blokeli kod';
+}
+function bulkModalAc(){
+  bulkModalTextarea.value = bulkInput.value;
+  bulkModalSayacGuncelle();
+  bulkModalOverlay.classList.add('open');
+  setTimeout(()=> bulkModalTextarea.focus(), 60);
+}
+function bulkModalKapat(){
+  bulkInput.value = bulkModalTextarea.value;
+  bulkModalOverlay.classList.remove('open');
+}
+btnBulkTumunuGor.addEventListener('click', bulkModalAc);
+bulkModalClose.addEventListener('click', bulkModalKapat);
+bulkModalTamam.addEventListener('click', bulkModalKapat);
+bulkModalOverlay.addEventListener('click', (e)=>{ if(e.target === bulkModalOverlay) bulkModalKapat(); });
+bulkModalTextarea.addEventListener('input', bulkModalSayacGuncelle);
+
+/* ---------- Güncelle Modal ---------- */
+const modalOverlay = document.getElementById('modalOverlay');
+const modalKod = document.getElementById('modalKod');
+const modalTextarea = document.getElementById('modalTextarea');
+const modalCount = document.getElementById('modalCount');
+const modalClose = document.getElementById('modalClose');
+const modalGuncelleBtn = document.getElementById('modalGuncelle');
+const modalSilBtn = document.getElementById('modalSil');
+const modalMsg = document.getElementById('modalMsg');
+
+let modalAktifId = null;
+let modalAktifKod = null;
+let modalIslemde = false;
+
+function modalShowMsg(text, type){
+  modalMsg.textContent = text;
+  modalMsg.className = 'modal-msg ' + (type || '');
+}
+
+function modalKodlariGuncelleSayac(){
+  const liste = modalTextarea.value.split(/[\s,;]+/).map(s=>s.trim()).filter(Boolean);
+  const benzersiz = new Set(liste.map(s=>s.toUpperCase()));
+  modalCount.textContent = benzersiz.size + ' blokeli kod';
+}
+modalTextarea.addEventListener('input', modalKodlariGuncelleSayac);
+
+function kodGuncelle(id, lastikKodu, mevcutListe){
+  modalAktifId = id;
+  modalAktifKod = lastikKodu;
+  modalKod.textContent = lastikKodu;
+  modalTextarea.value = mevcutListe.join(', ');
+  modalShowMsg('', '');
+  modalKodlariGuncelleSayac();
+  modalOverlay.classList.add('open');
+  setTimeout(()=>modalTextarea.focus(), 50);
+}
+
+function modalKapat(){
+  modalOverlay.classList.remove('open');
+  modalAktifId = null;
+  modalAktifKod = null;
+}
+modalClose.addEventListener('click', modalKapat);
+modalOverlay.addEventListener('click', (e)=>{ if(e.target === modalOverlay) modalKapat(); });
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && modalOverlay.classList.contains('open')) modalKapat(); });
+
+modalGuncelleBtn.addEventListener('click', async ()=>{
+  if(modalIslemde || !modalAktifId) return;
+  const yeniListe = [...new Set(modalTextarea.value.split(/[\s,;]+/).map(s=>s.trim().toUpperCase()).filter(Boolean))];
+
+  modalIslemde = true;
+  modalGuncelleBtn.disabled = true;
+  modalSilBtn.disabled = true;
+  modalShowMsg('Kaydediliyor...', '');
+  try{
+    if(yeniListe.length === 0){
+      await deleteDoc(doc(db, 'bloklu_kodlar', modalAktifId));
+      modalKapat();
+    }else{
+      await updateDoc(doc(db, 'bloklu_kodlar', modalAktifId), { blokluKodlar: yeniListe });
+      modalShowMsg('Güncellendi.', 'ok');
+      setTimeout(modalKapat, 700);
+    }
+  }catch(e){
+    modalShowMsg('Hata: ' + e.message, 'err');
+  }finally{
+    modalIslemde = false;
+    modalGuncelleBtn.disabled = false;
+    modalSilBtn.disabled = false;
+  }
+});
+
+/* ---------- Onay (silme) modalı: modern uyarı kutusu ---------- */
+const onayModalOverlay = document.getElementById('onayModalOverlay');
+const onayBaslik = document.getElementById('onayBaslik');
+const onayMetin = document.getElementById('onayMetin');
+const onayVazgecBtn = document.getElementById('onayVazgec');
+const onayOnaylaBtn = document.getElementById('onayOnayla');
+let onayCozumle = null;
+
+function onayAc(baslik, metin){
+  onayBaslik.textContent = baslik;
+  onayMetin.textContent = metin;
+  onayModalOverlay.classList.add('open');
+  return new Promise(resolve=>{ onayCozumle = resolve; });
+}
+function onayKapat(sonuc){
+  onayModalOverlay.classList.remove('open');
+  if(onayCozumle){ onayCozumle(sonuc); onayCozumle = null; }
+}
+onayVazgecBtn.addEventListener('click', ()=> onayKapat(false));
+onayOnaylaBtn.addEventListener('click', ()=> onayKapat(true));
+onayModalOverlay.addEventListener('click', (e)=>{ if(e.target === onayModalOverlay) onayKapat(false); });
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && onayModalOverlay.classList.contains('open')) onayKapat(false); });
+
+modalSilBtn.addEventListener('click', async ()=>{
+  if(modalIslemde || !modalAktifId) return;
+  const onay = await onayAc('Kaydı silmek üzeresin', modalAktifKod + ' kaydını tamamen silmek istediğine emin misin? Bu işlem geri alınamaz.');
+  if(!onay) return;
+
+  modalIslemde = true;
+  modalGuncelleBtn.disabled = true;
+  modalSilBtn.disabled = true;
+  modalShowMsg('Siliniyor...', '');
+  try{
+    await deleteDoc(doc(db, 'bloklu_kodlar', modalAktifId));
+    modalKapat();
+  }catch(e){
+    modalShowMsg('Hata: ' + e.message, 'err');
+  }finally{
+    modalIslemde = false;
+    modalGuncelleBtn.disabled = false;
+    modalSilBtn.disabled = false;
+  }
+});
+
+/* ---------- Bloklu Beadcodlar: tümünü görüntüleme modalı ---------- */
+const beadcodGoruntuleOverlay = document.getElementById('beadcodGoruntuleOverlay');
+const beadcodGoruntuleKod = document.getElementById('beadcodGoruntuleKod');
+const beadcodGoruntuleListe = document.getElementById('beadcodGoruntuleListe');
+const beadcodGoruntuleSayac = document.getElementById('beadcodGoruntuleSayac');
+const beadcodGoruntuleClose = document.getElementById('beadcodGoruntuleClose');
+
+function beadcodGoruntuleAc(lastikKodu, blokluKodlar){
+  beadcodGoruntuleKod.textContent = lastikKodu;
+  beadcodGoruntuleListe.innerHTML = blokluKodlar.map(k=>`<span class="beadcod-chip">${escapeHtml(k)}</span>`).join('');
+  beadcodGoruntuleSayac.textContent = blokluKodlar.length + ' bloklu kod';
+  beadcodGoruntuleOverlay.classList.add('open');
+}
+function beadcodGoruntuleKapat(){
+  beadcodGoruntuleOverlay.classList.remove('open');
+}
+beadcodGoruntuleClose.addEventListener('click', beadcodGoruntuleKapat);
+beadcodGoruntuleOverlay.addEventListener('click', (e)=>{ if(e.target === beadcodGoruntuleOverlay) beadcodGoruntuleKapat(); });
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && beadcodGoruntuleOverlay.classList.contains('open')) beadcodGoruntuleKapat(); });
+
+let tumKodKayitlari = [];
+const qKodlar = query(kodlarCol, orderBy('eklenme', 'desc'));
+onSnapshot(qKodlar, snap=>{
+  setConn('ok');
+  mevcutKodlar = new Map();
+  tumKodKayitlari = [];
+  snap.forEach(d=>{
+    const data = d.data();
+    const blokluKodlar = Array.isArray(data.blokluKodlar) ? data.blokluKodlar : [];
+    mevcutKodlar.set(data.lastikKodu, { id: d.id, blokluKodlar: new Set(blokluKodlar) });
+    tumKodKayitlari.push({
+      id: d.id,
+      lastikKodu: data.lastikKodu,
+      blokluKodlar,
+      tarih: data.eklenme && data.eklenme.toDate ? data.eklenme.toDate() : null
+    });
+  });
+  renderKodListe();
+  renderLog();
+  otomatikTemizleBulunanlar();
+}, err=>{
+  setConn('err');
+  kodListe.innerHTML = '<tr><td colspan="5" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
+});
+
+function renderKodListe(){
+  const { start, end } = filtreAraligi('kod');
+  const filtreli = tumKodKayitlari.filter(k=>{
+    if(!k.tarih) return !start;
+    if(start && k.tarih < start) return false;
+    if(end && k.tarih >= end) return false;
+    return true;
+  });
+  if(filtreli.length === 0){
+    kodListe.innerHTML = '<tr><td colspan="5" class="empty">' + (tumKodKayitlari.length === 0 ? 'Henüz bloklu kod eklenmedi.' : 'Seçilen tarihte kayıt yok.') + '</td></tr>';
+    return;
+  }
+  let html = '';
+  filtreli.forEach(k=>{
+    const tarih = k.tarih ? formatTarih(k.tarih) : '—';
+    html += `<tr class="kod-row" data-id="${k.id}">
+      <td class="tarih">${tarih}</td>
+      <td class="kod">${escapeHtml(k.lastikKodu)}</td>
+      <td>
+        <div class="beadcod-hucre">
+          <span class="beadcod-metin">${escapeHtml(k.blokluKodlar.join(', '))}</span>
+          <button type="button" class="beadcod-buyut-btn" data-id="${k.id}" title="Tümünü Gör">⤢</button>
+        </div>
+      </td>
+      <td class="adet">${k.blokluKodlar.length}</td>
+      <td><button class="btn-upd" data-id="${k.id}">Güncelle</button></td>
+    </tr>`;
+  });
+  kodListe.innerHTML = html;
+  kodListe.querySelectorAll('tr.kod-row').forEach(tr=>{
+    tr.addEventListener('click', ()=>{
+      const kayit = tumKodKayitlari.find(k=>k.id === tr.dataset.id);
+      if(kayit) kodGuncelle(kayit.id, kayit.lastikKodu, kayit.blokluKodlar);
+    });
+  });
+  kodListe.querySelectorAll('.btn-upd').forEach(b=>{
+    b.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const kayit = tumKodKayitlari.find(k=>k.id === b.dataset.id);
+      if(kayit) kodGuncelle(kayit.id, kayit.lastikKodu, kayit.blokluKodlar);
+    });
+  });
+  kodListe.querySelectorAll('.beadcod-buyut-btn').forEach(b=>{
+    b.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const kayit = tumKodKayitlari.find(k=>k.id === b.dataset.id);
+      if(kayit) beadcodGoruntuleAc(kayit.lastikKodu, kayit.blokluKodlar);
+    });
+  });
+}
+
+/* ---------- Bulunanlar (log) ---------- */
+const logBody = document.getElementById('logBody');
+let tumOkutmalar = [];
+
+/* ---------- Tarih filtresi (modern modal takvim) ---------- */
+const navTarihBtn = document.getElementById('navTarihBtn');
+const navTarihLabel = document.getElementById('navTarihLabel');
+const takvimModalOverlay = document.getElementById('takvimModalOverlay');
+const takvimModalClose = document.getElementById('takvimModalClose');
+const takvimBaslik = document.getElementById('takvimBaslik');
+const takvimAyYil = document.getElementById('takvimAyYil');
+const takvimGrid = document.getElementById('takvimGrid');
+const takvimOnceki = document.getElementById('takvimOnceki');
+const takvimSonraki = document.getElementById('takvimSonraki');
+const takvimTumunuGosterBtn = document.getElementById('takvimTumunuGoster');
+const takvimBugunBtn = document.getElementById('takvimBugun');
+
+const AY_ADLARI = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+
+const filtreDurumu = {
+  log: { aktifFiltre: 'ozel-gun', seciliGun: new Date() },
+  kod: { aktifFiltre: 'ozel-gun', seciliGun: new Date() }
+};
+
+let takvimGoruntulenenAy = new Date();
+
+function ayniGun(a, b){
+  return !!a && !!b && a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+}
+
+function navEtiketiGuncelle(){
+  const durum = filtreDurumu.log;
+  if(durum.aktifFiltre === 'ozel-gun' && durum.seciliGun){
+    navTarihLabel.textContent = formatTarihSadece(durum.seciliGun);
+  } else if(durum.aktifFiltre === 'ozel-ay' && durum.seciliAy){
+    navTarihLabel.textContent = AY_ADLARI[durum.seciliAy.getMonth()] + ' ' + durum.seciliAy.getFullYear();
+  } else if(durum.aktifFiltre === 'ozel-yil' && durum.seciliYil){
+    navTarihLabel.textContent = String(durum.seciliYil);
+  } else {
+    navTarihLabel.textContent = 'Tüm Tarihler';
+  }
+}
+
+function renderTakvim(){
+  const yil = takvimGoruntulenenAy.getFullYear();
+  const ay = takvimGoruntulenenAy.getMonth();
+  takvimAyYil.textContent = AY_ADLARI[ay] + ' ' + yil;
+  takvimBaslik.textContent = AY_ADLARI[ay] + ' ' + yil;
+
+  const ayinIlkGunu = new Date(yil, ay, 1);
+  // Pazartesi başlangıçlı hafta indeksi (0=Pt ... 6=Pz)
+  const baslangicOfset = (ayinIlkGunu.getDay() + 6) % 7;
+  const ayinGunSayisi = new Date(yil, ay + 1, 0).getDate();
+  const oncekiAyGunSayisi = new Date(yil, ay, 0).getDate();
+  const bugun = new Date();
+
+  let html = '';
+  for(let i = 0; i < baslangicOfset; i++){
+    html += `<span class="takvim-gun disi">${oncekiAyGunSayisi - baslangicOfset + i + 1}</span>`;
+  }
+  for(let gun = 1; gun <= ayinGunSayisi; gun++){
+    const tarih = new Date(yil, ay, gun);
+    const siniflar = ['takvim-gun'];
+    if(ayniGun(tarih, bugun)) siniflar.push('bugun');
+    if(filtreDurumu.log.aktifFiltre === 'ozel-gun' && ayniGun(tarih, filtreDurumu.log.seciliGun)) siniflar.push('secili');
+    html += `<button type="button" class="${siniflar.join(' ')}" data-gun="${gun}">${gun}</button>`;
+  }
+  const toplamHucre = baslangicOfset + ayinGunSayisi;
+  const kalan = (7 - (toplamHucre % 7)) % 7;
+  for(let i = 1; i <= kalan; i++){
+    html += `<span class="takvim-gun disi">${i}</span>`;
+  }
+  takvimGrid.innerHTML = html;
+
+  takvimGrid.querySelectorAll('button.takvim-gun').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const secilenTarih = new Date(yil, ay, Number(btn.dataset.gun));
+      filtreDurumu.log.seciliGun = secilenTarih;
+      filtreDurumu.kod.seciliGun = secilenTarih;
+      filtreDurumu.log.aktifFiltre = 'ozel-gun';
+      filtreDurumu.kod.aktifFiltre = 'ozel-gun';
+      navEtiketiGuncelle();
+      renderLog();
+      renderKodListe();
+      takvimKapat();
+    });
+  });
+}
+
+function takvimAc(){
+  takvimGoruntulenenAy = new Date(filtreDurumu.log.seciliGun || new Date());
+  renderTakvim();
+  takvimModalOverlay.classList.add('open');
+}
+function takvimKapat(){
+  takvimModalOverlay.classList.remove('open');
+}
+
+navTarihBtn.addEventListener('click', takvimAc);
+takvimModalClose.addEventListener('click', takvimKapat);
+takvimModalOverlay.addEventListener('click', (e)=>{ if(e.target === takvimModalOverlay) takvimKapat(); });
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && takvimModalOverlay.classList.contains('open')) takvimKapat(); });
+
+takvimOnceki.addEventListener('click', ()=>{
+  takvimGoruntulenenAy = new Date(takvimGoruntulenenAy.getFullYear(), takvimGoruntulenenAy.getMonth() - 1, 1);
+  renderTakvim();
+});
+takvimSonraki.addEventListener('click', ()=>{
+  takvimGoruntulenenAy = new Date(takvimGoruntulenenAy.getFullYear(), takvimGoruntulenenAy.getMonth() + 1, 1);
+  renderTakvim();
+});
+takvimTumunuGosterBtn.addEventListener('click', ()=>{
+  filtreDurumu.log.aktifFiltre = 'hepsi';
+  filtreDurumu.kod.aktifFiltre = 'hepsi';
+  filtreDurumu.log.seciliGun = null;
+  filtreDurumu.kod.seciliGun = null;
+  navEtiketiGuncelle();
+  renderLog();
+  renderKodListe();
+  takvimKapat();
+});
+takvimBugunBtn.addEventListener('click', ()=>{
+  const bugun = new Date();
+  filtreDurumu.log.seciliGun = bugun;
+  filtreDurumu.kod.seciliGun = bugun;
+  filtreDurumu.log.aktifFiltre = 'ozel-gun';
+  filtreDurumu.kod.aktifFiltre = 'ozel-gun';
+  navEtiketiGuncelle();
+  renderLog();
+  renderKodListe();
+  takvimKapat();
+});
+
+navEtiketiGuncelle();
+
+/* ---------- Ay ve Yıl seçim modalı ---------- */
+const navAyYilBtn = document.getElementById('navAyYilBtn');
+const ayYilModalOverlay = document.getElementById('ayYilModalOverlay');
+const ayYilModalClose = document.getElementById('ayYilModalClose');
+const ayYilBaslik = document.getElementById('ayYilBaslik');
+const ayGrid = document.getElementById('ayGrid');
+const ayYilOnceki = document.getElementById('ayYilOnceki');
+const ayYilSonraki = document.getElementById('ayYilSonraki');
+const ayYilTumunuGosterBtn = document.getElementById('ayYilTumunuGoster');
+const ayYilYiliSecBtn = document.getElementById('ayYilYiliSec');
+
+let ayYilGoruntulenenYil = new Date().getFullYear();
+
+function renderAyGrid(){
+  ayYilBaslik.textContent = String(ayYilGoruntulenenYil);
+  const bugun = new Date();
+  const durum = filtreDurumu.log;
+  let html = '';
+  AY_ADLARI.forEach((adi, idx)=>{
+    const siniflar = ['ay-hucre'];
+    if(ayYilGoruntulenenYil === bugun.getFullYear() && idx === bugun.getMonth()) siniflar.push('bu-ay');
+    if(durum.aktifFiltre === 'ozel-ay' && durum.seciliAy && durum.seciliAy.getFullYear() === ayYilGoruntulenenYil && durum.seciliAy.getMonth() === idx){
+      siniflar.push('secili');
+    }
+    html += `<button type="button" class="${siniflar.join(' ')}" data-ay="${idx}">${adi}</button>`;
+  });
+  ayGrid.innerHTML = html;
+
+  ayGrid.querySelectorAll('button.ay-hucre').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const secilenAy = new Date(ayYilGoruntulenenYil, Number(btn.dataset.ay), 1);
+      filtreDurumu.log.seciliAy = secilenAy;
+      filtreDurumu.kod.seciliAy = secilenAy;
+      filtreDurumu.log.aktifFiltre = 'ozel-ay';
+      filtreDurumu.kod.aktifFiltre = 'ozel-ay';
+      navEtiketiGuncelle();
+      renderLog();
+      renderKodListe();
+      ayYilKapat();
+    });
+  });
+}
+
+function ayYilAc(){
+  const durum = filtreDurumu.log;
+  ayYilGoruntulenenYil = (durum.aktifFiltre === 'ozel-ay' && durum.seciliAy) ? durum.seciliAy.getFullYear()
+    : (durum.aktifFiltre === 'ozel-yil' && durum.seciliYil) ? durum.seciliYil
+    : new Date().getFullYear();
+  renderAyGrid();
+  ayYilModalOverlay.classList.add('open');
+}
+function ayYilKapat(){
+  ayYilModalOverlay.classList.remove('open');
+}
+
+navAyYilBtn.addEventListener('click', ayYilAc);
+ayYilModalClose.addEventListener('click', ayYilKapat);
+ayYilModalOverlay.addEventListener('click', (e)=>{ if(e.target === ayYilModalOverlay) ayYilKapat(); });
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && ayYilModalOverlay.classList.contains('open')) ayYilKapat(); });
+
+ayYilOnceki.addEventListener('click', ()=>{
+  ayYilGoruntulenenYil -= 1;
+  renderAyGrid();
+});
+ayYilSonraki.addEventListener('click', ()=>{
+  ayYilGoruntulenenYil += 1;
+  renderAyGrid();
+});
+ayYilTumunuGosterBtn.addEventListener('click', ()=>{
+  filtreDurumu.log.aktifFiltre = 'hepsi';
+  filtreDurumu.kod.aktifFiltre = 'hepsi';
+  filtreDurumu.log.seciliGun = null;
+  filtreDurumu.kod.seciliGun = null;
+  filtreDurumu.log.seciliAy = null;
+  filtreDurumu.kod.seciliAy = null;
+  filtreDurumu.log.seciliYil = null;
+  filtreDurumu.kod.seciliYil = null;
+  navEtiketiGuncelle();
+  renderLog();
+  renderKodListe();
+  ayYilKapat();
+});
+ayYilYiliSecBtn.addEventListener('click', ()=>{
+  filtreDurumu.log.seciliYil = ayYilGoruntulenenYil;
+  filtreDurumu.kod.seciliYil = ayYilGoruntulenenYil;
+  filtreDurumu.log.aktifFiltre = 'ozel-yil';
+  filtreDurumu.kod.aktifFiltre = 'ozel-yil';
+  navEtiketiGuncelle();
+  renderLog();
+  renderKodListe();
+  ayYilKapat();
+});
+
+function filtreAraligi(hedef){
+  const durum = filtreDurumu[hedef];
+  if(durum.aktifFiltre === 'ozel-gun' && durum.seciliGun){
+    const start = new Date(durum.seciliGun.getFullYear(), durum.seciliGun.getMonth(), durum.seciliGun.getDate());
+    const end = new Date(start); end.setDate(end.getDate() + 1);
+    return { start, end };
+  }
+  if(durum.aktifFiltre === 'ozel-aralik' && durum.aralikBas && durum.aralikSon){
+    const start = new Date(durum.aralikBas.getFullYear(), durum.aralikBas.getMonth(), durum.aralikBas.getDate());
+    const end = new Date(durum.aralikSon.getFullYear(), durum.aralikSon.getMonth(), durum.aralikSon.getDate());
+    end.setDate(end.getDate() + 1);
+    return { start, end };
+  }
+  if(durum.aktifFiltre === 'ozel-yil' && durum.seciliYil){
+    return { start: new Date(durum.seciliYil, 0, 1), end: new Date(durum.seciliYil + 1, 0, 1) };
+  }
+  if(durum.aktifFiltre === 'ozel-ay' && durum.seciliAy){
+    const start = new Date(durum.seciliAy.getFullYear(), durum.seciliAy.getMonth(), 1);
+    const end = new Date(durum.seciliAy.getFullYear(), durum.seciliAy.getMonth() + 1, 1);
+    return { start, end };
+  }
+  return { start: null, end: null };
+}
+
+function bulunduMu(kod){
+  if(!kod || !Array.isArray(tumOkutmalar) || tumOkutmalar.length === 0) return false;
+  const aranan = String(kod).toUpperCase();
+  return tumOkutmalar.some(o => {
+    const lastik = (o.lastikKodu || '').toUpperCase();
+    const blok = (o.bloklananKod || '').toUpperCase();
+    return lastik === aranan || blok === aranan;
+  });
+}
+
+/* ---------- Okutulan (bulunan) kodları Bloklu Beadcodlar listesinden otomatik sil ---------- */
+const temizlemeIslemde = new Set();
+async function otomatikTemizleBulunanlar(){
+  if(!Array.isArray(tumOkutmalar) || tumOkutmalar.length === 0) return;
+  if(!Array.isArray(tumKodKayitlari) || tumKodKayitlari.length === 0) return;
+  for(const k of tumKodKayitlari){
+    if(temizlemeIslemde.has(k.id)) continue;
+    const kalanlar = k.blokluKodlar.filter(kd => !bulunduMu(kd));
+    if(kalanlar.length !== k.blokluKodlar.length){
+      temizlemeIslemde.add(k.id);
+      try{
+        await updateDoc(doc(db, 'bloklu_kodlar', k.id), { blokluKodlar: kalanlar });
+      }catch(e){
+        console.error('Otomatik temizleme hatası:', e);
+      }finally{
+        temizlemeIslemde.delete(k.id);
+      }
+    }
+  }
+}
+
+function lastikKoduBul(kod){
+  if(!kod) return null;
+  const kodUpper = kod.toUpperCase();
+  if(mevcutKodlar.has(kodUpper)) return kodUpper;
+  for(const [lastikKodu, rec] of mevcutKodlar.entries()){
+    if(rec.blokluKodlar.has(kodUpper)) return lastikKodu;
+  }
+  return null;
+}
+
+/* ---------- Otomatik silme denetim geçmişi ---------- */
+function renderLog(){
+  const { start, end } = filtreAraligi('log');
+  const filtreli = tumOkutmalar.filter(o=>{
+    if(!o.tarih) return !start;
+    if(start && o.tarih < start) return false;
+    if(end && o.tarih >= end) return false;
+    return true;
+  });
+  if(filtreli.length === 0){
+    logBody.innerHTML = '<tr><td colspan="7" class="empty">Kayıt yok.</td></tr>';
+    return;
+  }
+
+  /* Aynı lastik kodu + aynı bloklanan kod tekrarlarını tek satırda topla */
+  const grup = new Map();
+  filtreli.forEach(o=>{
+    const anaLastikKodu = lastikKoduBul(o.bloklananKod || o.kod || '') || o.lastikKodu || '?';
+    const key = anaLastikKodu + '||' + (o.bloklananKod || o.kod || '');
+    if(!grup.has(key)){
+      grup.set(key, { anaLastikKodu, kod: o.bloklananKod || o.kod || '', istasyon: o.istasyon, tarih: o.tarih, adet: 0 });
+    }
+    const g = grup.get(key);
+    g.adet++;
+    if(o.tarih && (!g.tarih || o.tarih > g.tarih)){
+      g.tarih = o.tarih;
+      g.istasyon = o.istasyon;
+    }
+  });
+  const gruplar = [...grup.values()].sort((a,b)=> (b.tarih ? b.tarih.getTime() : 0) - (a.tarih ? a.tarih.getTime() : 0));
+
+  let html = '';
+  gruplar.forEach((g, i)=>{
+    html += `<tr>
+      <td class="sira">${i + 1}</td>
+      <td class="tarih">${g.tarih ? formatTarihSadece(g.tarih) : '—'}</td>
+      <td class="kod">${escapeHtml(g.anaLastikKodu)}</td>
+      <td class="istasyon">${escapeHtml(g.istasyon || '—')}</td>
+      <td class="kod">${escapeHtml(g.kod)}</td>
+      <td class="saat">${g.tarih ? formatSaatSadece(g.tarih) : '—'}</td>
+      <td class="adet">${g.adet}</td>
+    </tr>`;
+  });
+  logBody.innerHTML = html;
+}
+
+/* ---------- Bulunanlar: komple temizle ---------- */
+const btnLogTemizle = document.getElementById('btnLogTemizle');
+let logTemizleniyor = false;
+
+btnLogTemizle.addEventListener('click', async ()=>{
+  if(logTemizleniyor) return;
+  if(tumOkutmalar.length === 0){ return; }
+  if(!confirm('Tüm okutma kayıtlarını komple silmek istediğine emin misin? Bu işlem geri alınamaz.')) return;
+
+  logTemizleniyor = true;
+  btnLogTemizle.disabled = true;
+  btnLogTemizle.textContent = 'Temizleniyor...';
+  try{
+    const snap = await getDocs(okutmalarCol);
+    const docs = snap.docs;
+    const parcaBoyutu = 400; // Firestore batch limiti 500
+    for(let i=0; i<docs.length; i+=parcaBoyutu){
+      const batch = writeBatch(db);
+      docs.slice(i, i+parcaBoyutu).forEach(d=> batch.delete(d.ref));
+      await batch.commit();
+    }
+  }catch(e){
+    alert('Hata: ' + e.message);
+  }finally{
+    logTemizleniyor = false;
+    btnLogTemizle.disabled = false;
+    btnLogTemizle.textContent = 'Komple Temizle';
+  }
+});
+
+const qLog = query(okutmalarCol, orderBy('tarih', 'desc'));
+onSnapshot(qLog, snap=>{
+  setConn('ok');
+  tumOkutmalar = [];
+  snap.forEach(d=>{
+    const data = d.data();
+    tumOkutmalar.push({
+      lastikKodu: data.lastikKodu || data.lastikkodu || '',
+      bloklananKod: data.bloklananKod || data.bloklanakod || '',
+      istasyon: data.istasyon,
+      tarih: data.tarih && data.tarih.toDate ? data.tarih.toDate() : null,
+      adet: data.adet || 1
+    });
+  });
+  renderLog();
+  renderKodListe();
+  otomatikTemizleBulunanlar();
+}, err=>{
+  setConn('err');
+  logBody.innerHTML = '<tr><td colspan="7" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
+});
+
+/* ---------- Yardımcılar ---------- */
+function formatTarih(d){
+  return d.toLocaleDateString('tr-TR') + ' ' + d.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
+}
+function formatTarihSadece(d){
+  return d.toLocaleDateString('tr-TR');
+}
+function formatSaatSadece(d){
+  return d.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
+}
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+/* ---------- Bloklu Bulunan Lastikler sekmesi: koda göre ara ---------- */
+const logAramaInput = document.getElementById('logAramaInput');
+const logAramaBody = document.getElementById('logAramaBody');
+const btnKopyalaBloklanan = document.getElementById('btnKopyalaBloklanan');
+let sonAramaBloklananKodlar = [];
+
+function renderLogArama(){
+  const aranan = logAramaInput.value.trim().toUpperCase();
+
+  if(!aranan){
+    logAramaBody.innerHTML = '<tr><td colspan="7" class="empty">Aramak için bir kod gir.</td></tr>';
+    sonAramaBloklananKodlar = [];
+    btnKopyalaBloklanan.style.display = 'none';
+    return;
+  }
+
+  const eslesenler = tumOkutmalar.filter(o=>{
+    const lastikKodu = (o.lastikKodu || '').toUpperCase();
+    const bloklananKod = (o.bloklananKod || '').toUpperCase();
+    return lastikKodu === aranan || bloklananKod === aranan;
+  });
+
+  if(eslesenler.length === 0){
+    logAramaBody.innerHTML = '<tr><td colspan="7" class="empty">"' + escapeHtml(aranan) + '" kodunda kayıt bulunamadı.</td></tr>';
+    sonAramaBloklananKodlar = [];
+    btnKopyalaBloklanan.style.display = 'none';
+    return;
+  }
+
+  /* Aynı lastik kodu + aynı bloklanan kod tekrarlarını tek satırda topla */
+  const grup = new Map();
+  eslesenler.forEach(o=>{
+    const anaLastikKodu = o.lastikKodu || '?';
+    const key = anaLastikKodu + '||' + (o.bloklananKod || '');
+    if(!grup.has(key)){
+      grup.set(key, { 
+        anaLastikKodu, 
+        kod: o.bloklananKod || '', 
+        istasyon: o.istasyon, 
+        tarih: o.tarih, 
+        adet: 0 
+      });
+    }
+    const g = grup.get(key);
+    g.adet++;
+    if(o.tarih && (!g.tarih || o.tarih > g.tarih)){
+      g.tarih = o.tarih;
+      g.istasyon = o.istasyon;
+    }
+  });
+  const gruplar = [...grup.values()].sort((a,b)=> (b.tarih ? b.tarih.getTime() : 0) - (a.tarih ? a.tarih.getTime() : 0));
+
+  logAramaBody.innerHTML = gruplar.map((g, i) => `
+    <tr>
+      <td class="sira">${i + 1}</td>
+      <td class="tarih">${g.tarih ? formatTarihSadece(g.tarih) : '—'}</td>
+      <td class="kod">${escapeHtml(g.anaLastikKodu)}</td>
+      <td class="istasyon">${escapeHtml(g.istasyon || '—')}</td>
+      <td class="kod">${escapeHtml(g.kod)}</td>
+      <td class="saat">${g.tarih ? formatSaatSadece(g.tarih) : '—'}</td>
+      <td class="adet">${g.adet}</td>
+    </tr>
+  `).join('');
+
+  sonAramaBloklananKodlar = gruplar.map(g => g.kod);
+  btnKopyalaBloklanan.style.display = sonAramaBloklananKodlar.length ? '' : 'none';
+}
+
+btnKopyalaBloklanan.addEventListener('click', async ()=>{
+  if(sonAramaBloklananKodlar.length === 0) return;
+  const metin = sonAramaBloklananKodlar.join(', ');
+  const eskiYazi = btnKopyalaBloklanan.textContent;
+  try{
+    await navigator.clipboard.writeText(metin);
+    btnKopyalaBloklanan.textContent = '✓ Kopyalandı';
+  }catch(e){
+    const alan = document.createElement('textarea');
+    alan.value = metin;
+    document.body.appendChild(alan);
+    alan.select();
+    document.execCommand('copy');
+    document.body.removeChild(alan);
+    btnKopyalaBloklanan.textContent = '✓ Kopyalandı';
+  }
+  setTimeout(()=>{ btnKopyalaBloklanan.textContent = eskiYazi; }, 1500);
+});
+
+logAramaInput.addEventListener('input', renderLogArama);
+logAramaInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') renderLogArama(); });
+</script>
+</body>
+</html>
