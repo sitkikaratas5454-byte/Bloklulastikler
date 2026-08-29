@@ -409,6 +409,34 @@
     transition:color .15s, border-color .15s, background .15s;
   }
   .bulk-expand-btn:hover{color:var(--accent-2);border-color:var(--accent);background:var(--accent-tint);}
+  .beadcod-hucre{display:flex;align-items:center;gap:8px;max-width:340px;}
+  .beadcod-metin{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+  .beadcod-buyut-btn{
+    flex-shrink:0;
+    width:26px;
+    height:26px;
+    border-radius:7px;
+    background:var(--surface);
+    border:1px solid var(--line-strong);
+    color:var(--muted);
+    font-size:13px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:color .15s, border-color .15s, background .15s;
+  }
+  .beadcod-buyut-btn:hover{color:var(--accent-2);border-color:var(--accent);background:var(--accent-tint);}
+  .beadcod-goruntule-liste{
+    display:flex;flex-wrap:wrap;gap:7px;
+    max-height:50vh;overflow-y:auto;
+    padding:2px;
+  }
+  .beadcod-chip{
+    font-family:var(--mono);font-size:13px;font-weight:600;color:var(--navy);
+    background:var(--navy-tint);border:1px solid var(--line);
+    border-radius:7px;padding:5px 10px;
+  }
   @media (max-width:700px){
     .entry-row{flex-wrap:wrap;}
     .entry-kod-input{flex:1 1 auto;max-width:none;}
@@ -923,6 +951,22 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="beadcodGoruntuleOverlay">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <p class="tag">Lastik Kodu</p>
+        <p class="kodbaslik" id="beadcodGoruntuleKod">—</p>
+      </div>
+      <button class="modal-close" id="beadcodGoruntuleClose" aria-label="Kapat">✕</button>
+    </div>
+
+    <p class="modal-label">Bloklu Beadcodlar</p>
+    <div class="beadcod-goruntule-liste" id="beadcodGoruntuleListe"></div>
+    <span class="modal-count" id="beadcodGoruntuleSayac">0 bloklu kod</span>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
@@ -1163,6 +1207,26 @@ modalSilBtn.addEventListener('click', async ()=>{
   }
 });
 
+/* ---------- Bloklu Beadcodlar: tümünü görüntüleme modalı ---------- */
+const beadcodGoruntuleOverlay = document.getElementById('beadcodGoruntuleOverlay');
+const beadcodGoruntuleKod = document.getElementById('beadcodGoruntuleKod');
+const beadcodGoruntuleListe = document.getElementById('beadcodGoruntuleListe');
+const beadcodGoruntuleSayac = document.getElementById('beadcodGoruntuleSayac');
+const beadcodGoruntuleClose = document.getElementById('beadcodGoruntuleClose');
+
+function beadcodGoruntuleAc(lastikKodu, blokluKodlar){
+  beadcodGoruntuleKod.textContent = lastikKodu;
+  beadcodGoruntuleListe.innerHTML = blokluKodlar.map(k=>`<span class="beadcod-chip">${escapeHtml(k)}</span>`).join('');
+  beadcodGoruntuleSayac.textContent = blokluKodlar.length + ' bloklu kod';
+  beadcodGoruntuleOverlay.classList.add('open');
+}
+function beadcodGoruntuleKapat(){
+  beadcodGoruntuleOverlay.classList.remove('open');
+}
+beadcodGoruntuleClose.addEventListener('click', beadcodGoruntuleKapat);
+beadcodGoruntuleOverlay.addEventListener('click', (e)=>{ if(e.target === beadcodGoruntuleOverlay) beadcodGoruntuleKapat(); });
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && beadcodGoruntuleOverlay.classList.contains('open')) beadcodGoruntuleKapat(); });
+
 let tumKodKayitlari = [];
 const qKodlar = query(kodlarCol, orderBy('eklenme', 'desc'));
 onSnapshot(qKodlar, snap=>{
@@ -1205,7 +1269,12 @@ function renderKodListe(){
     html += `<tr class="kod-row" data-id="${k.id}">
       <td class="tarih">${tarih}</td>
       <td class="kod">${escapeHtml(k.lastikKodu)}</td>
-      <td>${k.blokluKodlar.map(escapeHtml).join(', ')}</td>
+      <td>
+        <div class="beadcod-hucre">
+          <span class="beadcod-metin">${escapeHtml(k.blokluKodlar.join(', '))}</span>
+          <button type="button" class="beadcod-buyut-btn" data-id="${k.id}" title="Tümünü Gör">⤢</button>
+        </div>
+      </td>
       <td class="adet">${k.blokluKodlar.length}</td>
       <td><button class="btn-upd" data-id="${k.id}">Güncelle</button></td>
     </tr>`;
@@ -1222,6 +1291,13 @@ function renderKodListe(){
       e.stopPropagation();
       const kayit = tumKodKayitlari.find(k=>k.id === b.dataset.id);
       if(kayit) kodGuncelle(kayit.id, kayit.lastikKodu, kayit.blokluKodlar);
+    });
+  });
+  kodListe.querySelectorAll('.beadcod-buyut-btn').forEach(b=>{
+    b.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const kayit = tumKodKayitlari.find(k=>k.id === b.dataset.id);
+      if(kayit) beadcodGoruntuleAc(kayit.lastikKodu, kayit.blokluKodlar);
     });
   });
 }
