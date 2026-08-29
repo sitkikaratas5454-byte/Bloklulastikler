@@ -75,33 +75,24 @@
   .giris-panel{
     width:100%;
     max-width:360px;
-    background:var(--surface);
+    background:linear-gradient(160deg, rgba(255,255,255,.1), rgba(255,255,255,.03));
+    border:1px solid rgba(255,255,255,.16);
     border-radius:var(--radius-lg);
     padding:36px 32px 30px;
     text-align:center;
-    box-shadow:var(--shadow-lg);
-  }
-  .giris-panel .giris-mark{
-    width:48px;height:48px;
-    border-radius:12px;
-    background:linear-gradient(160deg, var(--accent), var(--accent-2));
-    color:var(--navy);
-    display:flex;align-items:center;justify-content:center;
-    font-family:var(--font-head);
-    font-weight:800;
-    font-size:18px;
-    margin:0 auto 18px;
-    box-shadow:0 10px 22px rgba(240,179,35,.4);
+    box-shadow:0 18px 46px rgba(0,0,0,.35);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
   }
   .giris-panel .giris-baslik{
     font-family:var(--font-head);
     font-weight:800;
     font-size:19px;
-    color:var(--heading);
+    color:#fff;
     margin:0 0 4px;
   }
   .giris-panel .giris-alt{
-    color:var(--muted);
+    color:#c3cce3;
     font-size:13.5px;
     margin:0 0 22px;
   }
@@ -960,7 +951,6 @@
 
 <div id="girisOverlay" class="giris-overlay">
   <div class="giris-panel">
-    <div class="giris-mark">BÜ</div>
     <p class="giris-baslik">Panele Giriş</p>
     <p class="giris-alt">Devam etmek için şifreni gir</p>
     <input type="password" id="girisSifre" placeholder="Şifre" autocomplete="off" inputmode="numeric">
@@ -1068,22 +1058,6 @@
           </thead>
           <tbody id="logBody">
             <tr><td colspan="7" class="empty">Yükleniyor...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <h2 class="card-title">Otomatik Silinen Kodlar</h2>
-      </div>
-      <div class="tablo-3d" style="overflow-x:auto;">
-        <table>
-          <thead>
-            <tr><th>Silinme Tarihi</th><th>Lastik Kodu</th><th>Silinen Kod</th><th>İstasyon</th><th>Bulunma Tarihi</th></tr>
-          </thead>
-          <tbody id="silmeGecmisiBody">
-            <tr><td colspan="5" class="empty">Yükleniyor...</td></tr>
           </tbody>
         </table>
       </div>
@@ -1234,7 +1208,6 @@ const db = getFirestore(app);
 
 const kodlarCol = collection(db, "bloklu_kodlar");
 const okutmalarCol = collection(db, "bloklu_okutmalar");
-const silmeGecmisiCol = collection(db, "bloklu_silme_gecmisi");
 
 const connDot = document.getElementById('connDot');
 const connText = document.getElementById('connText');
@@ -1711,34 +1684,17 @@ function bulunduMu(kod){
 }
 
 /* ---------- Okutulan (bulunan) kodları Bloklu Beadcodlar listesinden otomatik sil ---------- */
-/* Not: her silme işlemi bloklu_silme_gecmisi koleksiyonuna kaydedilir; bu kayıt
-   "Komple Temizle" ile silinmez, sadece elle takip/denetim içindir. */
 const temizlemeIslemde = new Set();
 async function otomatikTemizleBulunanlar(){
   if(!Array.isArray(tumOkutmalar) || tumOkutmalar.length === 0) return;
   if(!Array.isArray(tumKodKayitlari) || tumKodKayitlari.length === 0) return;
   for(const k of tumKodKayitlari){
     if(temizlemeIslemde.has(k.id)) continue;
-    const silinenler = k.blokluKodlar.filter(kd => bulunduMu(kd));
     const kalanlar = k.blokluKodlar.filter(kd => !bulunduMu(kd));
-    if(silinenler.length > 0){
+    if(kalanlar.length !== k.blokluKodlar.length){
       temizlemeIslemde.add(k.id);
       try{
         await updateDoc(doc(db, 'bloklu_kodlar', k.id), { blokluKodlar: kalanlar });
-        for(const silinenKod of silinenler){
-          const eslesenOkutma = tumOkutmalar.find(o => (o.kod || '').toUpperCase() === silinenKod.toUpperCase());
-          try{
-            await addDoc(silmeGecmisiCol, {
-              lastikKodu: k.lastikKodu,
-              silinenKod,
-              bulunmaTarihi: eslesenOkutma && eslesenOkutma.tarih ? Timestamp.fromDate(eslesenOkutma.tarih) : null,
-              istasyon: eslesenOkutma ? (eslesenOkutma.istasyon || null) : null,
-              silinmeTarihi: serverTimestamp()
-            });
-          }catch(e){
-            console.error('Silme geçmişi kaydedilemedi:', e);
-          }
-        }
       }catch(e){
         console.error('Otomatik temizleme hatası:', e);
       }finally{
@@ -1758,31 +1714,6 @@ function lastikKoduBul(kod){
 }
 
 /* ---------- Otomatik silme denetim geçmişi ---------- */
-const silmeGecmisiBody = document.getElementById('silmeGecmisiBody');
-const qSilmeGecmisi = query(silmeGecmisiCol, orderBy('silinmeTarihi', 'desc'));
-onSnapshot(qSilmeGecmisi, snap=>{
-  if(snap.empty){
-    silmeGecmisiBody.innerHTML = '<tr><td colspan="5" class="empty">Henüz otomatik silinen kod yok.</td></tr>';
-    return;
-  }
-  let html = '';
-  snap.forEach(d=>{
-    const data = d.data();
-    const silinmeTarihi = data.silinmeTarihi && data.silinmeTarihi.toDate ? formatTarih(data.silinmeTarihi.toDate()) : '—';
-    const bulunmaTarihi = data.bulunmaTarihi && data.bulunmaTarihi.toDate ? formatTarih(data.bulunmaTarihi.toDate()) : '—';
-    html += `<tr>
-      <td class="tarih">${silinmeTarihi}</td>
-      <td class="kod">${escapeHtml(data.lastikKodu || '—')}</td>
-      <td class="kod">${escapeHtml(data.silinenKod || '—')}</td>
-      <td class="istasyon">${escapeHtml(data.istasyon || '—')}</td>
-      <td class="tarih">${bulunmaTarihi}</td>
-    </tr>`;
-  });
-  silmeGecmisiBody.innerHTML = html;
-}, err=>{
-  silmeGecmisiBody.innerHTML = '<tr><td colspan="5" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
-});
-
 function renderLog(){
   const { start, end } = filtreAraligi('log');
   const filtreli = tumOkutmalar.filter(o=>{
