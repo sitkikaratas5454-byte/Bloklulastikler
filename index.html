@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#f3f5f9;
+    --bg:#f4f1e6;
     --surface:#ffffff;
     --surface-2:#f7f8fb;
     --surface-3:#eef1f6;
@@ -17,10 +17,10 @@
     --navy:#0f2247;
     --navy-2:#16305f;
     --navy-tint:#eef2f9;
-    --accent:#e8890c;
-    --accent-2:#c96f00;
-    --accent-tint:#fdf0dd;
-    --accent-tint-strong:#fbe0b8;
+    --accent:#e0b020;
+    --accent-2:#b8860f;
+    --accent-tint:#faf0d6;
+    --accent-tint-strong:#f3dda0;
     --red:#dc3545;
     --red-tint:#fbe7e9;
     --green:#1f9d55;
@@ -42,7 +42,7 @@
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    background:var(--bg);
+    background:linear-gradient(135deg, #0c1730 0%, #12244a 30%, #3f4a3a 62%, #6b5a1f 82%, #8a7a2e 100%) fixed;
     color:var(--text);
     font-family:var(--font);
     min-height:100vh;
@@ -60,8 +60,8 @@
     justify-content:center;
     padding:20px;
     background:
-      radial-gradient(circle at 20% 10%, rgba(232,137,12,.10) 0%, rgba(232,137,12,0) 40%),
-      linear-gradient(160deg, #0c1730 0%, #12244a 55%, #16305f 100%);
+      radial-gradient(circle at 20% 10%, rgba(224,176,32,.16) 0%, rgba(224,176,32,0) 45%),
+      linear-gradient(150deg, #0c1730 0%, #12244a 45%, #4a4522 78%, #6e5b1a 100%);
   }
   .giris-panel{
     width:100%;
@@ -76,13 +76,13 @@
     width:48px;height:48px;
     border-radius:12px;
     background:linear-gradient(160deg, var(--accent), var(--accent-2));
-    color:#fff;
+    color:var(--navy);
     display:flex;align-items:center;justify-content:center;
     font-family:var(--font-head);
     font-weight:800;
     font-size:18px;
     margin:0 auto 18px;
-    box-shadow:0 10px 22px rgba(232,137,12,.35);
+    box-shadow:0 10px 22px rgba(224,176,32,.4);
   }
   .giris-panel .giris-baslik{
     font-family:var(--font-head);
@@ -120,13 +120,13 @@
     border-radius:var(--radius-sm);
     border:none;
     background:var(--accent);
-    color:#fff;
+    color:var(--navy);
     font-weight:700;
     font-size:14.5px;
     cursor:pointer;
     transition:background .15s;
   }
-  .giris-panel button:hover{background:var(--accent-2);}
+  .giris-panel button:hover{background:var(--accent-2);color:#fff;}
   .giris-hata{
     color:var(--red);
     font-size:12.5px;
@@ -224,7 +224,7 @@
   .takvim-gun:hover{border-color:var(--accent);background:var(--accent-tint);}
   .takvim-gun.disi{color:var(--muted-2);opacity:.45;}
   .takvim-gun.bugun{border-color:var(--navy-2);color:var(--navy);font-weight:700;}
-  .takvim-gun.secili{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .takvim-gun.secili{background:var(--accent);border-color:var(--accent);color:var(--navy);}
   .takvim-gun.secili:hover{background:var(--accent-2);border-color:var(--accent-2);color:#fff;}
   @media (max-width:820px){
     .navbar-inner{flex-wrap:wrap;row-gap:10px;}
@@ -292,6 +292,7 @@
     width:100%;
     margin:0;
     padding:28px 40px 70px;
+    background:var(--bg);
   }
   .view{display:none;}
   .view.active{display:block;}
@@ -496,12 +497,12 @@
   .add-row{display:flex;gap:10px;}
   .btn-add{
     background:var(--accent);
-    color:#fff;
+    color:var(--navy);
     padding:12px 24px;
     font-size:13.5px;
     box-shadow:var(--shadow-sm);
   }
-  .btn-add:hover{background:var(--accent-2);}
+  .btn-add:hover{background:var(--accent-2);color:#fff;}
   .btn-add:disabled{opacity:.5;cursor:not-allowed;}
 
   .msg{display:block;font-size:12.5px;margin-top:10px;min-height:16px;}
@@ -524,15 +525,15 @@
     border-radius:var(--radius-sm);
     border:none;
     background:var(--accent);
-    color:#fff;
+    color:var(--navy);
     font-family:var(--font-head);
     font-weight:700;
     font-size:13.5px;
     letter-spacing:.01em;
     cursor:pointer;
-    box-shadow:0 6px 16px rgba(232,137,12,.28);
+    box-shadow:0 6px 16px rgba(224,176,32,.32);
   }
-  .btn-kaydet-full:hover{background:var(--accent-2);}
+  .btn-kaydet-full:hover{background:var(--accent-2);color:#fff;}
   .btn-kaydet-full:disabled{opacity:.55;cursor:not-allowed;}
   .entry-card .msg{margin:0;}
   .entry-actions .msg{flex:1;}
