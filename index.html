@@ -292,7 +292,7 @@
   .tab:hover{color:#fff;}
   .tab.active{
     color:var(--navy);
-    background:#fff;
+    background:var(--accent);
     box-shadow:0 1px 4px rgba(0,0,0,.28), 0 1px 1px rgba(0,0,0,.1);
   }
 
@@ -556,6 +556,48 @@
   }
   .btn-danger:hover{background:var(--red-tint);}
 
+  .btn-secondary{
+    background:transparent;
+    border:1px solid var(--line-strong);
+    color:var(--text);
+    padding:8px 16px;
+    font-size:12.5px;
+    font-weight:600;
+  }
+  .btn-secondary:hover{background:var(--surface-2);border-color:var(--muted-2);}
+
+  /* ---------- Onay (silme) modalı: modern uyarı kutusu ---------- */
+  .onay-modal-card{
+    max-width:360px;
+    text-align:center;
+    padding:32px 26px calc(24px + env(safe-area-inset-bottom));
+  }
+  .onay-ikon{
+    width:52px;height:52px;
+    margin:0 auto 16px;
+    border-radius:50%;
+    background:var(--red-tint);
+    color:var(--red);
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-head);
+    font-weight:800;
+    font-size:26px;
+  }
+  .onay-baslik{
+    font-family:var(--font-head);
+    font-weight:800;
+    font-size:17px;
+    color:var(--heading);
+    margin:0 0 8px;
+  }
+  .onay-metin{
+    color:var(--muted);
+    font-size:13.5px;
+    line-height:1.5;
+    margin:0 0 22px;
+  }
+  .onay-modal-card .modal-actions{margin-top:0;}
+
   .btn-upd{
     background:transparent;
     border:1px solid rgba(240,179,35,.5);
@@ -763,6 +805,12 @@
   #view-log input[type=text]:focus,
   #view-ekle input[type=text]:focus,
   #view-ekle textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(240,179,35,.25);}
+  #view-log .btn-secondary{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.24);
+    color:#fff;
+  }
+  #view-log .btn-secondary:hover{border-color:var(--accent);color:var(--accent);background:rgba(240,179,35,.12);}
 
   /* ---------- Güncelle Modal shell ---------- */
   .modal-overlay{
@@ -798,6 +846,32 @@
     .modal-card{border-radius:var(--radius-lg);transform:translateY(0) scale(.97);}
     .modal-overlay.open .modal-card{transform:translateY(0) scale(1);}
   }
+
+  /* ---------- Takvim modalı: sayfa arka planına uygun (beyaz değil) ---------- */
+  .takvim-modal-card{
+    background:linear-gradient(160deg, var(--primary) 0%, var(--bg-dark) 55%, #4b4420 100%);
+    border:1px solid rgba(255,255,255,.16);
+  }
+  .takvim-modal-card .modal-head .tag{color:#c3cce3;}
+  .takvim-modal-card .modal-head .kodbaslik{color:#fff;}
+  .takvim-modal-card .modal-close{
+    background:rgba(255,255,255,.1);
+    border:1px solid rgba(255,255,255,.2);
+    color:#fff;
+  }
+  .takvim-modal-card .takvim-nav-btn{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.2);
+    color:#fff;
+  }
+  .takvim-modal-card .takvim-nav-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(240,179,35,.12);}
+  .takvim-modal-card .takvim-ay-yil{color:#fff;}
+  .takvim-modal-card .takvim-gun-basliklari{color:#9fb0d6;}
+  .takvim-modal-card .takvim-gun{color:#e9edf7;}
+  .takvim-modal-card .takvim-gun:hover{border-color:var(--accent);background:rgba(240,179,35,.14);}
+  .takvim-modal-card .takvim-gun.disi{color:#7d88a6;}
+  .takvim-modal-card .takvim-gun.bugun{border-color:var(--accent);color:var(--accent);}
+  .takvim-modal-card .takvim-gun.secili{background:var(--accent);border-color:var(--accent);color:var(--navy);}
   .modal-head{
     display:flex;
     align-items:flex-start;
@@ -899,7 +973,7 @@
   <div class="navbar-inner">
     <div class="navbar-brand">
       <div class="brand-text">
-        <span class="brand-title">Bitmiş Ürün Ambarı <span>· Bloklu Lastik</span></span>
+        <span class="brand-title">Bloklu Lastikler</span>
       </div>
     </div>
     <div class="navbar-right">
@@ -967,6 +1041,7 @@
     <div class="card">
       <div class="card-header">
         <h2 class="card-title">Kod Ara</h2>
+        <button type="button" class="btn-secondary" id="btnKopyalaBloklanan" style="display:none;">📋 Bloklanan Kodları Kopyala</button>
       </div>
       <div class="add-row">
         <input type="text" id="logAramaInput" placeholder="Kod giriniz..." autocomplete="off">
@@ -1022,6 +1097,18 @@
       <button class="btn-add" id="modalGuncelle">Güncelle</button>
     </div>
     <p class="modal-msg" id="modalMsg"></p>
+  </div>
+</div>
+
+<div class="modal-overlay" id="onayModalOverlay">
+  <div class="modal-card onay-modal-card">
+    <div class="onay-ikon">!</div>
+    <p class="onay-baslik" id="onayBaslik">Emin misin?</p>
+    <p class="onay-metin" id="onayMetin">Bu işlem geri alınamaz.</p>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="onayVazgec">Vazgeç</button>
+      <button class="btn-danger" id="onayOnayla">Evet, Sil</button>
+    </div>
   </div>
 </div>
 
@@ -1147,8 +1234,10 @@ document.querySelectorAll('.tab').forEach(tab=>{
     document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
     tab.classList.add('active');
     document.getElementById('view-' + tab.dataset.view).classList.add('active');
+    document.getElementById('btnLogTemizle').style.display = (tab.dataset.view === 'log') ? '' : 'none';
   });
 });
+document.getElementById('btnLogTemizle').style.display = 'none';
 
 /* ---------- Kod Ekle: tekli + toplu (otomatik kaydet) ---------- */
 const kodListe = document.getElementById('kodListe');
@@ -1308,9 +1397,33 @@ modalGuncelleBtn.addEventListener('click', async ()=>{
   }
 });
 
+/* ---------- Onay (silme) modalı: modern uyarı kutusu ---------- */
+const onayModalOverlay = document.getElementById('onayModalOverlay');
+const onayBaslik = document.getElementById('onayBaslik');
+const onayMetin = document.getElementById('onayMetin');
+const onayVazgecBtn = document.getElementById('onayVazgec');
+const onayOnaylaBtn = document.getElementById('onayOnayla');
+let onayCozumle = null;
+
+function onayAc(baslik, metin){
+  onayBaslik.textContent = baslik;
+  onayMetin.textContent = metin;
+  onayModalOverlay.classList.add('open');
+  return new Promise(resolve=>{ onayCozumle = resolve; });
+}
+function onayKapat(sonuc){
+  onayModalOverlay.classList.remove('open');
+  if(onayCozumle){ onayCozumle(sonuc); onayCozumle = null; }
+}
+onayVazgecBtn.addEventListener('click', ()=> onayKapat(false));
+onayOnaylaBtn.addEventListener('click', ()=> onayKapat(true));
+onayModalOverlay.addEventListener('click', (e)=>{ if(e.target === onayModalOverlay) onayKapat(false); });
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && onayModalOverlay.classList.contains('open')) onayKapat(false); });
+
 modalSilBtn.addEventListener('click', async ()=>{
   if(modalIslemde || !modalAktifId) return;
-  if(!confirm(modalAktifKod + ' kaydını tamamen silmek istediğine emin misin?')) return;
+  const onay = await onayAc('Kaydı silmek üzeresin', modalAktifKod + ' kaydını tamamen silmek istediğine emin misin? Bu işlem geri alınamaz.');
+  if(!onay) return;
 
   modalIslemde = true;
   modalGuncelleBtn.disabled = true;
@@ -1337,7 +1450,7 @@ const beadcodGoruntuleClose = document.getElementById('beadcodGoruntuleClose');
 
 function beadcodGoruntuleAc(lastikKodu, blokluKodlar){
   beadcodGoruntuleKod.textContent = lastikKodu;
-  beadcodGoruntuleListe.innerHTML = blokluKodlar.map(k=>`<span class="beadcod-chip${bulunduMu(k) ? ' beadcod-bulundu' : ''}">${escapeHtml(k)}</span>`).join('');
+  beadcodGoruntuleListe.innerHTML = blokluKodlar.map(k=>`<span class="beadcod-chip">${escapeHtml(k)}</span>`).join('');
   beadcodGoruntuleSayac.textContent = blokluKodlar.length + ' bloklu kod';
   beadcodGoruntuleOverlay.classList.add('open');
 }
@@ -1367,6 +1480,7 @@ onSnapshot(qKodlar, snap=>{
   });
   renderKodListe();
   renderLog();
+  otomatikTemizleBulunanlar();
 }, err=>{
   setConn('err');
   kodListe.innerHTML = '<tr><td colspan="5" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
@@ -1392,7 +1506,7 @@ function renderKodListe(){
       <td class="kod">${escapeHtml(k.lastikKodu)}</td>
       <td>
         <div class="beadcod-hucre">
-          <span class="beadcod-metin">${k.blokluKodlar.map(kd=>`<span class="${bulunduMu(kd) ? 'beadcod-bulundu' : ''}">${escapeHtml(kd)}</span>`).join(', ')}</span>
+          <span class="beadcod-metin">${escapeHtml(k.blokluKodlar.join(', '))}</span>
           <button type="button" class="beadcod-buyut-btn" data-id="${k.id}" title="Tümünü Gör">⤢</button>
         </div>
       </td>
@@ -1580,6 +1694,27 @@ function bulunduMu(kod){
   return tumOkutmalar.some(o => (o.kod || '').toUpperCase() === aranan);
 }
 
+/* ---------- Okutulan (bulunan) kodları Bloklu Beadcodlar listesinden otomatik sil ---------- */
+const temizlemeIslemde = new Set();
+async function otomatikTemizleBulunanlar(){
+  if(!Array.isArray(tumOkutmalar) || tumOkutmalar.length === 0) return;
+  if(!Array.isArray(tumKodKayitlari) || tumKodKayitlari.length === 0) return;
+  for(const k of tumKodKayitlari){
+    if(temizlemeIslemde.has(k.id)) continue;
+    const kalanlar = k.blokluKodlar.filter(kd => !bulunduMu(kd));
+    if(kalanlar.length !== k.blokluKodlar.length){
+      temizlemeIslemde.add(k.id);
+      try{
+        await updateDoc(doc(db, 'bloklu_kodlar', k.id), { blokluKodlar: kalanlar });
+      }catch(e){
+        console.error('Otomatik temizleme hatası:', e);
+      }finally{
+        temizlemeIslemde.delete(k.id);
+      }
+    }
+  }
+}
+
 function lastikKoduBul(kod){
   if(!kod) return null;
   if(mevcutKodlar.has(kod)) return kod;
@@ -1678,6 +1813,7 @@ onSnapshot(qLog, snap=>{
   });
   renderLog();
   renderKodListe();
+  otomatikTemizleBulunanlar();
 }, err=>{
   setConn('err');
   logBody.innerHTML = '<tr><td colspan="7" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
@@ -1700,12 +1836,16 @@ function escapeHtml(s){
 /* ---------- Bloklu Bulunan Lastikler sekmesi: koda göre ara ---------- */
 const logAramaInput = document.getElementById('logAramaInput');
 const logAramaBody = document.getElementById('logAramaBody');
+const btnKopyalaBloklanan = document.getElementById('btnKopyalaBloklanan');
+let sonAramaBloklananKodlar = [];
 
 function renderLogArama(){
   const aranan = logAramaInput.value.trim().toUpperCase();
 
   if(!aranan){
     logAramaBody.innerHTML = '<tr><td colspan="7" class="empty">Aramak için bir kod gir.</td></tr>';
+    sonAramaBloklananKodlar = [];
+    btnKopyalaBloklanan.style.display = 'none';
     return;
   }
 
@@ -1716,6 +1856,8 @@ function renderLogArama(){
 
   if(eslesenler.length === 0){
     logAramaBody.innerHTML = '<tr><td colspan="7" class="empty">"' + escapeHtml(aranan) + '" kodunda kayıt bulunamadı.</td></tr>';
+    sonAramaBloklananKodlar = [];
+    btnKopyalaBloklanan.style.display = 'none';
     return;
   }
 
@@ -1747,7 +1889,29 @@ function renderLogArama(){
       <td class="adet">${g.adet}</td>
     </tr>
   `).join('');
+
+  sonAramaBloklananKodlar = gruplar.map(g => g.kod);
+  btnKopyalaBloklanan.style.display = sonAramaBloklananKodlar.length ? '' : 'none';
 }
+
+btnKopyalaBloklanan.addEventListener('click', async ()=>{
+  if(sonAramaBloklananKodlar.length === 0) return;
+  const metin = sonAramaBloklananKodlar.join(', ');
+  const eskiYazi = btnKopyalaBloklanan.textContent;
+  try{
+    await navigator.clipboard.writeText(metin);
+    btnKopyalaBloklanan.textContent = '✓ Kopyalandı';
+  }catch(e){
+    const alan = document.createElement('textarea');
+    alan.value = metin;
+    document.body.appendChild(alan);
+    alan.select();
+    document.execCommand('copy');
+    document.body.removeChild(alan);
+    btnKopyalaBloklanan.textContent = '✓ Kopyalandı';
+  }
+  setTimeout(()=>{ btnKopyalaBloklanan.textContent = eskiYazi; }, 1500);
+});
 
 logAramaInput.addEventListener('input', renderLogArama);
 logAramaInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') renderLogArama(); });
