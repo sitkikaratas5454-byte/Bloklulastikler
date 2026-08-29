@@ -8,25 +8,34 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#f4f1e6;
+    /* --- Kurumsal Renk Paleti (birebir) --- */
+    --primary:#1C2B6E;         /* Ana Lacivert */
+    --primary-hover:#1e40af;   /* Hover Mavi/Lacivert */
+    --accent:#F0B323;          /* Ana Sarı */
+    --accent-hover:#EAB308;    /* Hover Sarı */
+    --bg-dark:#162560;         /* Tablo & Yan Menü Laciverti */
+    --text-dark:#0F172A;       /* Koyu Metin / Başlık */
+    --bg-light-yellow:#FEFCE8; /* Açık Sarı Kart Arka Planı */
+
+    /* --- Bu paletten türetilen destekleyici değişkenler --- */
+    --bg:var(--bg-light-yellow);
     --surface:#ffffff;
     --surface-2:#f7f8fb;
     --surface-3:#eef1f6;
     --line:#e3e7ee;
     --line-strong:#d6dbe4;
-    --navy:#0f2247;
-    --navy-2:#16305f;
-    --navy-tint:#eef2f9;
-    --accent:#e0b020;
-    --accent-2:#b8860f;
-    --accent-tint:#faf0d6;
-    --accent-tint-strong:#f3dda0;
+    --navy:var(--primary);
+    --navy-2:var(--bg-dark);
+    --navy-tint:var(--bg-light-yellow);
+    --accent-2:var(--accent-hover);
+    --accent-tint:var(--bg-light-yellow);
+    --accent-tint-strong:#f8ecc0;
     --red:#dc3545;
     --red-tint:#fbe7e9;
     --green:#1f9d55;
     --green-tint:#e6f6ec;
-    --text:#141b2d;
-    --heading:#0c1730;
+    --text:var(--text-dark);
+    --heading:var(--text-dark);
     --muted:#66738c;
     --muted-2:#8892a6;
     --mono:'Roboto Mono', monospace;
@@ -35,14 +44,14 @@
     --radius:12px;
     --radius-sm:8px;
     --radius-lg:18px;
-    --shadow-sm:0 1px 2px rgba(15,34,71,.06);
-    --shadow-md:0 6px 20px rgba(15,34,71,.08);
-    --shadow-lg:0 18px 46px rgba(15,34,71,.12);
+    --shadow-sm:0 1px 2px rgba(28,43,110,.06);
+    --shadow-md:0 6px 20px rgba(28,43,110,.08);
+    --shadow-lg:0 18px 46px rgba(28,43,110,.12);
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    background:linear-gradient(135deg, #0c1730 0%, #12244a 30%, #3f4a3a 62%, #6b5a1f 82%, #8a7a2e 100%) fixed;
+    background:linear-gradient(135deg, var(--primary) 0%, var(--bg-dark) 42%, #4b4420 75%, var(--accent) 100%) fixed;
     color:var(--text);
     font-family:var(--font);
     min-height:100vh;
@@ -60,8 +69,8 @@
     justify-content:center;
     padding:20px;
     background:
-      radial-gradient(circle at 20% 10%, rgba(224,176,32,.16) 0%, rgba(224,176,32,0) 45%),
-      linear-gradient(150deg, #0c1730 0%, #12244a 45%, #4a4522 78%, #6e5b1a 100%);
+      radial-gradient(circle at 20% 10%, rgba(240,179,35,.16) 0%, rgba(240,179,35,0) 45%),
+      linear-gradient(150deg, var(--primary) 0%, var(--bg-dark) 48%, #4b4420 80%, var(--accent-hover) 100%);
   }
   .giris-panel{
     width:100%;
@@ -82,7 +91,7 @@
     font-weight:800;
     font-size:18px;
     margin:0 auto 18px;
-    box-shadow:0 10px 22px rgba(224,176,32,.4);
+    box-shadow:0 10px 22px rgba(240,179,35,.4);
   }
   .giris-panel .giris-baslik{
     font-family:var(--font-head);
@@ -126,7 +135,7 @@
     cursor:pointer;
     transition:background .15s;
   }
-  .giris-panel button:hover{background:var(--accent-2);color:#fff;}
+  .giris-panel button:hover{background:var(--accent-2);color:var(--primary);}
   .giris-hata{
     color:var(--red);
     font-size:12.5px;
@@ -200,7 +209,7 @@
     display:flex;align-items:center;justify-content:center;
     transition:border-color .15s, background .15s, color .15s;
   }
-  .takvim-nav-btn:hover{border-color:var(--accent);color:var(--accent-2);background:var(--accent-tint);}
+  .takvim-nav-btn:hover{border-color:var(--accent);color:var(--primary);background:var(--accent-tint);}
   .takvim-ay-yil{font-family:var(--font-head);font-weight:700;font-size:14.5px;color:var(--navy);text-transform:capitalize;}
   .takvim-gun-basliklari{
     display:grid;grid-template-columns:repeat(7,1fr);
@@ -225,7 +234,7 @@
   .takvim-gun.disi{color:var(--muted-2);opacity:.45;}
   .takvim-gun.bugun{border-color:var(--navy-2);color:var(--navy);font-weight:700;}
   .takvim-gun.secili{background:var(--accent);border-color:var(--accent);color:var(--navy);}
-  .takvim-gun.secili:hover{background:var(--accent-2);border-color:var(--accent-2);color:#fff;}
+  .takvim-gun.secili:hover{background:var(--accent-2);border-color:var(--accent-2);color:var(--primary);}
   @media (max-width:820px){
     .navbar-inner{flex-wrap:wrap;row-gap:10px;}
     .navbar-right{width:100%;justify-content:flex-start;}
@@ -292,7 +301,7 @@
     width:100%;
     margin:0;
     padding:28px 40px 70px;
-    background:var(--bg);
+    background:transparent;
   }
   .view{display:none;}
   .view.active{display:block;}
@@ -349,7 +358,7 @@
     font-family:var(--mono);
     font-size:11.5px;
     font-weight:600;
-    color:var(--accent-2);
+    color:var(--primary);
     background:var(--accent-tint);
     padding:3px 10px;
     border-radius:20px;
@@ -409,7 +418,7 @@
     cursor:pointer;
     transition:color .15s, border-color .15s, background .15s;
   }
-  .bulk-expand-btn:hover{color:var(--accent-2);border-color:var(--accent);background:var(--accent-tint);}
+  .bulk-expand-btn:hover{color:var(--primary);border-color:var(--accent);background:var(--accent-tint);}
   .beadcod-hucre{display:flex;align-items:center;gap:8px;max-width:340px;}
   .beadcod-metin{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
   .beadcod-buyut-btn{
@@ -427,7 +436,7 @@
     cursor:pointer;
     transition:color .15s, border-color .15s, background .15s;
   }
-  .beadcod-buyut-btn:hover{color:var(--accent-2);border-color:var(--accent);background:var(--accent-tint);}
+  .beadcod-buyut-btn:hover{color:var(--primary);border-color:var(--accent);background:var(--accent-tint);}
   .beadcod-goruntule-liste{
     display:flex;flex-wrap:wrap;gap:7px;
     max-height:50vh;overflow-y:auto;
@@ -502,7 +511,7 @@
     font-size:13.5px;
     box-shadow:var(--shadow-sm);
   }
-  .btn-add:hover{background:var(--accent-2);color:#fff;}
+  .btn-add:hover{background:var(--accent-2);color:var(--primary);}
   .btn-add:disabled{opacity:.5;cursor:not-allowed;}
 
   .msg{display:block;font-size:12.5px;margin-top:10px;min-height:16px;}
@@ -531,9 +540,9 @@
     font-size:13.5px;
     letter-spacing:.01em;
     cursor:pointer;
-    box-shadow:0 6px 16px rgba(224,176,32,.32);
+    box-shadow:0 6px 16px rgba(240,179,35,.32);
   }
-  .btn-kaydet-full:hover{background:var(--accent-2);color:#fff;}
+  .btn-kaydet-full:hover{background:var(--accent-2);color:var(--primary);}
   .btn-kaydet-full:disabled{opacity:.55;cursor:not-allowed;}
   .entry-card .msg{margin:0;}
   .entry-actions .msg{flex:1;}
@@ -555,7 +564,7 @@
     font-size:12px;
     font-weight:600;
   }
-  .btn-upd:hover{border-color:var(--accent);color:var(--accent-2);background:var(--accent-tint);}
+  .btn-upd:hover{border-color:var(--accent);color:var(--primary);background:var(--accent-tint);}
 
   .empty{color:var(--muted);font-size:13.5px;padding:26px 0;text-align:center;}
 
@@ -607,7 +616,7 @@
     font-family:var(--mono);
     font-size:11.5px;
     font-weight:600;
-    color:var(--accent-2);
+    color:var(--primary);
     background:var(--accent-tint);
     padding:5px 12px;
     border-radius:14px;
@@ -638,11 +647,11 @@
   tbody tr:hover td{background:var(--surface-2);}
   tr.kod-row{cursor:pointer;}
   td.kod{font-family:var(--mono);color:var(--navy);font-weight:600;letter-spacing:.01em;}
-  td.istasyon{color:var(--accent-2);font-size:12.5px;font-weight:600;}
+  td.istasyon{color:var(--primary);font-size:12.5px;font-weight:600;}
   td.sira{color:var(--muted);font-family:var(--mono);font-size:12px;}
   td.tarih{color:var(--muted);font-size:12.5px;white-space:nowrap;}
   td.saat{color:var(--muted);font-size:12.5px;white-space:nowrap;}
-  td.adet{font-family:var(--mono);color:var(--accent-2);font-size:12.5px;text-align:center;font-weight:600;}
+  td.adet{font-family:var(--mono);color:var(--primary);font-size:12.5px;text-align:center;font-weight:600;}
 
   /* ---------- Güncelle Modal shell ---------- */
   .modal-overlay{
@@ -734,7 +743,7 @@
     font-family:var(--mono);
     font-size:11.5px;
     font-weight:600;
-    color:var(--accent-2);
+    color:var(--primary);
     background:var(--accent-tint);
     padding:4px 12px;
     border-radius:14px;
