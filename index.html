@@ -149,23 +149,13 @@
     gap:16px;
   }
   .navbar-brand{display:flex;align-items:center;gap:12px;min-width:0;}
-  .brand-icon{
-    width:40px;height:40px;
-    flex-shrink:0;
-    border-radius:10px;
-    background:linear-gradient(160deg, var(--accent), var(--accent-2));
-    display:flex;align-items:center;justify-content:center;
-    font-family:var(--font-head);
-    font-weight:800;
-    font-size:14px;
-    color:#fff;
-  }
   .brand-text{display:flex;flex-direction:column;min-width:0;}
   .brand-title{
     font-family:var(--font-head);
-    font-weight:700;
-    font-size:16px;
+    font-weight:800;
+    font-size:22px;
     letter-spacing:.01em;
+    text-transform:uppercase;
     color:#fff;
     white-space:nowrap;
     overflow:hidden;
@@ -192,23 +182,6 @@
   .dot{width:7px;height:7px;border-radius:50%;background:var(--muted-2);flex-shrink:0;}
   .dot.ok{background:#3ddc84;}
   .dot.err{background:#ff5a67;}
-  .user-chip{
-    display:flex;align-items:center;gap:8px;
-    background:rgba(255,255,255,.06);
-    border:1px solid rgba(255,255,255,.1);
-    padding:6px 13px 6px 6px;
-    border-radius:20px;
-    font-size:13px;
-    color:#e7ebf4;
-  }
-  .user-chip .av{
-    width:24px;height:24px;border-radius:50%;
-    background:linear-gradient(160deg,#4a6ab5,#2c4788);
-    display:flex;align-items:center;justify-content:center;
-    font-size:11px;font-weight:700;color:#fff;
-  }
-  .navbar-right .user-chip{display:none;}
-  @media (min-width:720px){ .navbar-right .user-chip{display:flex;} }
 
   /* ---------- Tab bar ---------- */
   .tabbar{
@@ -826,7 +799,6 @@
 <header class="navbar">
   <div class="navbar-inner">
     <div class="navbar-brand">
-      <div class="brand-icon">BÜ</div>
       <div class="brand-text">
         <span class="brand-title">Bitmiş Ürün Ambarı <span>· Bloklu Lastik</span></span>
         <span class="brand-sub">Beadcode blok listesi ve okutma kayıtları</span>
@@ -834,7 +806,6 @@
     </div>
     <div class="navbar-right">
       <div class="conn-badge"><span class="dot" id="connDot"></span><span id="connText">bağlanıyor...</span></div>
-      <div class="user-chip"><span class="av">OP</span> Operatör</div>
     </div>
   </div>
   <nav class="tabbar">
