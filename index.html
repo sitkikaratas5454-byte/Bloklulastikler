@@ -172,7 +172,7 @@
   .navbar-right{display:flex;align-items:center;gap:12px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;}
   .navbar-date{
     height:36px;
-    padding:0 12px;
+    padding:0 14px;
     background:rgba(255,255,255,.07);
     border:1px solid rgba(255,255,255,.16);
     border-radius:9px;
@@ -181,12 +181,51 @@
     font-weight:600;
     font-size:13px;
     outline:none;
-    color-scheme:dark;
     cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
     transition:border-color .15s, background .15s;
   }
+  .navbar-date svg{flex-shrink:0;color:var(--accent);}
   .navbar-date:hover{border-color:rgba(255,255,255,.35);}
   .navbar-date:focus{border-color:var(--accent);background:rgba(255,255,255,.1);}
+
+  /* ---------- Takvim modalı ---------- */
+  .takvim-modal-card{max-width:340px;}
+  .takvim-nav{display:flex;align-items:center;justify-content:space-between;margin-top:14px;}
+  .takvim-nav-btn{
+    width:32px;height:32px;border-radius:8px;border:1px solid var(--line);
+    background:var(--surface);color:var(--navy);font-size:16px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:border-color .15s, background .15s, color .15s;
+  }
+  .takvim-nav-btn:hover{border-color:var(--accent);color:var(--accent-2);background:var(--accent-tint);}
+  .takvim-ay-yil{font-family:var(--font-head);font-weight:700;font-size:14.5px;color:var(--navy);text-transform:capitalize;}
+  .takvim-gun-basliklari{
+    display:grid;grid-template-columns:repeat(7,1fr);
+    margin-top:14px;
+    font-size:11.5px;font-weight:700;color:var(--muted);text-align:center;text-transform:uppercase;letter-spacing:.03em;
+  }
+  .takvim-grid{
+    display:grid;grid-template-columns:repeat(7,1fr);
+    gap:3px;
+    margin-top:6px;
+  }
+  .takvim-gun{
+    aspect-ratio:1/1;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:8px;
+    font-size:13px;font-weight:600;color:var(--text);
+    background:transparent;border:1px solid transparent;
+    cursor:pointer;
+    transition:border-color .15s, background .15s, color .15s;
+  }
+  .takvim-gun:hover{border-color:var(--accent);background:var(--accent-tint);}
+  .takvim-gun.disi{color:var(--muted-2);opacity:.45;}
+  .takvim-gun.bugun{border-color:var(--navy-2);color:var(--navy);font-weight:700;}
+  .takvim-gun.secili{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .takvim-gun.secili:hover{background:var(--accent-2);border-color:var(--accent-2);color:#fff;}
   @media (max-width:820px){
     .navbar-inner{flex-wrap:wrap;row-gap:10px;}
     .navbar-right{width:100%;justify-content:flex-start;}
@@ -568,6 +607,7 @@
   }
   tbody tr:last-child td{border-bottom:none;}
   tbody tr:hover td{background:var(--surface-2);}
+  tr.kod-row{cursor:pointer;}
   td.kod{font-family:var(--mono);color:var(--navy);font-weight:600;letter-spacing:.01em;}
   td.istasyon{color:var(--accent-2);font-size:12.5px;font-weight:600;}
   td.sira{color:var(--muted);font-family:var(--mono);font-size:12px;}
@@ -711,11 +751,13 @@
     <div class="navbar-brand">
       <div class="brand-text">
         <span class="brand-title">Bitmiş Ürün Ambarı <span>· Bloklu Lastik</span></span>
-        <span class="brand-sub">Beadcode blok listesi ve okutma kayıtları</span>
       </div>
     </div>
     <div class="navbar-right">
-      <input type="date" class="navbar-date" id="navTarihFiltre" aria-label="Tarih Filtresi">
+      <button type="button" class="navbar-date" id="navTarihBtn" aria-label="Tarih Filtresi">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        <span id="navTarihLabel">Bugün</span>
+      </button>
       <div class="conn-badge"><span class="dot" id="connDot"></span><span id="connText">bağlanıyor...</span></div>
       <button class="btn-danger" id="btnLogTemizle">Komple Temizle</button>
     </div>
@@ -752,9 +794,16 @@
       <div class="card-header">
         <h2 class="card-title">Bloklu Kod Listesi</h2>
       </div>
-      <ul class="code-list" id="kodListe">
-        <li class="empty">Yükleniyor...</li>
-      </ul>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr><th>Eklenme Tarihi</th><th>Lastik Kodu</th><th>Bloklu Beadcodlar</th><th>Bloklu Kod Adedi</th><th></th></tr>
+          </thead>
+          <tbody id="kodListe">
+            <tr><td colspan="5" class="empty">Yükleniyor...</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </section>
 
@@ -843,6 +892,33 @@
 
     <div class="modal-actions">
       <button class="btn-add" id="bulkModalTamam">Tamam</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="takvimModalOverlay">
+  <div class="modal-card takvim-modal-card">
+    <div class="modal-head">
+      <div>
+        <p class="tag">Tarih Filtresi</p>
+        <p class="kodbaslik" id="takvimBaslik">—</p>
+      </div>
+      <button class="modal-close" id="takvimModalClose" aria-label="Kapat">✕</button>
+    </div>
+
+    <div class="takvim-nav">
+      <button type="button" class="takvim-nav-btn" id="takvimOnceki" aria-label="Önceki Ay">‹</button>
+      <span class="takvim-ay-yil" id="takvimAyYil">—</span>
+      <button type="button" class="takvim-nav-btn" id="takvimSonraki" aria-label="Sonraki Ay">›</button>
+    </div>
+    <div class="takvim-gun-basliklari">
+      <span>Pt</span><span>Sa</span><span>Ça</span><span>Pe</span><span>Cu</span><span>Ct</span><span>Pz</span>
+    </div>
+    <div class="takvim-grid" id="takvimGrid"></div>
+
+    <div class="modal-actions">
+      <button class="btn-danger" id="takvimTumunuGoster">Tüm Tarihler</button>
+      <button class="btn-add" id="takvimBugun">Bugün</button>
     </div>
   </div>
 </div>
@@ -1108,7 +1184,7 @@ onSnapshot(qKodlar, snap=>{
   renderLog();
 }, err=>{
   setConn('err');
-  kodListe.innerHTML = '<li class="empty">Bağlantı hatası: ' + err.message + '</li>';
+  kodListe.innerHTML = '<tr><td colspan="5" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
 });
 
 function renderKodListe(){
@@ -1120,27 +1196,24 @@ function renderKodListe(){
     return true;
   });
   if(filtreli.length === 0){
-    kodListe.innerHTML = '<li class="empty">' + (tumKodKayitlari.length === 0 ? 'Henüz bloklu kod eklenmedi.' : 'Seçilen tarihte kayıt yok.') + '</li>';
+    kodListe.innerHTML = '<tr><td colspan="5" class="empty">' + (tumKodKayitlari.length === 0 ? 'Henüz bloklu kod eklenmedi.' : 'Seçilen tarihte kayıt yok.') + '</td></tr>';
     return;
   }
   let html = '';
   filtreli.forEach(k=>{
     const tarih = k.tarih ? formatTarih(k.tarih) : '—';
-    html += `<li class="code-item" data-id="${k.id}">
-      <div class="code-item-left">
-        <div class="kod">Lastik Kodu: ${escapeHtml(k.lastikKodu)}<span class="tarih-ek">${tarih}</span></div>
-        <div class="meta">Bloklu Kodlar: ${k.blokluKodlar.map(escapeHtml).join(', ')}</div>
-      </div>
-      <div class="item-right">
-        <span class="row-count">${k.blokluKodlar.length} bloklu kod</span>
-        <button class="btn-upd" data-id="${k.id}">Güncelle</button>
-      </div>
-    </li>`;
+    html += `<tr class="kod-row" data-id="${k.id}">
+      <td class="tarih">${tarih}</td>
+      <td class="kod">${escapeHtml(k.lastikKodu)}</td>
+      <td>${k.blokluKodlar.map(escapeHtml).join(', ')}</td>
+      <td class="adet">${k.blokluKodlar.length}</td>
+      <td><button class="btn-upd" data-id="${k.id}">Güncelle</button></td>
+    </tr>`;
   });
   kodListe.innerHTML = html;
-  kodListe.querySelectorAll('.code-item').forEach(li=>{
-    li.addEventListener('click', ()=>{
-      const kayit = tumKodKayitlari.find(k=>k.id === li.dataset.id);
+  kodListe.querySelectorAll('tr.kod-row').forEach(tr=>{
+    tr.addEventListener('click', ()=>{
+      const kayit = tumKodKayitlari.find(k=>k.id === tr.dataset.id);
       if(kayit) kodGuncelle(kayit.id, kayit.lastikKodu, kayit.blokluKodlar);
     });
   });
@@ -1157,37 +1230,128 @@ function renderKodListe(){
 const logBody = document.getElementById('logBody');
 let tumOkutmalar = [];
 
-/* ---------- Tarih filtresi (tek, sade date input) ---------- */
-const navTarihFiltre = document.getElementById('navTarihFiltre');
+/* ---------- Tarih filtresi (modern modal takvim) ---------- */
+const navTarihBtn = document.getElementById('navTarihBtn');
+const navTarihLabel = document.getElementById('navTarihLabel');
+const takvimModalOverlay = document.getElementById('takvimModalOverlay');
+const takvimModalClose = document.getElementById('takvimModalClose');
+const takvimBaslik = document.getElementById('takvimBaslik');
+const takvimAyYil = document.getElementById('takvimAyYil');
+const takvimGrid = document.getElementById('takvimGrid');
+const takvimOnceki = document.getElementById('takvimOnceki');
+const takvimSonraki = document.getElementById('takvimSonraki');
+const takvimTumunuGosterBtn = document.getElementById('takvimTumunuGoster');
+const takvimBugunBtn = document.getElementById('takvimBugun');
 
-function tarihToInputDeger(d){
-  if(!d) return '';
-  const yy = d.getFullYear();
-  const ay = String(d.getMonth() + 1).padStart(2, '0');
-  const gun = String(d.getDate()).padStart(2, '0');
-  return yy + '-' + ay + '-' + gun;
-}
-function inputDegerToTarih(v){
-  if(!v) return null;
-  const [yy, ay, gun] = v.split('-').map(Number);
-  return new Date(yy, ay - 1, gun);
-}
+const AY_ADLARI = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
 
 const filtreDurumu = {
   log: { aktifFiltre: 'ozel-gun', seciliGun: new Date() },
   kod: { aktifFiltre: 'ozel-gun', seciliGun: new Date() }
 };
 
-navTarihFiltre.value = tarihToInputDeger(filtreDurumu.log.seciliGun);
-navTarihFiltre.addEventListener('change', ()=>{
-  const tarih = inputDegerToTarih(navTarihFiltre.value);
-  filtreDurumu.log.seciliGun = tarih;
-  filtreDurumu.kod.seciliGun = tarih;
-  filtreDurumu.log.aktifFiltre = tarih ? 'ozel-gun' : 'hepsi';
-  filtreDurumu.kod.aktifFiltre = tarih ? 'ozel-gun' : 'hepsi';
+let takvimGoruntulenenAy = new Date();
+
+function ayniGun(a, b){
+  return !!a && !!b && a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+}
+
+function navEtiketiGuncelle(){
+  const secili = filtreDurumu.log.seciliGun;
+  navTarihLabel.textContent = (filtreDurumu.log.aktifFiltre === 'ozel-gun' && secili) ? formatTarihSadece(secili) : 'Tüm Tarihler';
+}
+
+function renderTakvim(){
+  const yil = takvimGoruntulenenAy.getFullYear();
+  const ay = takvimGoruntulenenAy.getMonth();
+  takvimAyYil.textContent = AY_ADLARI[ay] + ' ' + yil;
+  takvimBaslik.textContent = AY_ADLARI[ay] + ' ' + yil;
+
+  const ayinIlkGunu = new Date(yil, ay, 1);
+  // Pazartesi başlangıçlı hafta indeksi (0=Pt ... 6=Pz)
+  const baslangicOfset = (ayinIlkGunu.getDay() + 6) % 7;
+  const ayinGunSayisi = new Date(yil, ay + 1, 0).getDate();
+  const oncekiAyGunSayisi = new Date(yil, ay, 0).getDate();
+  const bugun = new Date();
+
+  let html = '';
+  for(let i = 0; i < baslangicOfset; i++){
+    html += `<span class="takvim-gun disi">${oncekiAyGunSayisi - baslangicOfset + i + 1}</span>`;
+  }
+  for(let gun = 1; gun <= ayinGunSayisi; gun++){
+    const tarih = new Date(yil, ay, gun);
+    const siniflar = ['takvim-gun'];
+    if(ayniGun(tarih, bugun)) siniflar.push('bugun');
+    if(filtreDurumu.log.aktifFiltre === 'ozel-gun' && ayniGun(tarih, filtreDurumu.log.seciliGun)) siniflar.push('secili');
+    html += `<button type="button" class="${siniflar.join(' ')}" data-gun="${gun}">${gun}</button>`;
+  }
+  const toplamHucre = baslangicOfset + ayinGunSayisi;
+  const kalan = (7 - (toplamHucre % 7)) % 7;
+  for(let i = 1; i <= kalan; i++){
+    html += `<span class="takvim-gun disi">${i}</span>`;
+  }
+  takvimGrid.innerHTML = html;
+
+  takvimGrid.querySelectorAll('button.takvim-gun').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const secilenTarih = new Date(yil, ay, Number(btn.dataset.gun));
+      filtreDurumu.log.seciliGun = secilenTarih;
+      filtreDurumu.kod.seciliGun = secilenTarih;
+      filtreDurumu.log.aktifFiltre = 'ozel-gun';
+      filtreDurumu.kod.aktifFiltre = 'ozel-gun';
+      navEtiketiGuncelle();
+      renderLog();
+      renderKodListe();
+      takvimKapat();
+    });
+  });
+}
+
+function takvimAc(){
+  takvimGoruntulenenAy = new Date(filtreDurumu.log.seciliGun || new Date());
+  renderTakvim();
+  takvimModalOverlay.classList.add('open');
+}
+function takvimKapat(){
+  takvimModalOverlay.classList.remove('open');
+}
+
+navTarihBtn.addEventListener('click', takvimAc);
+takvimModalClose.addEventListener('click', takvimKapat);
+takvimModalOverlay.addEventListener('click', (e)=>{ if(e.target === takvimModalOverlay) takvimKapat(); });
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && takvimModalOverlay.classList.contains('open')) takvimKapat(); });
+
+takvimOnceki.addEventListener('click', ()=>{
+  takvimGoruntulenenAy = new Date(takvimGoruntulenenAy.getFullYear(), takvimGoruntulenenAy.getMonth() - 1, 1);
+  renderTakvim();
+});
+takvimSonraki.addEventListener('click', ()=>{
+  takvimGoruntulenenAy = new Date(takvimGoruntulenenAy.getFullYear(), takvimGoruntulenenAy.getMonth() + 1, 1);
+  renderTakvim();
+});
+takvimTumunuGosterBtn.addEventListener('click', ()=>{
+  filtreDurumu.log.aktifFiltre = 'hepsi';
+  filtreDurumu.kod.aktifFiltre = 'hepsi';
+  filtreDurumu.log.seciliGun = null;
+  filtreDurumu.kod.seciliGun = null;
+  navEtiketiGuncelle();
   renderLog();
   renderKodListe();
+  takvimKapat();
 });
+takvimBugunBtn.addEventListener('click', ()=>{
+  const bugun = new Date();
+  filtreDurumu.log.seciliGun = bugun;
+  filtreDurumu.kod.seciliGun = bugun;
+  filtreDurumu.log.aktifFiltre = 'ozel-gun';
+  filtreDurumu.kod.aktifFiltre = 'ozel-gun';
+  navEtiketiGuncelle();
+  renderLog();
+  renderKodListe();
+  takvimKapat();
+});
+
+navEtiketiGuncelle();
 
 function filtreAraligi(hedef){
   const durum = filtreDurumu[hedef];
