@@ -264,6 +264,36 @@
   .msg.err{color:var(--red);}
   .msg.ok{color:var(--green);}
 
+  .ara-sonuc-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-top:26px;
+  }
+  .ara-sonuc-head .summary-title{margin:0;}
+  .btn-pdf{
+    flex:0 0 auto;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:9px 18px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:transparent;
+    color:var(--text);
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    font-size:12.5px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:background .15s, border-color .15s;
+  }
+  .btn-pdf::before{content:"⭳";font-size:14px;}
+  .btn-pdf:hover:not(:disabled){background:rgba(255,255,255,.06);border-color:var(--yellow);}
+  .btn-pdf:disabled{opacity:.4;cursor:not-allowed;}
+
   .list-title{
     font-family:'Oswald',sans-serif;
     font-weight:700;
@@ -868,7 +898,23 @@
           <input type="text" id="aramaInput" placeholder="Lastik kodu gir..." autocomplete="off">
           <button class="btn-add" id="btnAra">Ara</button>
         </div>
-        <ul class="summary-list" id="aramaSonuc" style="margin-top:14px;"></ul>
+      </div>
+
+      <div class="ara-sonuc-head">
+        <p class="summary-title" id="araSonucBaslik">Arama Sonucu</p>
+        <button class="btn-pdf" id="btnPdfIndir" disabled>PDF İndir</button>
+      </div>
+      <div class="kabarik-panel">
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr><th>Sıra No</th><th>Tarih</th><th>Bloklu Bulunan Kod</th><th>Saat</th></tr>
+            </thead>
+            <tbody id="araTabloBody">
+              <tr><td colspan="4" class="empty">Aramak için bir kod gir.</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -928,6 +974,8 @@
 
 <div class="conn"><div class="dot" id="connDot"></div><span id="connText">bağlanıyor...</span></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
@@ -1556,6 +1604,9 @@ function formatTarihSadece(d){
 function formatSaatSadece(d){
   return d.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
 }
+function formatSaatSaniye(d){
+  return d.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+}
 function formatTarihSaniye(d){
   return d.toLocaleDateString('tr-TR') + ' ' + d.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
 }
@@ -1566,29 +1617,121 @@ function escapeHtml(s){
 /* ---------- Koda göre ara ---------- */
 const aramaInput = document.getElementById('aramaInput');
 const btnAra = document.getElementById('btnAra');
-const aramaSonuc = document.getElementById('aramaSonuc');
+const araTabloBody = document.getElementById('araTabloBody');
+const araSonucBaslik = document.getElementById('araSonucBaslik');
+const btnPdfIndir = document.getElementById('btnPdfIndir');
+
+let sonAramaKodu = '';
+let sonAramaSonuclari = [];
 
 function kodAra(){
   const aranan = aramaInput.value.trim().toUpperCase();
+  sonAramaKodu = aranan;
+  sonAramaSonuclari = [];
+  btnPdfIndir.disabled = true;
+
   if(!aranan){
-    aramaSonuc.innerHTML = '<li class="empty">Aramak için bir kod gir.</li>';
+    araTabloBody.innerHTML = '<tr><td colspan="4" class="empty">Aramak için bir kod gir.</td></tr>';
+    araSonucBaslik.textContent = 'Arama Sonucu';
     return;
   }
-  const sonuclar = tumOkutmalar.filter(o => (o.kod || '').toUpperCase() === aranan);
+
+  const sonuclar = tumOkutmalar
+    .filter(o => (o.kod || '').toUpperCase() === aranan)
+    .slice()
+    .sort((a, b) => (b.tarih ? b.tarih.getTime() : 0) - (a.tarih ? a.tarih.getTime() : 0));
+
+  araSonucBaslik.textContent = '"' + aranan + '" — ' + sonuclar.length + ' adet bulundu';
+
   if(sonuclar.length === 0){
-    aramaSonuc.innerHTML = '<li class="empty">"' + escapeHtml(aranan) + '" kodunda kayıt bulunamadı.</li>';
+    araTabloBody.innerHTML = '<tr><td colspan="4" class="empty">"' + escapeHtml(aranan) + '" kodunda kayıt bulunamadı.</td></tr>';
     return;
   }
-  aramaSonuc.innerHTML = sonuclar.map(o => `
-    <li class="summary-item">
-      <span class="kod">${o.tarih ? formatTarihSaniye(o.tarih) : '—'}</span>
-      <span class="adet">${escapeHtml(o.istasyon || '—')}</span>
-    </li>
+
+  sonAramaSonuclari = sonuclar;
+  btnPdfIndir.disabled = false;
+
+  araTabloBody.innerHTML = sonuclar.map((o, i) => `
+    <tr>
+      <td class="sira">${i + 1}</td>
+      <td class="tarih">${o.tarih ? formatTarihSadece(o.tarih) : '—'}</td>
+      <td class="kod">${escapeHtml(o.kod)}</td>
+      <td class="saat">${o.tarih ? formatSaatSaniye(o.tarih) : '—'}</td>
+    </tr>
   `).join('');
 }
 
 btnAra.addEventListener('click', kodAra);
 aramaInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') kodAra(); });
+
+/* ---------- Arama sonucunu PDF olarak indir ---------- */
+function pdfIndir(){
+  if(!sonAramaSonuclari.length) return;
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+  const sayfaGenislik = doc.internal.pageSize.getWidth();
+
+  const navyRgb = [26, 34, 51];
+  const yellowRgb = [230, 178, 30];
+
+  doc.setFillColor(...navyRgb);
+  doc.rect(0, 0, sayfaGenislik, 70, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.text('Bitmiş Ürün Ambarı — Bloklu Lastik Paneli', 40, 30);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(11);
+  doc.setTextColor(...yellowRgb);
+  doc.text('Koda Göre Arama Sonucu', 40, 48);
+
+  doc.setFontSize(10.5);
+  doc.setTextColor(60, 60, 60);
+  const uretimTarihi = new Date().toLocaleString('tr-TR');
+  doc.text('Aranan Kod: ' + sonAramaKodu, 40, 92);
+  doc.text('Toplam Bulunma: ' + sonAramaSonuclari.length + ' adet', 40, 108);
+  doc.text('Rapor Tarihi: ' + uretimTarihi, sayfaGenislik - 220, 92);
+
+  const rows = sonAramaSonuclari.map((o, i) => [
+    String(i + 1),
+    o.tarih ? formatTarihSadece(o.tarih) : '—',
+    o.kod || '—',
+    o.tarih ? formatSaatSaniye(o.tarih) : '—'
+  ]);
+
+  doc.autoTable({
+    startY: 126,
+    head: [['Sıra No', 'Tarih', 'Bloklu Bulunan Kod', 'Saat']],
+    body: rows,
+    theme: 'grid',
+    styles: { font: 'helvetica', fontSize: 10, cellPadding: 7, textColor: [40, 40, 40], lineColor: [220, 220, 220], lineWidth: 0.5 },
+    headStyles: { fillColor: navyRgb, textColor: [255, 255, 255], fontStyle: 'bold', halign: 'left' },
+    alternateRowStyles: { fillColor: [245, 246, 248] },
+    columnStyles: {
+      0: { cellWidth: 60, halign: 'center' },
+      1: { cellWidth: 110 },
+      2: { cellWidth: 200, font: 'courier' },
+      3: { cellWidth: 100 }
+    },
+    margin: { left: 40, right: 40 },
+    didDrawPage: (data)=>{
+      const sayfaSayisi = doc.internal.getNumberOfPages();
+      doc.setFontSize(9);
+      doc.setTextColor(140, 140, 140);
+      doc.text(
+        'Sayfa ' + doc.internal.getCurrentPageInfo().pageNumber + ' / ' + sayfaSayisi,
+        sayfaGenislik - 90,
+        doc.internal.pageSize.getHeight() - 20
+      );
+    }
+  });
+
+  const dosyaAdi = 'bloklu-lastik-' + sonAramaKodu.replace(/[^A-Z0-9]/gi, '') + '.pdf';
+  doc.save(dosyaAdi);
+}
+
+btnPdfIndir.addEventListener('click', pdfIndir);
 </script>
 </body>
 </html>
