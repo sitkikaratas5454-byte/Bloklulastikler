@@ -617,27 +617,6 @@
   td.saat{color:var(--muted);font-size:12.5px;white-space:nowrap;}
   td.adet{font-family:var(--mono);color:var(--accent-2);font-size:12.5px;text-align:center;font-weight:600;}
 
-  .summary-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
-  .summary-item{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    background:var(--surface-2);
-    border:1px solid var(--line);
-    border-radius:var(--radius-sm);
-    padding:12px 15px;
-  }
-  .summary-item .kod{font-family:var(--mono);font-size:14px;font-weight:600;letter-spacing:.01em;color:var(--navy);}
-  .summary-item .adet{
-    font-family:var(--mono);
-    font-size:12px;
-    font-weight:600;
-    color:var(--accent-2);
-    background:var(--accent-tint);
-    padding:4px 12px;
-    border-radius:14px;
-    white-space:nowrap;
-  }
 
   .ara-sonuc-head{
     display:flex;
@@ -846,15 +825,6 @@
           <button class="btn-danger" id="btnLogTemizle">Komple Temizle</button>
         </div>
       </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <h2 class="card-title">Koda Göre Bulunma Sayısı</h2>
-      </div>
-      <ul class="summary-list" id="summaryListe">
-        <li class="empty">Yükleniyor...</li>
-      </ul>
     </div>
 
     <div class="card">
@@ -1324,8 +1294,6 @@ function filtreAraligi(hedef){
   return { start: null, end: null };
 }
 
-const summaryListe = document.getElementById('summaryListe');
-
 function renderLog(){
   function lastikKoduBul(kod){
     if(!kod) return null;
@@ -1344,35 +1312,38 @@ function renderLog(){
   });
   logSayisi.textContent = filtreli.length + ' okutma';
 
-  /* Koda göre bulunma sayısı özeti */
-  const sayac = new Map();
-  filtreli.forEach(o=>{
-    sayac.set(o.kod, (sayac.get(o.kod) || 0) + 1);
-  });
-  if(sayac.size === 0){
-    summaryListe.innerHTML = '<li class="empty">Kayıt yok.</li>';
-  }else{
-    const siraliOzet = [...sayac.entries()].sort((a,b)=> b[1]-a[1]);
-    summaryListe.innerHTML = siraliOzet.map(([kod, adet])=>
-      `<li class="summary-item"><span class="kod">${escapeHtml(kod)}</span><span class="adet">${adet} adet bulundu</span></li>`
-    ).join('');
-  }
-
   if(filtreli.length === 0){
     logBody.innerHTML = '<tr><td colspan="7" class="empty">Kayıt yok.</td></tr>';
     return;
   }
+
+  /* Aynı lastik kodu + aynı bloklanan kod tekrarlarını tek satırda topla */
+  const grup = new Map();
+  filtreli.forEach(o=>{
+    const anaLastikKodu = lastikKoduBul(o.kod) || o.kod;
+    const key = anaLastikKodu + '||' + o.kod;
+    if(!grup.has(key)){
+      grup.set(key, { anaLastikKodu, kod: o.kod, istasyon: o.istasyon, tarih: o.tarih, adet: 0 });
+    }
+    const g = grup.get(key);
+    g.adet++;
+    if(o.tarih && (!g.tarih || o.tarih > g.tarih)){
+      g.tarih = o.tarih;
+      g.istasyon = o.istasyon;
+    }
+  });
+  const gruplar = [...grup.values()].sort((a,b)=> (b.tarih ? b.tarih.getTime() : 0) - (a.tarih ? a.tarih.getTime() : 0));
+
   let html = '';
-  filtreli.forEach((o, i)=>{
-    const anaLastikKodu = lastikKoduBul(o.kod);
+  gruplar.forEach((g, i)=>{
     html += `<tr>
       <td class="sira">${i + 1}</td>
-      <td class="tarih">${o.tarih ? formatTarihSadece(o.tarih) : '—'}</td>
-      <td class="kod">${escapeHtml(anaLastikKodu || o.kod)}</td>
-      <td class="istasyon">${escapeHtml(o.istasyon || '—')}</td>
-      <td class="kod">${escapeHtml(o.kod)}</td>
-      <td class="saat">${o.tarih ? formatSaatSadece(o.tarih) : '—'}</td>
-      <td class="adet">${sayac.get(o.kod) || 1}</td>
+      <td class="tarih">${g.tarih ? formatTarihSadece(g.tarih) : '—'}</td>
+      <td class="kod">${escapeHtml(g.anaLastikKodu)}</td>
+      <td class="istasyon">${escapeHtml(g.istasyon || '—')}</td>
+      <td class="kod">${escapeHtml(g.kod)}</td>
+      <td class="saat">${g.tarih ? formatSaatSadece(g.tarih) : '—'}</td>
+      <td class="adet">${g.adet}</td>
     </tr>`;
   });
   logBody.innerHTML = html;
