@@ -131,7 +131,7 @@
     color:var(--text);
   }
   h1 span{color:var(--yellow);}
-  .sub{color:var(--red);font-size:13.5px;margin:0;font-style:italic;}
+  .sub{color:var(--muted);font-size:13.5px;margin:0;font-style:italic;}
   .tabs{
     display:flex;
     max-width:760px;
@@ -792,6 +792,7 @@
 <div class="tabs">
   <div class="tab active" data-view="ekle">Kod Ekle</div>
   <div class="tab" data-view="log">Bloklu Bulunan Lastikler</div>
+  <div class="tab" data-view="ara">Koda Göre Ara</div>
 </div>
 
 <main>
@@ -838,16 +839,7 @@
         <div class="count-badge" id="logSayisi">0 okutma</div>
         <button class="btn-danger" id="btnLogTemizle" style="flex:0 0 auto;padding:7px 14px;font-size:12.5px;">Komple Temizle</button>
       </div>
-      <p class="summary-title" style="margin-top:0;">Koda Göre Ara</p>
-      <div class="kabarik-panel">
-        <div class="add-row" style="margin-bottom:0;">
-          <input type="text" id="aramaInput" placeholder="Lastik kodu gir..." autocomplete="off">
-          <button class="btn-add" id="btnAra">Ara</button>
-        </div>
-        <ul class="summary-list" id="aramaSonuc" style="margin-top:14px;"></ul>
-      </div>
-
-      <p class="summary-title">Koda Göre Bulunma Sayısı</p>
+      <p class="summary-title" style="margin-top:0;">Koda Göre Bulunma Sayısı</p>
       <div class="kabarik-panel">
         <ul class="summary-list" id="summaryListe">
           <li class="empty">Yükleniyor...</li>
@@ -866,6 +858,17 @@
             </tbody>
           </table>
         </div>
+      </div>
+    </section>
+
+    <section id="view-ara" class="view">
+      <p class="summary-title" style="margin-top:0;">Koda Göre Ara</p>
+      <div class="kabarik-panel">
+        <div class="add-row" style="margin-bottom:0;">
+          <input type="text" id="aramaInput" placeholder="Lastik kodu gir..." autocomplete="off">
+          <button class="btn-add" id="btnAra">Ara</button>
+        </div>
+        <ul class="summary-list" id="aramaSonuc" style="margin-top:14px;"></ul>
       </div>
     </section>
 
@@ -914,7 +917,7 @@
     <div class="takvim-gunler" id="takvimGunler"></div>
     <div class="takvim-grid" id="takvimGrid"></div>
 
-    <p class="modal-hint" id="takvimHint" style="font-style:italic;color:var(--red);"></p>
+    <p class="modal-hint" id="takvimHint" style="font-style:italic;"></p>
 
     <div class="modal-actions">
       <button class="btn-danger" id="takvimTemizle">Temizle</button>
