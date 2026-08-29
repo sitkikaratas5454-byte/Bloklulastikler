@@ -117,8 +117,8 @@
     min-height:16px;
   }
   header{
-    padding:22px 20px 14px;
-    max-width:760px;
+    padding:22px clamp(20px,4vw,60px) 14px;
+    width:100%;
     margin:0 auto;
   }
   h1{
@@ -134,9 +134,9 @@
   .sub{color:var(--muted);font-size:13.5px;margin:0;font-style:italic;}
   .tabs{
     display:flex;
-    max-width:760px;
+    width:100%;
     margin:18px auto 0;
-    padding:0 20px;
+    padding:0 clamp(20px,4vw,60px);
     gap:8px;
   }
   .tab{
@@ -184,9 +184,9 @@
       inset 0 1px 0 rgba(255,255,255,.55);
   }
   main{
-    max-width:760px;
+    width:100%;
     margin:0 auto;
-    padding:0 20px 60px;
+    padding:0 clamp(20px,4vw,60px) 60px;
   }
   .panel{
     background:var(--panel);
