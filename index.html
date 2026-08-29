@@ -156,7 +156,7 @@
     font-size:22px;
     letter-spacing:.01em;
     text-transform:uppercase;
-    color:#fff;
+    color:var(--accent);
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
@@ -363,10 +363,27 @@
   /* ---------- Form controls (tek satır kompakt giriş) ---------- */
   .entry-row{
     display:flex;
-    align-items:stretch;
+    align-items:flex-end;
     gap:10px;
     flex-wrap:nowrap;
   }
+  .entry-field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    min-width:0;
+  }
+  .entry-field-bulk{flex:1 1 auto;}
+  .entry-field-save{flex:0 0 auto;}
+  .entry-label{
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    color:var(--accent);
+  }
+  #view-ekle .entry-label{color:var(--accent);}
+  .entry-label-hidden{visibility:hidden;}
   .entry-kod-input{
     flex:0 0 190px;
     max-width:190px;
@@ -440,8 +457,9 @@
   }
   @media (max-width:700px){
     .entry-row{flex-wrap:wrap;}
-    .entry-kod-input{flex:1 1 auto;max-width:none;}
-    .bulk-box{flex:1 1 100%;order:2;}
+    .entry-field{flex:1 1 auto;max-width:none;}
+    .entry-field-bulk{flex:1 1 100%;order:2;}
+    .entry-field-save{flex:1 1 100%;order:3;}
     .entry-row .btn-kaydet-full{flex:1 1 100%;order:3;}
   }
   input[type=text], input[type=password]{
@@ -963,7 +981,7 @@
   <div class="navbar-inner">
     <div class="navbar-brand">
       <div class="brand-text">
-        <span class="brand-title">Bloklu Lastikler</span>
+        <span class="brand-title">GOODYEAR BLOKELİ BEADCODE TAKİBİ</span>
       </div>
     </div>
     <div class="navbar-right">
@@ -991,12 +1009,21 @@
 
     <div class="card entry-card">
       <div class="entry-row">
-        <input id="kodInput" type="text" autocomplete="off" maxlength="10" placeholder="Lastik Kodu" aria-label="Lastik Kodu Giriniz" class="entry-kod-input">
-        <div class="bulk-box" id="bulkBox">
-          <textarea id="bulkInput" placeholder="Blokeli Kodları Giriniz" aria-label="Blokeli Kodları Giriniz"></textarea>
-          <button type="button" class="bulk-expand-btn" id="btnBulkTumunuGor" title="Tümünü Gör">⤢</button>
+        <div class="entry-field">
+          <label class="entry-label" for="kodInput">Lastik Kodu</label>
+          <input id="kodInput" type="text" autocomplete="off" maxlength="10" placeholder="Lastik Kodu" aria-label="Lastik Kodu Giriniz" class="entry-kod-input">
         </div>
-        <button class="btn-kaydet-full" id="btnKaydet">Kaydet</button>
+        <div class="entry-field entry-field-bulk">
+          <label class="entry-label" for="bulkInput">Blokeli Kodları Giriniz</label>
+          <div class="bulk-box" id="bulkBox">
+            <textarea id="bulkInput" placeholder="Blokeli Kodları Giriniz" aria-label="Blokeli Kodları Giriniz"></textarea>
+            <button type="button" class="bulk-expand-btn" id="btnBulkTumunuGor" title="Tümünü Gör">⤢</button>
+          </div>
+        </div>
+        <div class="entry-field entry-field-save">
+          <label class="entry-label entry-label-hidden">Kaydet</label>
+          <button class="btn-kaydet-full" id="btnKaydet">Kaydet</button>
+        </div>
       </div>
       <div class="entry-actions">
         <span class="msg" id="kaydetMsg"></span>
@@ -1021,15 +1048,9 @@
   </section>
 
   <section id="view-log" class="view">
-    <div class="page-head">
-      <div>
-        <h1>Bloklu Bulunan Lastikler</h1>
-      </div>
-    </div>
-
     <div class="card">
       <div class="card-header">
-        <h2 class="card-title">Kod Ara</h2>
+        <h2 class="card-title" style="font-size:26px;text-transform:uppercase;color:var(--accent);">Kod Ara</h2>
         <button type="button" class="btn-secondary" id="btnKopyalaBloklanan" style="display:none;">📋 Bloklanan Kodları Kopyala</button>
       </div>
       <div class="add-row">
