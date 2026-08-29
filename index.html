@@ -653,6 +653,37 @@
   td.saat{color:var(--muted);font-size:12.5px;white-space:nowrap;}
   td.adet{font-family:var(--mono);color:var(--primary);font-size:12.5px;text-align:center;font-weight:600;}
 
+  /* ---------- Bloklu Bulunan Lastikler sekmesi: sayfa arka planına uygun (beyaz kart yok) ---------- */
+  #view-log .card{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.16);
+    box-shadow:none;
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+  }
+  #view-log h1{color:#fff;}
+  #view-log .page-head p{color:#c3cce3;}
+  #view-log .card-title{color:#fff;}
+  #view-log .card-title .tag-count{background:rgba(240,179,35,.18);color:var(--accent);}
+  #view-log .card-desc{color:#c3cce3;}
+  #view-log thead th{color:#9fb0d6;border-bottom-color:rgba(255,255,255,.16);}
+  #view-log tbody td{color:#e9edf7;border-bottom-color:rgba(255,255,255,.1);}
+  #view-log tbody tr:hover td{background:rgba(255,255,255,.06);}
+  #view-log td.kod{color:var(--accent);}
+  #view-log td.istasyon{color:#ffd873;}
+  #view-log td.sira,
+  #view-log td.tarih,
+  #view-log td.saat{color:#9fb0d6;}
+  #view-log td.adet{color:var(--accent);}
+  #view-log .empty{color:#9fb0d6;}
+  #view-log input[type=text]{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.22);
+    color:#fff;
+  }
+  #view-log input[type=text]::placeholder{color:#a9b3cc;}
+  #view-log input[type=text]:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(240,179,35,.25);}
+
   /* ---------- Güncelle Modal shell ---------- */
   .modal-overlay{
     position:fixed;inset:0;
