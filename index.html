@@ -140,9 +140,9 @@
     color:#fff;
   }
   .navbar-inner{
-    max-width:1240px;
-    margin:0 auto;
-    padding:16px clamp(20px,4vw,40px);
+    width:100%;
+    margin:0;
+    padding:16px 40px;
     display:flex;
     align-items:center;
     justify-content:space-between;
@@ -216,9 +216,9 @@
     border-top:1px solid rgba(255,255,255,.06);
   }
   .tabbar-inner{
-    max-width:1240px;
-    margin:0 auto;
-    padding:0 clamp(20px,4vw,40px);
+    width:100%;
+    margin:0;
+    padding:0 40px;
     display:flex;
     gap:4px;
     overflow-x:auto;
@@ -248,9 +248,9 @@
 
   /* ---------- Layout ---------- */
   main{
-    max-width:1240px;
-    margin:0 auto;
-    padding:clamp(20px,3.5vw,36px) clamp(20px,4vw,40px) 70px;
+    width:100%;
+    margin:0;
+    padding:28px 40px 70px;
   }
   .view{display:none;}
   .view.active{display:block;}
@@ -799,6 +799,11 @@
   .modal-msg.err{color:var(--red);}
   .modal-msg.ok{color:var(--green);}
 
+  @media (max-width:900px){
+    .navbar-inner{padding:14px 20px;}
+    .tabbar-inner{padding:0 20px;}
+    main{padding:22px 20px 60px;}
+  }
   @media (max-width:600px){
     .entry-card{padding:20px 18px 22px;}
     .entry-actions{flex-wrap:wrap;}
