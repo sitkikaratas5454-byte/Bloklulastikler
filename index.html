@@ -1034,7 +1034,6 @@
     <div class="page-head">
       <div>
         <h1>Bloklu Bulunan Lastikler</h1>
-        <p>Tüm okuma kayıtları ve koda göre bulunma özetleri.</p>
       </div>
     </div>
 
@@ -1069,6 +1068,22 @@
           </thead>
           <tbody id="logBody">
             <tr><td colspan="7" class="empty">Yükleniyor...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">Otomatik Silinen Kodlar</h2>
+      </div>
+      <div class="tablo-3d" style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr><th>Silinme Tarihi</th><th>Lastik Kodu</th><th>Silinen Kod</th><th>İstasyon</th><th>Bulunma Tarihi</th></tr>
+          </thead>
+          <tbody id="silmeGecmisiBody">
+            <tr><td colspan="5" class="empty">Yükleniyor...</td></tr>
           </tbody>
         </table>
       </div>
@@ -1219,6 +1234,7 @@ const db = getFirestore(app);
 
 const kodlarCol = collection(db, "bloklu_kodlar");
 const okutmalarCol = collection(db, "bloklu_okutmalar");
+const silmeGecmisiCol = collection(db, "bloklu_silme_gecmisi");
 
 const connDot = document.getElementById('connDot');
 const connText = document.getElementById('connText');
@@ -1695,17 +1711,34 @@ function bulunduMu(kod){
 }
 
 /* ---------- Okutulan (bulunan) kodları Bloklu Beadcodlar listesinden otomatik sil ---------- */
+/* Not: her silme işlemi bloklu_silme_gecmisi koleksiyonuna kaydedilir; bu kayıt
+   "Komple Temizle" ile silinmez, sadece elle takip/denetim içindir. */
 const temizlemeIslemde = new Set();
 async function otomatikTemizleBulunanlar(){
   if(!Array.isArray(tumOkutmalar) || tumOkutmalar.length === 0) return;
   if(!Array.isArray(tumKodKayitlari) || tumKodKayitlari.length === 0) return;
   for(const k of tumKodKayitlari){
     if(temizlemeIslemde.has(k.id)) continue;
+    const silinenler = k.blokluKodlar.filter(kd => bulunduMu(kd));
     const kalanlar = k.blokluKodlar.filter(kd => !bulunduMu(kd));
-    if(kalanlar.length !== k.blokluKodlar.length){
+    if(silinenler.length > 0){
       temizlemeIslemde.add(k.id);
       try{
         await updateDoc(doc(db, 'bloklu_kodlar', k.id), { blokluKodlar: kalanlar });
+        for(const silinenKod of silinenler){
+          const eslesenOkutma = tumOkutmalar.find(o => (o.kod || '').toUpperCase() === silinenKod.toUpperCase());
+          try{
+            await addDoc(silmeGecmisiCol, {
+              lastikKodu: k.lastikKodu,
+              silinenKod,
+              bulunmaTarihi: eslesenOkutma && eslesenOkutma.tarih ? Timestamp.fromDate(eslesenOkutma.tarih) : null,
+              istasyon: eslesenOkutma ? (eslesenOkutma.istasyon || null) : null,
+              silinmeTarihi: serverTimestamp()
+            });
+          }catch(e){
+            console.error('Silme geçmişi kaydedilemedi:', e);
+          }
+        }
       }catch(e){
         console.error('Otomatik temizleme hatası:', e);
       }finally{
@@ -1723,6 +1756,32 @@ function lastikKoduBul(kod){
   }
   return null;
 }
+
+/* ---------- Otomatik silme denetim geçmişi ---------- */
+const silmeGecmisiBody = document.getElementById('silmeGecmisiBody');
+const qSilmeGecmisi = query(silmeGecmisiCol, orderBy('silinmeTarihi', 'desc'));
+onSnapshot(qSilmeGecmisi, snap=>{
+  if(snap.empty){
+    silmeGecmisiBody.innerHTML = '<tr><td colspan="5" class="empty">Henüz otomatik silinen kod yok.</td></tr>';
+    return;
+  }
+  let html = '';
+  snap.forEach(d=>{
+    const data = d.data();
+    const silinmeTarihi = data.silinmeTarihi && data.silinmeTarihi.toDate ? formatTarih(data.silinmeTarihi.toDate()) : '—';
+    const bulunmaTarihi = data.bulunmaTarihi && data.bulunmaTarihi.toDate ? formatTarih(data.bulunmaTarihi.toDate()) : '—';
+    html += `<tr>
+      <td class="tarih">${silinmeTarihi}</td>
+      <td class="kod">${escapeHtml(data.lastikKodu || '—')}</td>
+      <td class="kod">${escapeHtml(data.silinenKod || '—')}</td>
+      <td class="istasyon">${escapeHtml(data.istasyon || '—')}</td>
+      <td class="tarih">${bulunmaTarihi}</td>
+    </tr>`;
+  });
+  silmeGecmisiBody.innerHTML = html;
+}, err=>{
+  silmeGecmisiBody.innerHTML = '<tr><td colspan="5" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
+});
 
 function renderLog(){
   const { start, end } = filtreAraligi('log');
