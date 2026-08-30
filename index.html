@@ -336,6 +336,15 @@
     margin:2px 0 0;
   }
 
+  /* Kod ekleme satırı: kapsayıcı kart görünümü kaldırıldı, doğrudan panel üzerinde */
+  .entry-card{
+    background:transparent;
+    border:none;
+    box-shadow:none;
+    padding:0;
+    margin-bottom:22px;
+  }
+
   /* ---------- Form controls (tek satır kompakt giriş) ---------- */
   .entry-row{
     display:flex;
@@ -749,6 +758,13 @@
     backdrop-filter:blur(8px);
     -webkit-backdrop-filter:blur(8px);
   }
+  #view-ekle .entry-card{
+    background:transparent;
+    border:none;
+    box-shadow:none;
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+  }
   #view-log h1,
   #view-ekle h1{color:#fff;}
   #view-log .page-head p,
@@ -947,7 +963,7 @@
     main{padding:22px 20px 60px;}
   }
   @media (max-width:600px){
-    .entry-card{padding:14px 18px 16px;}
+    .entry-card{padding:0;}
     .entry-actions{flex-wrap:wrap;}
   }
 </style>
