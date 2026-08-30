@@ -1385,7 +1385,7 @@
 
     <p class="modal-label">Blokeli Kodlar <span style="color:var(--muted);text-transform:none;letter-spacing:0;font-weight:400;">(virgülle ayır)</span></p>
     <textarea id="modalTextarea" autocomplete="off"></textarea>
-    <p class="modal-hint">Kutuyu tamamen boşaltıp Güncelle'ye basarsan tüm blokeli kodlar silinir. Lastik kodunu komple kaldırmak için aşağıdaki "Kaydı Sil" butonunu kullan.</p>
+    <p class="modal-hint">Burada sadece henüz bulunmamış (kalan) blokeli kodlar listelenir; daha önce bulunan kodlar otomatik olarak korunur. Lastik kodunu komple kaldırmak için aşağıdaki "Kaydı Sil" butonunu kullan.</p>
     <span class="modal-count" id="modalCount">0 blokeli kod</span>
 
     <div class="modal-actions">
@@ -1670,6 +1670,7 @@ const modalMsg = document.getElementById('modalMsg');
 
 let modalAktifId = null;
 let modalAktifKod = null;
+let modalBulunanKodlar = [];
 let modalIslemde = false;
 
 function modalShowMsg(text, type){
@@ -1687,7 +1688,10 @@ function kodGuncelle(id, lastikKodu, mevcutListe){
   modalAktifId = id;
   modalAktifKod = lastikKodu;
   modalKod.textContent = lastikKodu;
-  modalTextarea.value = mevcutListe.join(', ');
+  const bulunanlar = lastikIcinBulunanKodlar(lastikKodu, mevcutListe);
+  modalBulunanKodlar = mevcutListe.filter(kod => bulunanlar.has(String(kod).toUpperCase()));
+  const kalanListe = mevcutListe.filter(kod => !bulunanlar.has(String(kod).toUpperCase()));
+  modalTextarea.value = kalanListe.join(', ');
   modalShowMsg('', '');
   modalKodlariGuncelleSayac();
   modalOverlay.classList.add('open');
@@ -1697,6 +1701,7 @@ function modalKapat(){
   modalOverlay.classList.remove('open');
   modalAktifId = null;
   modalAktifKod = null;
+  modalBulunanKodlar = [];
 }
 modalClose.addEventListener('click', modalKapat);
 modalOverlay.addEventListener('click', (e)=>{ if(e.target === modalOverlay) modalKapat(); });
@@ -1704,7 +1709,8 @@ document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && modalOverla
 
 modalGuncelleBtn.addEventListener('click', async ()=>{
   if(modalIslemde || !modalAktifId) return;
-  const yeniListe = [...new Set(modalTextarea.value.split(/[\s,;]+/).map(s=>s.trim().toUpperCase()).filter(Boolean))];
+  const girilenListe = [...new Set(modalTextarea.value.split(/[\s,;]+/).map(s=>s.trim().toUpperCase()).filter(Boolean))];
+  const yeniListe = [...new Set([...modalBulunanKodlar.map(k=>String(k).toUpperCase()), ...girilenListe])];
   modalIslemde = true;
   modalGuncelleBtn.disabled = true;
   modalSilBtn.disabled = true;
