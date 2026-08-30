@@ -1166,7 +1166,6 @@
     <div class="card kod-listesi-card">
       <div class="card-header">
         <h2 class="card-title kod-listesi-baslik">Bloklu Kod Listesi</h2>
-        <button type="button" class="btn-secondary" id="btnKodListeYenile" style="font-size:12px;padding:6px 12px;">↻ Yenile</button>
       </div>
       <div class="tablo-3d tablo-duz" style="overflow-x:auto;">
         <table>
@@ -1689,17 +1688,6 @@ setTimeout(()=>{
   });
 }, 7000);
 
-const btnKodListeYenile = document.getElementById('btnKodListeYenile');
-btnKodListeYenile.addEventListener('click', ()=>{
-  kodListe.innerHTML = '<tr><td colspan="4" class="empty">Yükleniyor...</td></tr>';
-  getDocs(qKodlar).then(snap=>{
-    try{ kodlarSnapshotIsle(snap); }
-    catch(e){ kodListe.innerHTML = '<tr><td colspan="4" class="empty">Hata: ' + e.message + '</td></tr>'; }
-  }).catch(err=>{
-    kodlarSnapshotHata(err);
-  });
-});
-
 function lastikIcinBulunanKodlar(lastikKodu, blokluKodlar){
   const bulunanlar = new Set();
   if(!Array.isArray(tumOkutmalar) || tumOkutmalar.length === 0 || !Array.isArray(blokluKodlar)) return bulunanlar;
@@ -1796,9 +1784,7 @@ function navEtiketleriGuncelle(){
   const durum = filtreDurumu.log;
   const bugun = new Date();
   if(durum.aktifFiltre === 'ozel-gun' && durum.seciliGun){
-    navTarihLabel.textContent = ayniGun(durum.seciliGun, bugun)
-      ? 'Bugün'
-      : String(durum.seciliGun.getDate()).padStart(2,'0') + '.' + String(durum.seciliGun.getMonth()+1).padStart(2,'0') + '.' + durum.seciliGun.getFullYear();
+    navTarihLabel.textContent = String(durum.seciliGun.getDate()).padStart(2,'0') + '.' + String(durum.seciliGun.getMonth()+1).padStart(2,'0') + '.' + durum.seciliGun.getFullYear();
   } else {
     navTarihLabel.textContent = 'Tüm Tarihler';
   }
