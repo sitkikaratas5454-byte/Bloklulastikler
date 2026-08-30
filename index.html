@@ -2076,12 +2076,13 @@ function renderLogArama(){
     return;
   }
 
-  // Gruplama
+  // Gruplama: aynı kod farklı istasyonlarda okutulmuşsa her istasyon ayrı satırda gösterilsin
   const grup = new Map();
   eslesenler.forEach(o=>{
     const anaLastikKodu = o.lastikKodu || '?';
     const blokKod = o.bloklananKod || '';
-    const key = anaLastikKodu + '||' + blokKod;
+    const istasyon = o.istasyon || '—';
+    const key = anaLastikKodu + '||' + blokKod + '||' + istasyon;
     
     if(!grup.has(key)){
       grup.set(key, { 
@@ -2096,7 +2097,6 @@ function renderLogArama(){
     g.adet++;
     if(o.tarih && (!g.tarih || o.tarih > g.tarih)){
       g.tarih = o.tarih;
-      g.istasyon = o.istasyon;
     }
   });
   
@@ -2113,7 +2113,7 @@ function renderLogArama(){
     </tr>
   `).join('');
 
-  sonAramaBloklananKodlar = gruplar.map(g => g.kod);
+  sonAramaBloklananKodlar = [...new Set(gruplar.map(g => g.kod))];
   btnKopyalaBloklanan.style.display = sonAramaBloklananKodlar.length ? '' : 'none';
   if(sonAramaBloklananKodlar.length){
     bloklananAdetMsg.textContent = sonAramaBloklananKodlar.length + ' adet bloklu kod';
