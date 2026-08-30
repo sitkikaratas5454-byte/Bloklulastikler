@@ -880,8 +880,7 @@
   .takvim-modal-card{
     background:linear-gradient(160deg, var(--primary) 0%, var(--bg-dark) 55%, #4b4420 100%);
     border:1px solid rgba(255,255,255,.16);
-  }
-  .takvim-modal-card .modal-head .tag{color:#c3cce3;}
+  }  .takvim-modal-card .modal-head .tag{color:#c3cce3;}
   .takvim-modal-card .modal-head .kodbaslik{color:#fff;}
   .takvim-modal-card .modal-close{
     background:rgba(255,255,255,.1);
@@ -901,6 +900,41 @@
   .takvim-modal-card .takvim-gun.disi{color:#7d88a6;}
   .takvim-modal-card .takvim-gun.bugun{border-color:var(--accent);color:var(--accent);}
   .takvim-modal-card .takvim-gun.secili{background:var(--accent);border-color:var(--accent);color:var(--navy);}
+
+  /* ---------- Güncelleme modalı: sayfa arka planına uygun (beyaz değil) ---------- */
+  .guncelle-modal-card{
+    background:linear-gradient(160deg, var(--primary) 0%, var(--bg-dark) 55%, #4b4420 100%);
+    border:1px solid rgba(255,255,255,.16);
+  }
+  .guncelle-modal-card .modal-head .tag{color:#c3cce3;}
+  .guncelle-modal-card .modal-head .kodbaslik{color:#fff;}
+  .guncelle-modal-card .modal-close{
+    background:rgba(255,255,255,.1);
+    border:1px solid rgba(255,255,255,.2);
+    color:#fff;
+  }
+  .guncelle-modal-card .modal-close:hover{color:var(--primary);border-color:var(--accent);background:var(--accent);}
+  .guncelle-modal-card .modal-label{color:#e9edf7;}
+  .guncelle-modal-card .modal-label span{color:#9fb0d6 !important;}
+  .guncelle-modal-card textarea{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.2);
+    color:#fff;
+  }
+  .guncelle-modal-card textarea::placeholder{color:#9fb0d6;}
+  .guncelle-modal-card textarea:focus{
+    background:rgba(255,255,255,.12);
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px rgba(240,179,35,.2);
+  }
+  .guncelle-modal-card .modal-hint{color:#c3cce3;}
+  .guncelle-modal-card .modal-count{
+    color:var(--navy);
+    background:var(--accent);
+  }
+  .guncelle-modal-card .modal-msg.err{color:#ff9aa2;}
+  .guncelle-modal-card .modal-msg.ok{color:#7be3a3;}
+
   .modal-head{
     display:flex;
     align-items:flex-start;
@@ -1061,10 +1095,10 @@
       <div class="tablo-3d" style="overflow-x:auto;">
         <table>
           <thead>
-            <tr><th>Eklenme Tarihi</th><th>Lastik Kodu</th><th>Bloklu Beadcodlar</th><th>Bloklu Kod Adedi</th><th></th></tr>
+            <tr><th>Eklenme Tarihi</th><th>Lastik Kodu</th><th>Bloklu Beadcodlar</th><th>Bloklu Kod Adedi</th></tr>
           </thead>
           <tbody id="kodListe">
-            <tr><td colspan="5" class="empty">Yükleniyor...</td></tr>
+            <tr><td colspan="4" class="empty">Yükleniyor...</td></tr>
           </tbody>
         </table>
       </div>
@@ -1074,8 +1108,11 @@
   <section id="view-log" class="view">
     <div class="card">
       <div class="card-header">
-        <h2 class="card-title" style="font-size:26px;text-transform:uppercase;color:var(--accent);">Kod Ara</h2>
-        <button type="button" class="btn-secondary" id="btnKopyalaBloklanan" style="display:none;">📋 Bloklanan Kodları Kopyala</button>
+        <h2 class="card-title" style="font-size:26px;text-transform:uppercase;color:var(--accent);">Lastik Kodu Ara</h2>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span id="bloklananAdetMsg" style="display:none;font-size:13px;font-weight:600;color:var(--muted);"></span>
+          <button type="button" class="btn-secondary" id="btnKopyalaBloklanan" style="display:none;">📋 Bloklanan Kodları Kopyala</button>
+        </div>
       </div>
       <div class="add-row">
         <input type="text" id="logAramaInput" placeholder="Kod giriniz..." autocomplete="off">
@@ -1083,10 +1120,10 @@
       <div class="tablo-3d" style="overflow-x:auto;margin-top:16px;">
         <table>
           <thead>
-            <tr><th>Sıra No</th><th>Tarih</th><th>Lastik Kodu</th><th>İstasyon</th><th>Bloklanan Kod</th><th>Saat</th><th>Adet</th></tr>
+            <tr><th>Sıra No</th><th>Tarih</th><th>Lastik Kodu</th><th>İstasyon</th><th>Bloklanan Kod</th><th>Saat</th></tr>
           </thead>
           <tbody id="logAramaBody">
-            <tr><td colspan="7" class="empty">Aramak için bir kod gir.</td></tr>
+            <tr><td colspan="6" class="empty">Aramak için bir kod gir.</td></tr>
           </tbody>
         </table>
       </div>
@@ -1112,7 +1149,7 @@
 </main>
 
 <div class="modal-overlay" id="modalOverlay">
-  <div class="modal-card">
+  <div class="modal-card guncelle-modal-card">
     <div class="modal-head">
       <div>
         <p class="tag">Lastik Kodu</p>
@@ -1307,6 +1344,20 @@ const btnKaydet = document.getElementById('btnKaydet');
 const kaydetMsg = document.getElementById('kaydetMsg');
 let kaydediliyor = false;
 
+// Sadece sayı girilebilsin (Lastik Kodu: yalnızca rakam)
+kodInput.setAttribute('inputmode', 'numeric');
+kodInput.addEventListener('input', ()=>{
+  const temiz = kodInput.value.replace(/[^0-9]/g, '');
+  if(temiz !== kodInput.value) kodInput.value = temiz;
+});
+
+// Sadece sayı girilebilsin (Blokeli Kodlar: rakam + ayraç karakterleri: boşluk, virgül, noktalı virgül, satır sonu)
+bulkInput.setAttribute('inputmode', 'numeric');
+bulkInput.addEventListener('input', ()=>{
+  const temiz = bulkInput.value.replace(/[^0-9\s,;]/g, '');
+  if(temiz !== bulkInput.value) bulkInput.value = temiz;
+});
+
 function showMsg(text, type){
   kaydetMsg.textContent = text;
   kaydetMsg.className = 'msg ' + (type || '');
@@ -1320,6 +1371,23 @@ async function hepsiniKaydet(){
   const benzersizBlokluKodlar = [...new Set(girilenBlokluKodlar)];
   if(!lastikKodu){ showMsg('Lastik kodu girmelisin.', 'err'); return; }
   if(benzersizBlokluKodlar.length === 0){ showMsg('En az bir blokeli kod girmelisin.', 'err'); return; }
+
+  // Aynı blokeli kod başka bir lastik koduna zaten kayıtlıysa engelle
+  const cakisanlar = [];
+  for(const kod of benzersizBlokluKodlar){
+    for(const [digerLastikKodu, veri] of mevcutKodlar.entries()){
+      if(digerLastikKodu === lastikKodu) continue;
+      if(veri.blokluKodlar.has(kod)){
+        cakisanlar.push(kod + ' → ' + digerLastikKodu);
+        break;
+      }
+    }
+  }
+  if(cakisanlar.length > 0){
+    showMsg('Bu kod(lar) zaten başka bir lastik koduna kayıtlı, yanlış eklemeyi önlemek için engellendi: ' + cakisanlar.join(', '), 'err');
+    return;
+  }
+
   kaydediliyor = true;
   btnKaydet.disabled = true;
   showMsg('Kaydediliyor...', '');
@@ -1498,9 +1566,13 @@ const beadcodGoruntuleSayac = document.getElementById('beadcodGoruntuleSayac');
 const beadcodGoruntuleClose = document.getElementById('beadcodGoruntuleClose');
 
 function beadcodGoruntuleAc(lastikKodu, blokluKodlar){
+  const bulunanlar = lastikIcinBulunanKodlar(lastikKodu, blokluKodlar);
+  const kalanKodlar = blokluKodlar.filter(k => !bulunanlar.has(String(k).toUpperCase()));
   beadcodGoruntuleKod.textContent = lastikKodu;
-  beadcodGoruntuleListe.innerHTML = blokluKodlar.map(k=>`<span class="beadcod-chip">${escapeHtml(k)}</span>`).join('');
-  beadcodGoruntuleSayac.textContent = blokluKodlar.length + ' bloklu kod';
+  beadcodGoruntuleListe.innerHTML = kalanKodlar.length
+    ? kalanKodlar.map(k=>`<span class="beadcod-chip">${escapeHtml(k)}</span>`).join('')
+    : '<span class="beadcod-chip" style="opacity:.6;">Bulunmayan kod kalmadı</span>';
+  beadcodGoruntuleSayac.textContent = blokluKodlar.length + '/' + bulunanlar.size + ' bloklu kod bulundu';
   beadcodGoruntuleOverlay.classList.add('open');
 }
 function beadcodGoruntuleKapat(){
@@ -1532,8 +1604,23 @@ onSnapshot(qKodlar, snap=>{
   otomatikTemizleBulunanlar();
 }, err=>{
   setConn('err');
-  kodListe.innerHTML = '<tr><td colspan="5" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
+  kodListe.innerHTML = '<tr><td colspan="4" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
 });
+
+// Bir lastik kodu için, o lastiğe ait blokeli kodlardan hangilerinin
+// zaten okutulup bulunduğunu (tumOkutmalar içinde) döner.
+function lastikIcinBulunanKodlar(lastikKodu, blokluKodlar){
+  const bulunanlar = new Set();
+  if(!Array.isArray(tumOkutmalar) || tumOkutmalar.length === 0 || !Array.isArray(blokluKodlar)) return bulunanlar;
+  const lastikUpper = String(lastikKodu || '').toUpperCase();
+  const kodSeti = new Set(blokluKodlar.map(k=>String(k).toUpperCase()));
+  tumOkutmalar.forEach(o=>{
+    if((o.lastikKodu || '').toUpperCase() !== lastikUpper) return;
+    const blok = (o.bloklananKod || '').toUpperCase();
+    if(kodSeti.has(blok)) bulunanlar.add(blok);
+  });
+  return bulunanlar;
+}
 
 function renderKodListe(){
   const { start, end } = filtreAraligi('kod');
@@ -1544,36 +1631,30 @@ function renderKodListe(){
     return true;
   });
   if(filtreli.length === 0){
-    kodListe.innerHTML = '<tr><td colspan="5" class="empty">' + (tumKodKayitlari.length === 0 ? 'Henüz bloklu kod eklenmedi.' : 'Seçilen tarihte kayıt yok.') + '</td></tr>';
+    kodListe.innerHTML = '<tr><td colspan="4" class="empty">' + (tumKodKayitlari.length === 0 ? 'Henüz bloklu kod eklenmedi.' : 'Seçilen tarihte kayıt yok.') + '</td></tr>';
     return;
   }
   let html = '';
   filtreli.forEach(k=>{
     const tarih = k.tarih ? formatTarih(k.tarih) : '—';
+    const bulunanlar = lastikIcinBulunanKodlar(k.lastikKodu, k.blokluKodlar);
+    const kalanKodlar = k.blokluKodlar.filter(kod => !bulunanlar.has(String(kod).toUpperCase()));
     html += `<tr class="kod-row" data-id="${k.id}">
       <td class="tarih">${tarih}</td>
       <td class="kod">${escapeHtml(k.lastikKodu)}</td>
       <td>
         <div class="beadcod-hucre">
-          <span class="beadcod-metin">${escapeHtml(k.blokluKodlar.join(', '))}</span>
+          <span class="beadcod-metin">${kalanKodlar.length ? escapeHtml(kalanKodlar.join(', ')) : '—'}</span>
           <button type="button" class="beadcod-buyut-btn" data-id="${k.id}" title="Tümünü Gör">⤢</button>
         </div>
       </td>
-      <td class="adet">${k.blokluKodlar.length}</td>
-      <td><button class="btn-upd" data-id="${k.id}">Güncelle</button></td>
+      <td class="adet">${k.blokluKodlar.length}/${bulunanlar.size}</td>
     </tr>`;
   });
   kodListe.innerHTML = html;
   kodListe.querySelectorAll('tr.kod-row').forEach(tr=>{
     tr.addEventListener('click', ()=>{
       const kayit = tumKodKayitlari.find(k=>k.id === tr.dataset.id);
-      if(kayit) kodGuncelle(kayit.id, kayit.lastikKodu, kayit.blokluKodlar);
-    });
-  });
-  kodListe.querySelectorAll('.btn-upd').forEach(b=>{
-    b.addEventListener('click', (e)=>{
-      e.stopPropagation();
-      const kayit = tumKodKayitlari.find(k=>k.id === b.dataset.id);
       if(kayit) kodGuncelle(kayit.id, kayit.lastikKodu, kayit.blokluKodlar);
     });
   });
@@ -1965,15 +2046,17 @@ function escapeHtml(s){
 const logAramaInput = document.getElementById('logAramaInput');
 const logAramaBody = document.getElementById('logAramaBody');
 const btnKopyalaBloklanan = document.getElementById('btnKopyalaBloklanan');
+const bloklananAdetMsg = document.getElementById('bloklananAdetMsg');
 let sonAramaBloklananKodlar = [];
 
 function renderLogArama(){
   const aranan = logAramaInput.value.trim().toUpperCase();
 
   if(!aranan){
-    logAramaBody.innerHTML = '<tr><td colspan="7" class="empty">Aramak için bir kod gir.</td></tr>';
+    logAramaBody.innerHTML = '<tr><td colspan="6" class="empty">Aramak için bir kod gir.</td></tr>';
     sonAramaBloklananKodlar = [];
     btnKopyalaBloklanan.style.display = 'none';
+    bloklananAdetMsg.style.display = 'none';
     return;
   }
 
@@ -1986,9 +2069,10 @@ function renderLogArama(){
   });
 
   if(eslesenler.length === 0){
-    logAramaBody.innerHTML = '<tr><td colspan="7" class="empty">"' + escapeHtml(aranan) + '" kodunda kayıt bulunamadı.</td></tr>';
+    logAramaBody.innerHTML = '<tr><td colspan="6" class="empty">"' + escapeHtml(aranan) + '" kodunda kayıt bulunamadı.</td></tr>';
     sonAramaBloklananKodlar = [];
     btnKopyalaBloklanan.style.display = 'none';
+    bloklananAdetMsg.style.display = 'none';
     return;
   }
 
@@ -2026,12 +2110,17 @@ function renderLogArama(){
       <td class="istasyon">${escapeHtml(g.istasyon || '—')}</td>
       <td class="kod">${escapeHtml(g.kod)}</td>
       <td class="saat">${g.tarih ? formatSaatSadece(g.tarih) : '—'}</td>
-      <td class="adet">${g.adet}</td>
     </tr>
   `).join('');
 
   sonAramaBloklananKodlar = gruplar.map(g => g.kod);
   btnKopyalaBloklanan.style.display = sonAramaBloklananKodlar.length ? '' : 'none';
+  if(sonAramaBloklananKodlar.length){
+    bloklananAdetMsg.textContent = sonAramaBloklananKodlar.length + ' adet bloklu kod';
+    bloklananAdetMsg.style.display = '';
+  }else{
+    bloklananAdetMsg.style.display = 'none';
+  }
 }
 
 btnKopyalaBloklanan.addEventListener('click', async ()=>{
