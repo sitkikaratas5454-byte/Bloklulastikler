@@ -924,11 +924,13 @@
   .guncelle-modal-card .modal-msg.err{color:#ff9aa2;}
   .guncelle-modal-card .modal-msg.ok{color:#7be3a3;}
 
-  /* ---------- Modern Takvim/Ay-Yıl modalı ---------- */
+  /* ---------- Yeni Takvim Bileşeni (iOS tarzı, hızlı Ay/Yıl seçimli) ---------- */
   .takvim-modal-card{
-    max-width:360px;
+    max-width:340px;
     background:linear-gradient(160deg, var(--primary) 0%, var(--bg-dark) 55%, #4b4420 100%);
     border:1px solid rgba(255,255,255,.16);
+    border-radius:22px;
+    box-shadow:0 24px 60px rgba(8,14,34,.45), 0 2px 8px rgba(8,14,34,.2);
   }
   .takvim-modal-card .modal-head .tag{color:#c3cce3;}
   .takvim-modal-card .modal-head .kodbaslik{color:#fff;}
@@ -938,58 +940,94 @@
     color:#fff;
   }
   .takvim-modal-card .modal-close:hover{color:var(--primary);border-color:var(--accent);background:var(--accent);}
-  .takvim-nav{display:flex;align-items:center;justify-content:space-between;margin-top:6px;}
-  .takvim-nav-btn{
-    width:36px;height:36px;border-radius:11px;
-    border:1px solid rgba(255,255,255,.18);
-    background:rgba(255,255,255,.07);
-    color:#fff;font-size:17px;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;
-    transition:border-color .15s, background .15s, color .15s;
+
+  /* Ay / Yıl hızlı seçim satırı */
+  .takvim-select-row{
+    display:flex;
+    gap:8px;
+    margin-top:8px;
   }
-  .takvim-nav-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(240,179,35,.14);}
-  .takvim-ay-yil{font-family:var(--font-head);font-weight:700;font-size:15.5px;color:#fff;text-transform:capitalize;}
+  .takvim-select-wrap{
+    position:relative;
+    flex:1 1 0;
+  }
+  .takvim-select-wrap::after{
+    content:'';
+    position:absolute;
+    right:13px;top:50%;
+    width:7px;height:7px;
+    border-right:2px solid var(--accent);
+    border-bottom:2px solid var(--accent);
+    transform:translateY(-65%) rotate(45deg);
+    pointer-events:none;
+  }
+  .takvim-select{
+    -webkit-appearance:none;
+    appearance:none;
+    width:100%;
+    height:44px;
+    padding:0 30px 0 14px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.18);
+    background:rgba(255,255,255,.08);
+    color:#fff;
+    font-family:var(--font-head);
+    font-weight:700;
+    font-size:14.5px;
+    text-transform:capitalize;
+    cursor:pointer;
+    outline:none;
+    transition:border-color .15s, background .15s;
+  }
+  .takvim-select:hover{border-color:rgba(255,255,255,.32);}
+  .takvim-select:focus{border-color:var(--accent);background:rgba(255,255,255,.12);}
+  .takvim-select option{color:#0F172A;background:#fff;}
+
   .takvim-gun-basliklari{
     display:grid;grid-template-columns:repeat(7,1fr);
-    margin-top:18px;
+    margin-top:20px;
     font-size:11px;font-weight:700;color:#9fb0d6;text-align:center;text-transform:uppercase;letter-spacing:.04em;
   }
   .takvim-grid{
     display:grid;grid-template-columns:repeat(7,1fr);
-    gap:4px;
+    gap:5px;
     margin-top:8px;
   }
   .takvim-gun{
     aspect-ratio:1/1;
+    min-height:38px;
     display:flex;align-items:center;justify-content:center;
-    border-radius:11px;
+    border-radius:50%;
     font-size:13.5px;font-weight:600;color:#e9edf7;
     background:rgba(255,255,255,.03);border:1px solid transparent;
     cursor:pointer;
-    transition:border-color .15s, background .15s, color .15s;
+    transition:transform .12s ease, border-color .15s, background .15s, color .15s;
   }
   .takvim-gun:hover{border-color:var(--accent);background:rgba(240,179,35,.16);}
+  .takvim-gun:active{transform:scale(.9);}
   .takvim-gun.disi{color:#5c6785;opacity:.4;background:transparent;}
   .takvim-gun.bugun{border-color:var(--accent);color:var(--accent);font-weight:700;}
-  .takvim-gun.secili{background:var(--accent);border-color:var(--accent);color:var(--navy);}
+  .takvim-gun.secili{background:var(--accent);border-color:var(--accent);color:var(--navy);box-shadow:0 4px 14px rgba(240,179,35,.4);}
   .takvim-gun.secili:hover{background:var(--accent-2);border-color:var(--accent-2);color:var(--primary);}
+
   .ay-grid{
     display:grid;grid-template-columns:repeat(3,1fr);
     gap:10px;
-    margin-top:18px;
+    margin-top:20px;
   }
   .ay-hucre{
     padding:16px 6px;
     display:flex;align-items:center;justify-content:center;
-    border-radius:12px;
+    border-radius:14px;
     font-size:13.5px;font-weight:700;color:#e9edf7;
     background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);
     cursor:pointer;
-    transition:border-color .15s, background .15s, color .15s;
+    transition:transform .12s ease, border-color .15s, background .15s, color .15s;
   }
   .ay-hucre:hover{border-color:var(--accent);background:rgba(240,179,35,.14);}
+  .ay-hucre:active{transform:scale(.94);}
   .ay-hucre.bu-ay{border-color:var(--accent);color:var(--accent);}
-  .ay-hucre.secili{background:var(--accent);border-color:var(--accent);color:var(--navy);}
+  .ay-hucre.secili{background:var(--accent);border-color:var(--accent);color:var(--navy);box-shadow:0 4px 14px rgba(240,179,35,.4);}
   .ay-hucre.secili:hover{background:var(--accent-2);border-color:var(--accent-2);color:var(--primary);}
 
   .modal-head{
@@ -1285,10 +1323,13 @@
       <button class="modal-close" id="takvimModalClose" aria-label="Kapat">✕</button>
     </div>
 
-    <div class="takvim-nav">
-      <button type="button" class="takvim-nav-btn" id="takvimOnceki" aria-label="Önceki Ay">‹</button>
-      <span class="takvim-ay-yil" id="takvimAyYil">—</span>
-      <button type="button" class="takvim-nav-btn" id="takvimSonraki" aria-label="Sonraki Ay">›</button>
+    <div class="takvim-select-row">
+      <div class="takvim-select-wrap">
+        <select class="takvim-select" id="takvimAySelect" aria-label="Ay Seç"></select>
+      </div>
+      <div class="takvim-select-wrap">
+        <select class="takvim-select" id="takvimYilSelect" aria-label="Yıl Seç"></select>
+      </div>
     </div>
     <div class="takvim-gun-basliklari">
       <span>Pt</span><span>Sa</span><span>Ça</span><span>Pe</span><span>Cu</span><span>Ct</span><span>Pz</span>
@@ -1312,10 +1353,10 @@
       <button class="modal-close" id="ayYilModalClose" aria-label="Kapat">✕</button>
     </div>
 
-    <div class="takvim-nav">
-      <button type="button" class="takvim-nav-btn" id="ayYilOnceki" aria-label="Önceki Yıl">‹</button>
-      <span class="takvim-ay-yil" id="ayYilBaslik">—</span>
-      <button type="button" class="takvim-nav-btn" id="ayYilSonraki" aria-label="Sonraki Yıl">›</button>
+    <div class="takvim-select-row">
+      <div class="takvim-select-wrap">
+        <select class="takvim-select" id="ayYilYilSelect" aria-label="Yıl Seç"></select>
+      </div>
     </div>
     <div class="ay-grid" id="ayGrid"></div>
 
@@ -1733,23 +1774,37 @@ const navTarihTumu = document.getElementById('navTarihTumu');
 const takvimModalOverlay = document.getElementById('takvimModalOverlay');
 const takvimModalClose = document.getElementById('takvimModalClose');
 const takvimBaslik = document.getElementById('takvimBaslik');
-const takvimAyYil = document.getElementById('takvimAyYil');
 const takvimGrid = document.getElementById('takvimGrid');
-const takvimOnceki = document.getElementById('takvimOnceki');
-const takvimSonraki = document.getElementById('takvimSonraki');
+const takvimAySelect = document.getElementById('takvimAySelect');
+const takvimYilSelect = document.getElementById('takvimYilSelect');
 const takvimTumunuGosterBtn = document.getElementById('takvimTumunuGoster');
 const takvimBugunBtn = document.getElementById('takvimBugun');
 
 const ayYilModalOverlay = document.getElementById('ayYilModalOverlay');
 const ayYilModalClose = document.getElementById('ayYilModalClose');
-const ayYilBaslik = document.getElementById('ayYilBaslik');
 const ayGrid = document.getElementById('ayGrid');
-const ayYilOnceki = document.getElementById('ayYilOnceki');
-const ayYilSonraki = document.getElementById('ayYilSonraki');
+const ayYilYilSelect = document.getElementById('ayYilYilSelect');
 const ayYilTumunuGosterBtn = document.getElementById('ayYilTumunuGoster');
 const ayYilBuAyBtn = document.getElementById('ayYilBuAy');
 
 const AY_ADLARI = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+
+// Yıl seçim listelerini doldur (bugünün yılına göre geniş bir aralık)
+const TAKVIM_YIL_BASLANGIC = new Date().getFullYear() - 8;
+const TAKVIM_YIL_BITIS = new Date().getFullYear() + 5;
+function yilSelectDoldur(selectEl){
+  let html = '';
+  for(let y = TAKVIM_YIL_BASLANGIC; y <= TAKVIM_YIL_BITIS; y++){
+    html += `<option value="${y}">${y}</option>`;
+  }
+  selectEl.innerHTML = html;
+}
+function aySelectDoldur(selectEl){
+  selectEl.innerHTML = AY_ADLARI.map((adi, idx)=>`<option value="${idx}">${adi}</option>`).join('');
+}
+aySelectDoldur(takvimAySelect);
+yilSelectDoldur(takvimYilSelect);
+yilSelectDoldur(ayYilYilSelect);
 
 // Varsayılan: bugünün günü otomatik seçili gelir
 const filtreDurumu = {
@@ -1784,8 +1839,15 @@ function navEtiketleriGuncelle(){
 function renderTakvim(){
   const yil = takvimGoruntulenenAy.getFullYear();
   const ay = takvimGoruntulenenAy.getMonth();
-  takvimAyYil.textContent = AY_ADLARI[ay] + ' ' + yil;
   takvimBaslik.textContent = AY_ADLARI[ay] + ' ' + yil;
+  takvimAySelect.value = String(ay);
+  if(takvimYilSelect.querySelector(`option[value="${yil}"]`) === null){
+    const opt = document.createElement('option');
+    opt.value = String(yil);
+    opt.textContent = String(yil);
+    takvimYilSelect.appendChild(opt);
+  }
+  takvimYilSelect.value = String(yil);
 
   const ayinIlkGunu = new Date(yil, ay, 1);
   const baslangicOfset = (ayinIlkGunu.getDay() + 6) % 7;
@@ -1842,12 +1904,12 @@ takvimModalClose.addEventListener('click', takvimKapat);
 takvimModalOverlay.addEventListener('click', (e)=>{ if(e.target === takvimModalOverlay) takvimKapat(); });
 document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && takvimModalOverlay.classList.contains('open')) takvimKapat(); });
 
-takvimOnceki.addEventListener('click', ()=>{
-  takvimGoruntulenenAy = new Date(takvimGoruntulenenAy.getFullYear(), takvimGoruntulenenAy.getMonth() - 1, 1);
+takvimAySelect.addEventListener('change', ()=>{
+  takvimGoruntulenenAy = new Date(Number(takvimYilSelect.value), Number(takvimAySelect.value), 1);
   renderTakvim();
 });
-takvimSonraki.addEventListener('click', ()=>{
-  takvimGoruntulenenAy = new Date(takvimGoruntulenenAy.getFullYear(), takvimGoruntulenenAy.getMonth() + 1, 1);
+takvimYilSelect.addEventListener('change', ()=>{
+  takvimGoruntulenenAy = new Date(Number(takvimYilSelect.value), Number(takvimAySelect.value), 1);
   renderTakvim();
 });
 takvimTumunuGosterBtn.addEventListener('click', ()=>{
@@ -1877,7 +1939,13 @@ takvimBugunBtn.addEventListener('click', ()=>{
 });
 
 function renderAyGrid(){
-  ayYilBaslik.textContent = String(ayYilGoruntulenenYil);
+  if(ayYilYilSelect.querySelector(`option[value="${ayYilGoruntulenenYil}"]`) === null){
+    const opt = document.createElement('option');
+    opt.value = String(ayYilGoruntulenenYil);
+    opt.textContent = String(ayYilGoruntulenenYil);
+    ayYilYilSelect.appendChild(opt);
+  }
+  ayYilYilSelect.value = String(ayYilGoruntulenenYil);
   const bugun = new Date();
   const durum = filtreDurumu.log;
   let html = '';
@@ -1923,12 +1991,8 @@ ayYilModalClose.addEventListener('click', ayYilKapat);
 ayYilModalOverlay.addEventListener('click', (e)=>{ if(e.target === ayYilModalOverlay) ayYilKapat(); });
 document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && ayYilModalOverlay.classList.contains('open')) ayYilKapat(); });
 
-ayYilOnceki.addEventListener('click', ()=>{
-  ayYilGoruntulenenYil -= 1;
-  renderAyGrid();
-});
-ayYilSonraki.addEventListener('click', ()=>{
-  ayYilGoruntulenenYil += 1;
+ayYilYilSelect.addEventListener('change', ()=>{
+  ayYilGoruntulenenYil = Number(ayYilYilSelect.value);
   renderAyGrid();
 });
 ayYilTumunuGosterBtn.addEventListener('click', ()=>{
