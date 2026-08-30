@@ -366,7 +366,7 @@
   .entry-field-bulk{flex:1 1 auto;}
   .entry-field-save{flex:0 0 auto;}
   .entry-label{
-    font-size:12px;
+    font-size:14px;
     font-weight:700;
     text-transform:uppercase;
     letter-spacing:.04em;
@@ -1381,6 +1381,9 @@ if(sessionStorage.getItem('blokluGiris') === '1'){
 }
 girisBtn.addEventListener('click', girisDeneme);
 girisSifreInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') girisDeneme(); });
+girisSifreInput.addEventListener('input', ()=>{
+  if(girisSifreInput.value.trim().length >= GIRIS_SIFRE.length) girisDeneme();
+});
 
 const firebaseConfig = {
   apiKey: "AIzaSyCTULPTsI4Lvof8YnZCJCWR5mn-BtES_Iw",
