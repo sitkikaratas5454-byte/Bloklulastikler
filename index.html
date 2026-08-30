@@ -795,6 +795,10 @@
   td.adet{font-family:var(--mono);color:var(--primary);font-size:12.5px;text-align:center;font-weight:600;}
   .kod-listesi-card tbody td{font-size:16px;}
   .kod-listesi-card thead th{font-size:15px;font-weight:800;}
+  .lastik-ara-card thead th{font-size:15px;font-weight:800;}
+  .lastik-ara-card tbody td{font-size:16px;}
+  .lastik-ara-card td.kod-bloklanan{color:var(--red);}
+  #view-log .lastik-ara-card td.kod-bloklanan{color:var(--red);}
   #view-ekle td.adet.adet-toplam{color:#ff6b6b;}
   #view-ekle td.adet.adet-bulunan{color:#3ddc84;}
   #view-ekle td.adet.adet-kalan{color:#4da3ff;}
@@ -1237,8 +1241,6 @@
 <body>
 
 <div class="emniyet-serit ust"></div>
-<div class="emniyet-serit sol"></div>
-<div class="emniyet-serit sag"></div>
 
 <div id="girisOverlay" class="giris-overlay">
   <div class="giris-panel">
@@ -2354,7 +2356,7 @@ function renderLogArama(){
       <td class="tarih">${g.tarih ? formatTarihSadece(g.tarih) : '—'}</td>
       <td class="kod">${escapeHtml(g.anaLastikKodu)}</td>
       <td class="istasyon">${escapeHtml(g.istasyon || '—')}</td>
-      <td class="kod">${escapeHtml(g.kod)}</td>
+      <td class="kod kod-bloklanan">${escapeHtml(g.kod)}</td>
       <td class="saat">${g.tarih ? formatSaatSadece(g.tarih) : '—'}</td>
     </tr>
   `).join('');
