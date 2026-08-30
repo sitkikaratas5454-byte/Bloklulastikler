@@ -885,6 +885,23 @@
     .modal-overlay.open .modal-card{transform:translateY(0) scale(1);}
   }
 
+  .modal-card.onay-modal-card{
+    max-width:360px;
+    text-align:center;
+    padding:32px 26px calc(24px + env(safe-area-inset-bottom));
+    background:linear-gradient(160deg, var(--primary) 0%, var(--bg-dark) 55%, #4b4420 100%);
+    border:1px solid rgba(255,255,255,.16);
+  }
+  .modal-card.onay-modal-card .btn-danger{
+    background:rgba(220,53,69,.16);
+    border:1px solid #ff8a94;
+    color:#ff8a94;
+  }
+  .modal-card.onay-modal-card .btn-danger:hover{
+    background:rgba(220,53,69,.28);
+    color:#fff;
+  }
+
   /* ---------- Güncelleme modalı: sayfa arka planına uygun (beyaz değil) ---------- */
   .guncelle-modal-card{
     background:linear-gradient(160deg, var(--primary) 0%, var(--bg-dark) 55%, #4b4420 100%);
@@ -1260,11 +1277,12 @@
               <th>Tarih</th>
               <th>Lastik Kodu</th>
               <th>Blokeli Kodlar</th>
-              <th>Adet</th>
+              <th>Toplam Blokeli Kod Sayısı</th>
+              <th>Bulunan Blokeli Kod Sayısı</th>
             </tr>
           </thead>
           <tbody id="kodListe">
-            <tr><td colspan="4" class="empty">Yükleniyor...</td></tr>
+            <tr><td colspan="5" class="empty">Yükleniyor...</td></tr>
           </tbody>
         </table>
       </div>
@@ -1768,11 +1786,11 @@ function kodlarSnapshotIsle(snap){
 function kodlarSnapshotHata(err){
   kodlarIlkYanit = true;
   setConn('err');
-  kodListe.innerHTML = '<tr><td colspan="4" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
+  kodListe.innerHTML = '<tr><td colspan="5" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
 }
 onSnapshot(qKodlar, snap=>{
   try{ kodlarSnapshotIsle(snap); }
-  catch(e){ kodListe.innerHTML = '<tr><td colspan="4" class="empty">Hata: ' + e.message + '</td></tr>'; }
+  catch(e){ kodListe.innerHTML = '<tr><td colspan="5" class="empty">Hata: ' + e.message + '</td></tr>'; }
 }, kodlarSnapshotHata);
 
 setTimeout(()=>{
@@ -1780,7 +1798,7 @@ setTimeout(()=>{
   getDocs(qKodlar).then(snap=>{
     if(kodlarIlkYanit) return;
     try{ kodlarSnapshotIsle(snap); }
-    catch(e){ kodListe.innerHTML = '<tr><td colspan="4" class="empty">Hata: ' + e.message + '</td></tr>'; }
+    catch(e){ kodListe.innerHTML = '<tr><td colspan="5" class="empty">Hata: ' + e.message + '</td></tr>'; }
   }).catch(err=>{
     if(kodlarIlkYanit) return;
     kodlarSnapshotHata(err);
@@ -1792,12 +1810,34 @@ function lastikIcinBulunanKodlar(lastikKodu, blokluKodlar){
   if(!Array.isArray(tumOkutmalar) || tumOkutmalar.length === 0 || !Array.isArray(blokluKodlar)) return bulunanlar;
   const lastikUpper = String(lastikKodu || '').toUpperCase();
   const kodSeti = new Set(blokluKodlar.map(k=>String(k).toUpperCase()));
+  const { start, end } = filtreAraligi('log');
   tumOkutmalar.forEach(o=>{
     if((o.lastikKodu || '').toUpperCase() !== lastikUpper) return;
+    if(start && (!o.tarih || o.tarih < start)) return;
+    if(end && o.tarih && o.tarih >= end) return;
     const blok = (o.bloklananKod || '').toUpperCase();
     if(kodSeti.has(blok)) bulunanlar.add(blok);
   });
   return bulunanlar;
+}
+
+function lastikIcinBulunanAdet(lastikKodu, blokluKodlar){
+  if(!Array.isArray(tumOkutmalar) || tumOkutmalar.length === 0) return 0;
+  const lastikUpper = String(lastikKodu || '').toUpperCase();
+  const kodSeti = Array.isArray(blokluKodlar)
+    ? new Set(blokluKodlar.map(k=>String(k).toUpperCase()))
+    : null;
+  const { start, end } = filtreAraligi('log');
+  let adet = 0;
+  tumOkutmalar.forEach(o=>{
+    if((o.lastikKodu || '').toUpperCase() !== lastikUpper) return;
+    if(start && (!o.tarih || o.tarih < start)) return;
+    if(end && o.tarih && o.tarih >= end) return;
+    const blok = (o.bloklananKod || '').toUpperCase();
+    if(kodSeti && !kodSeti.has(blok)) return;
+    adet += Number(o.adet) || 1;
+  });
+  return adet;
 }
 
 function renderKodListe(){
@@ -1809,7 +1849,7 @@ function renderKodListe(){
     return true;
   });
   if(filtreli.length === 0){
-    kodListe.innerHTML = '<tr><td colspan="4" class="empty">' + (tumKodKayitlari.length === 0 ? 'Henüz bloklu kod eklenmedi.' : 'Seçilen tarihte kayıt yok.') + '</td></tr>';
+    kodListe.innerHTML = '<tr><td colspan="5" class="empty">' + (tumKodKayitlari.length === 0 ? 'Henüz bloklu kod eklenmedi.' : 'Seçilen tarihte kayıt yok.') + '</td></tr>';
     return;
   }
   let html = '';
@@ -1826,7 +1866,8 @@ function renderKodListe(){
           <button type="button" class="beadcod-buyut-btn" data-id="${k.id}" title="Tümünü Gör">⤢</button>
         </div>
       </td>
-      <td class="adet">${k.blokluKodlar.length}/${bulunanlar.size}</td>
+      <td class="adet">${k.blokluKodlar.length}</td>
+      <td class="adet">${lastikIcinBulunanAdet(k.lastikKodu, k.blokluKodlar)}</td>
     </tr>`;
   });
   kodListe.innerHTML = html;
