@@ -1683,8 +1683,8 @@ const takvimBugunBtn = document.getElementById('takvimBugun');
 const AY_ADLARI = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
 
 const filtreDurumu = {
-  log: { aktifFiltre: 'hepsi', seciliGun: null },
-  kod: { aktifFiltre: 'hepsi', seciliGun: null }
+  log: { aktifFiltre: 'ozel-gun', seciliGun: new Date() },
+  kod: { aktifFiltre: 'ozel-gun', seciliGun: new Date() }
 };
 
 let takvimGoruntulenenAy = new Date();
@@ -1696,7 +1696,11 @@ function ayniGun(a, b){
 function navEtiketiGuncelle(){
   const durum = filtreDurumu.log;
   if(durum.aktifFiltre === 'ozel-gun' && durum.seciliGun){
-    navTarihLabel.textContent = formatTarihSadece(durum.seciliGun);
+    navTarihLabel.textContent = ayniGun(durum.seciliGun, new Date()) ? 'Bugün' : formatTarihSadece(durum.seciliGun);
+  } else if(durum.aktifFiltre === 'ozel-ay' && durum.seciliAy){
+    navTarihLabel.textContent = AY_ADLARI[durum.seciliAy.getMonth()] + ' ' + durum.seciliAy.getFullYear();
+  } else if(durum.aktifFiltre === 'ozel-yil' && durum.seciliYil){
+    navTarihLabel.textContent = String(durum.seciliYil);
   } else {
     navTarihLabel.textContent = 'Tüm Tarihler';
   }
