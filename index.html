@@ -1169,6 +1169,14 @@
         <button type="button" class="btn-secondary" id="btnKodListeYenile" style="font-size:12px;padding:6px 12px;">↻ Yenile</button>
       </div>
       <div class="tablo-3d tablo-duz" style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Tarih</th>
+              <th>Lastik Kodu</th>
+              <th>Blokeli Kodlar</th>
+              <th>Adet</th>
+            </tr>
           </thead>
           <tbody id="kodListe">
             <tr><td colspan="4" class="empty">Yükleniyor...</td></tr>
@@ -1367,11 +1375,7 @@ const db = getFirestore(app);
 const kodlarCol = collection(db, "bloklu_kodlar");
 const okutmalarCol = collection(db, "bloklu_okutmalar");
 
-// Not: bu durum/veri değişkenleri, aşağıdaki onSnapshot dinleyicileri
-// tarafından kullanıldığı için (dinleyiciler her zaman asenkron çalışsa da,
-// güvenlik payı bırakmak amacıyla) dosyanın en başında tanımlanır.
 const AY_ADLARI = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
-// Varsayılan: bugünün günü otomatik seçili gelir
 const filtreDurumu = {
   log: { aktifFiltre: 'ozel-gun', seciliGun: new Date() },
   kod: { aktifFiltre: 'ozel-gun', seciliGun: new Date() }
@@ -1404,14 +1408,12 @@ const btnKaydet = document.getElementById('btnKaydet');
 const kaydetMsg = document.getElementById('kaydetMsg');
 let kaydediliyor = false;
 
-// Sadece sayı girilebilsin (Lastik Kodu: yalnızca rakam)
 kodInput.setAttribute('inputmode', 'numeric');
 kodInput.addEventListener('input', ()=>{
   const temiz = kodInput.value.replace(/[^0-9]/g, '');
   if(temiz !== kodInput.value) kodInput.value = temiz;
 });
 
-// Sadece sayı girilebilsin (Blokeli Kodlar: rakam + ayraç karakterleri: boşluk, virgül, noktalı virgül, satır sonu)
 bulkInput.setAttribute('inputmode', 'numeric');
 bulkInput.addEventListener('input', ()=>{
   const temiz = bulkInput.value.replace(/[^0-9\s,;]/g, '');
@@ -1432,7 +1434,6 @@ async function hepsiniKaydet(){
   if(!lastikKodu){ showMsg('Lastik kodu girmelisin.', 'err'); return; }
   if(benzersizBlokluKodlar.length === 0){ showMsg('En az bir blokeli kod girmelisin.', 'err'); return; }
 
-  // Aynı blokeli kod başka bir lastik koduna zaten kayıtlıysa engelle
   const cakisanlar = [];
   for(const kod of benzersizBlokluKodlar){
     for(const [digerLastikKodu, veri] of mevcutKodlar.entries()){
@@ -1675,9 +1676,7 @@ onSnapshot(qKodlar, snap=>{
   try{ kodlarSnapshotIsle(snap); }
   catch(e){ kodListe.innerHTML = '<tr><td colspan="4" class="empty">Hata: ' + e.message + '</td></tr>'; }
 }, kodlarSnapshotHata);
-// Yavaş/kararsız bağlantılarda gerçek zamanlı dinleyici (onSnapshot) hiç
-// tetiklenmeyip "Yükleniyor..." ekranda takılı kalabiliyor. 7 saniye içinde
-// ilk yanıt gelmezse tek seferlik bir getDocs() ile yedekten yükle.
+
 setTimeout(()=>{
   if(kodlarIlkYanit) return;
   getDocs(qKodlar).then(snap=>{
@@ -1701,8 +1700,6 @@ btnKodListeYenile.addEventListener('click', ()=>{
   });
 });
 
-// Bir lastik kodu için, o lastiğe ait blokeli kodlardan hangilerinin
-// zaten okutulup bulunduğunu (tumOkutmalar içinde) döner.
 function lastikIcinBulunanKodlar(lastikKodu, blokluKodlar){
   const bulunanlar = new Set();
   if(!Array.isArray(tumOkutmalar) || tumOkutmalar.length === 0 || !Array.isArray(blokluKodlar)) return bulunanlar;
@@ -1774,7 +1771,6 @@ const takvimYilSelect = document.getElementById('takvimYilSelect');
 const takvimTumunuGosterBtn = document.getElementById('takvimTumunuGoster');
 const takvimBugunBtn = document.getElementById('takvimBugun');
 
-// Yıl seçim listelerini doldur (bugünün yılına göre geniş bir aralık)
 const TAKVIM_YIL_BASLANGIC = new Date().getFullYear() - 8;
 const TAKVIM_YIL_BITIS = new Date().getFullYear() + 5;
 function yilSelectDoldur(selectEl){
@@ -1946,7 +1942,6 @@ function bulunduMu(kod){
 async function otomatikTemizleBulunanlar(){
   if(!Array.isArray(tumOkutmalar) || tumOkutmalar.length === 0) return;
   if(!Array.isArray(tumKodKayitlari) || tumKodKayitlari.length === 0) return;
-  // Bu fonksiyon şimdilik pasif
 }
 
 function lastikKoduBul(kod){
@@ -2060,7 +2055,7 @@ onSnapshot(qLog, snap=>{
   try{ logSnapshotIsle(snap); }
   catch(e){ logBody.innerHTML = '<tr><td colspan="7" class="empty">Hata: ' + e.message + '</td></tr>'; }
 }, logSnapshotHata);
-// Aynı yedek mekanizma: 7 saniyede yanıt gelmezse tek seferlik getDocs() dene.
+
 setTimeout(()=>{
   if(logIlkYanit) return;
   getDocs(qLog).then(snap=>{
@@ -2087,7 +2082,7 @@ function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 
-/* ---------- KOD ARA (DÜZELTİLDİ) ---------- */
+/* ---------- KOD ARA ---------- */
 const logAramaInput = document.getElementById('logAramaInput');
 const logAramaBody = document.getElementById('logAramaBody');
 const btnKopyalaBloklanan = document.getElementById('btnKopyalaBloklanan');
@@ -2105,11 +2100,9 @@ function renderLogArama(){
     return;
   }
 
-  // 🔥 DÜZELTME: lastikKodu veya bloklananKod ile eşleşenleri bul
   const eslesenler = tumOkutmalar.filter(o=>{
     const lastikKodu = (o.lastikKodu || '').toUpperCase();
     const bloklananKod = (o.bloklananKod || '').toUpperCase();
-    // HER İKİSİNDE DE ARA
     return lastikKodu === aranan || bloklananKod === aranan;
   });
 
@@ -2121,7 +2114,6 @@ function renderLogArama(){
     return;
   }
 
-  // Gruplama: aynı kod farklı istasyonlarda okutulmuşsa her istasyon ayrı satırda gösterilsin
   const grup = new Map();
   eslesenler.forEach(o=>{
     const anaLastikKodu = o.lastikKodu || '?';
@@ -2188,6 +2180,7 @@ btnKopyalaBloklanan.addEventListener('click', async ()=>{
 });
 
 logAramaInput.addEventListener('input', renderLogArama);
-logAramaInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') renderLogArama(); });</script>
+logAramaInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') renderLogArama(); });
+</script>
 </body>
 </html>
