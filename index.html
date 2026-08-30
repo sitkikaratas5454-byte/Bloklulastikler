@@ -573,13 +573,15 @@
     max-width:360px;
     text-align:center;
     padding:32px 26px calc(24px + env(safe-area-inset-bottom));
+    background:linear-gradient(160deg, var(--primary) 0%, var(--bg-dark) 55%, #4b4420 100%);
+    border:1px solid rgba(255,255,255,.16);
   }
   .onay-ikon{
     width:52px;height:52px;
     margin:0 auto 16px;
     border-radius:50%;
-    background:var(--red-tint);
-    color:var(--red);
+    background:rgba(220,53,69,.18);
+    color:#ff8a94;
     display:flex;align-items:center;justify-content:center;
     font-family:var(--font-head);
     font-weight:800;
@@ -589,16 +591,22 @@
     font-family:var(--font-head);
     font-weight:800;
     font-size:17px;
-    color:var(--heading);
+    color:#fff;
     margin:0 0 8px;
   }
   .onay-metin{
-    color:var(--muted);
+    color:#c3cce3;
     font-size:13.5px;
     line-height:1.5;
     margin:0 0 22px;
   }
   .onay-modal-card .modal-actions{margin-top:0;}
+  .onay-modal-card .btn-secondary{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.24);
+    color:#fff;
+  }
+  .onay-modal-card .btn-secondary:hover{border-color:var(--accent);color:var(--accent);background:rgba(240,179,35,.12);}
 
   .btn-upd{
     background:transparent;
@@ -907,9 +915,15 @@
   .guncelle-modal-card .modal-count{
     color:var(--navy);
     background:var(--accent);
+    margin-top:14px;
   }
   .guncelle-modal-card .modal-msg.err{color:#ff9aa2;}
   .guncelle-modal-card .modal-msg.ok{color:#7be3a3;}
+  .guncelle-modal-card .beadcod-chip{
+    color:var(--navy);
+    background:var(--accent);
+    border-color:rgba(240,179,35,.45);
+  }
 
   /* ---------- Yeni Takvim Bileşeni (iOS tarzı, hızlı Ay/Yıl seçimli) ---------- */
   .takvim-modal-card{
@@ -1339,7 +1353,7 @@
 </div>
 
 <div class="modal-overlay" id="bulkModalOverlay">
-  <div class="modal-card">
+  <div class="modal-card guncelle-modal-card">
     <div class="modal-head">
       <div>
         <p class="tag">Kod Ekle</p>
@@ -1359,7 +1373,7 @@
 </div>
 
 <div class="modal-overlay" id="beadcodGoruntuleOverlay">
-  <div class="modal-card">
+  <div class="modal-card guncelle-modal-card">
     <div class="modal-head">
       <div>
         <p class="tag">Lastik Kodu</p>
@@ -1665,14 +1679,17 @@ const onayVazgecBtn = document.getElementById('onayVazgec');
 const onayOnaylaBtn = document.getElementById('onayOnayla');
 let onayCozumle = null;
 
-function onayAc(baslik, metin){
+function onayAc(baslik, metin, onayYazi){
   onayBaslik.textContent = baslik;
   onayMetin.textContent = metin;
+  onayOnaylaBtn.textContent = onayYazi || 'Evet, Sil';
+  onayVazgecBtn.style.display = onayYazi === 'Tamam' ? 'none' : '';
   onayModalOverlay.classList.add('open');
   return new Promise(resolve=>{ onayCozumle = resolve; });
 }
 function onayKapat(sonuc){
   onayModalOverlay.classList.remove('open');
+  onayVazgecBtn.style.display = '';
   if(onayCozumle){ onayCozumle(sonuc); onayCozumle = null; }
 }
 onayVazgecBtn.addEventListener('click', ()=> onayKapat(false));
@@ -2106,10 +2123,18 @@ function renderLog(){
 const btnLogTemizle = document.getElementById('btnLogTemizle');
 let logTemizleniyor = false;
 
+function logEkraniniTemizle(){
+  tumOkutmalar = [];
+  renderLog();
+  renderKodListe();
+  renderLogArama();
+}
+
 btnLogTemizle.addEventListener('click', async ()=>{
   if(logTemizleniyor) return;
   if(tumOkutmalar.length === 0){ return; }
-  if(!confirm('Tüm okutma kayıtlarını komple silmek istediğine emin misin?')) return;
+  const onay = await onayAc('Okutmaları silmek üzeresin', 'Tüm okutma kayıtlarını komple silmek istediğine emin misin? Bu işlem geri alınamaz.');
+  if(!onay) return;
   logTemizleniyor = true;
   btnLogTemizle.disabled = true;
   btnLogTemizle.textContent = 'Temizleniyor...';
@@ -2122,8 +2147,9 @@ btnLogTemizle.addEventListener('click', async ()=>{
       docs.slice(i, i+parcaBoyutu).forEach(d=> batch.delete(d.ref));
       await batch.commit();
     }
+    logEkraniniTemizle();
   }catch(e){
-    alert('Hata: ' + e.message);
+    await onayAc('Silinemedi', 'Hata: ' + e.message, 'Tamam');
   }finally{
     logTemizleniyor = false;
     btnLogTemizle.disabled = false;
@@ -2149,6 +2175,7 @@ function logSnapshotIsle(snap){
   });
   renderLog();
   renderKodListe();
+  renderLogArama();
 }
 function logSnapshotHata(err){
   logIlkYanit = true;
