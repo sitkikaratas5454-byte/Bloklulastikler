@@ -221,70 +221,57 @@
   .dot.ok{background:#3ddc84;}
   .dot.err{background:#ff5a67;}
 
-  /* ---------- Sol Navbar (Sidebar) ---------- */
-  .body-shell{
-    display:flex;
-    align-items:stretch;
-    min-height:calc(100vh - 74px);
-  }
-  .sidebar{
-    flex:0 0 240px;
-    width:240px;
+  /* ---------- Tab bar (üst navbar, iPhone tarzı segmented pill) ---------- */
+  .tabbar{
     background:var(--navy-2);
-    border-right:1px solid rgba(255,255,255,.06);
-    padding:22px 14px;
-    box-sizing:border-box;
+    border-top:1px solid rgba(255,255,255,.06);
+    padding:10px 0;
   }
-  .sidebar-label{
-    font-family:var(--font-head);
-    font-size:11px;
-    font-weight:700;
-    letter-spacing:.08em;
-    text-transform:uppercase;
-    color:#7683a3;
-    margin:0 10px 12px;
-  }
-  .tabs{
+  .tabbar-inner{
+    width:100%;
+    margin:0;
+    padding:0 40px;
     display:flex;
-    flex-direction:column;
-    gap:4px;
+    overflow-x:auto;
+    scrollbar-width:none;
+  }
+  .tabbar-inner::-webkit-scrollbar{display:none;}
+  .tabs{
+    display:inline-flex;
+    background:rgba(255,255,255,.08);
+    border-radius:12px;
+    padding:3px;
+    gap:2px;
+    flex:0 0 auto;
   }
   .tab{
-    display:flex;
-    align-items:center;
-    padding:13px 16px;
+    flex:0 0 auto;
+    padding:9px 18px;
+    text-align:center;
     color:#aab6cf;
     font-family:var(--font-head);
     font-weight:700;
-    font-size:14px;
-    letter-spacing:.01em;
+    font-size:14.5px;
+    letter-spacing:.02em;
+    text-transform:uppercase;
     cursor:pointer;
-    white-space:normal;
-    line-height:1.3;
-    border-radius:10px;
-    border-left:3px solid transparent;
-    transition:color .18s ease, background .18s ease, border-color .18s ease;
+    white-space:nowrap;
+    border-radius:9px;
+    transition:color .18s ease, background .18s ease, box-shadow .18s ease;
   }
-  .tab:hover{color:#fff;background:rgba(255,255,255,.06);}
+  .tab:hover{color:#fff;}
   .tab.active{
-    color:var(--accent);
-    background:rgba(240,179,35,.12);
-    border-left:3px solid var(--accent);
+    color:var(--navy);
+    background:var(--accent);
+    box-shadow:0 1px 4px rgba(0,0,0,.28), 0 1px 1px rgba(0,0,0,.1);
   }
-  @media (max-width:820px){
-    .body-shell{flex-direction:column;}
-    .sidebar{width:100%;flex:0 0 auto;border-right:none;border-bottom:1px solid rgba(255,255,255,.06);padding:12px;}
-    .tabs{flex-direction:row;overflow-x:auto;scrollbar-width:none;}
-    .tabs::-webkit-scrollbar{display:none;}
-    .tab{flex:0 0 auto;border-left:none;border-bottom:3px solid transparent;}
-    .tab.active{border-left:none;border-bottom:3px solid var(--accent);}
-    .sidebar-label{display:none;}
+  @media (max-width:900px){
+    .tabbar-inner{padding:0 20px;}
   }
 
   /* ---------- Layout ---------- */
   main{
-    flex:1 1 auto;
-    min-width:0;
+    width:100%;
     margin:0;
     padding:28px 40px 70px;
     background:transparent;
@@ -1146,18 +1133,17 @@
       <button class="btn-danger" id="btnLogTemizle">Komple Temizle</button>
     </div>
   </div>
+  <nav class="tabbar">
+    <div class="tabbar-inner">
+      <div class="tabs">
+        <div class="tab active" data-view="ekle">Kod Ekle</div>
+        <div class="tab" data-view="log">Bloklu Bulunan Lastikler</div>
+      </div>
+    </div>
+  </nav>
 </header>
 
-<div class="body-shell">
-  <aside class="sidebar">
-    <p class="sidebar-label">Menü</p>
-    <div class="tabs">
-      <div class="tab active" data-view="ekle">Kod Ekle</div>
-      <div class="tab" data-view="log">Bloklu Bulunan Lastikler</div>
-    </div>
-  </aside>
-
-  <main>
+<main>
 
   <section id="view-ekle" class="view active">
 
@@ -1239,8 +1225,7 @@
     </div>
   </section>
 
-  </main>
-</div>
+</main>
 
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal-card guncelle-modal-card">
