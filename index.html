@@ -767,6 +767,9 @@
   td.tarih{color:var(--muted);font-size:12.5px;white-space:nowrap;}
   td.saat{color:var(--muted);font-size:12.5px;white-space:nowrap;}
   td.adet{font-family:var(--mono);color:var(--primary);font-size:12.5px;text-align:center;font-weight:600;}
+  #view-ekle td.adet.adet-toplam{color:#ff6b6b;}
+  #view-ekle td.adet.adet-bulunan{color:#3ddc84;}
+  #view-ekle td.adet.adet-kalan{color:#4da3ff;}
 
   /* ---------- Kod Ekle + Bloklu Bulunan Lastikler sekmeleri: sayfa arka planına uygun (beyaz kart yok) ---------- */
   #view-log .card,
@@ -1277,9 +1280,9 @@
               <th>Tarih</th>
               <th>Lastik Kodu</th>
               <th>Blokeli Kodlar</th>
-              <th>Toplam Blokeli Kod Sayısı</th>
-              <th>Bulunan Blokeli Kod Sayısı</th>
-              <th>Kalan Blokeli Kod Sayısı</th>
+              <th style="text-align:center;">Toplam Blokeli Kod Sayısı</th>
+              <th style="text-align:center;">Bulunan Blokeli Kod Sayısı</th>
+              <th style="text-align:center;">Kalan Blokeli Kod Sayısı</th>
             </tr>
           </thead>
           <tbody id="kodListe">
@@ -1867,9 +1870,9 @@ function renderKodListe(){
           <button type="button" class="beadcod-buyut-btn" data-id="${k.id}" title="Tümünü Gör">⤢</button>
         </div>
       </td>
-      <td class="adet">${k.blokluKodlar.length}</td>
-      <td class="adet">${lastikIcinBulunanAdet(k.lastikKodu, k.blokluKodlar)}</td>
-      <td class="adet">${k.blokluKodlar.length - lastikIcinBulunanAdet(k.lastikKodu, k.blokluKodlar)}</td>
+      <td class="adet adet-toplam">${k.blokluKodlar.length}</td>
+      <td class="adet adet-bulunan">${lastikIcinBulunanAdet(k.lastikKodu, k.blokluKodlar)}</td>
+      <td class="adet adet-kalan">${k.blokluKodlar.length - lastikIcinBulunanAdet(k.lastikKodu, k.blokluKodlar)}</td>
     </tr>`;
   });
   kodListe.innerHTML = html;
