@@ -185,6 +185,7 @@
     color:var(--accent);
     text-align:center;
     white-space:nowrap;
+    margin-top:10px;
   }
   .brand-title span{color:var(--accent);}
   .brand-sub{
@@ -264,13 +265,51 @@
   }
   .tabbar-inner::-webkit-scrollbar{display:none;}
   .tabs{
+    position:relative;
     display:inline-flex;
-    background:transparent;
-    padding:0;
+    background:rgba(255,255,255,.06);
+    padding:4px;
+    border-radius:12px;
     gap:6px;
     flex:0 0 auto;
   }
+  .tab-indicator{
+    position:absolute;
+    top:4px;
+    left:4px;
+    height:calc(100% - 8px);
+    width:0;
+    background:var(--accent);
+    border-radius:9px;
+    box-shadow:0 1px 4px rgba(0,0,0,.28), 0 1px 1px rgba(0,0,0,.1);
+    overflow:hidden;
+    z-index:0;
+    pointer-events:none;
+    transition:left .38s cubic-bezier(.5,0,.2,1), width .38s cubic-bezier(.5,0,.2,1);
+  }
+  .tab-indicator::after{
+    content:'';
+    position:absolute;
+    top:0;
+    left:-60%;
+    width:45%;
+    height:100%;
+    background:linear-gradient(115deg, transparent 0%, rgba(255,255,255,0) 30%, rgba(255,255,255,.85) 48%, rgba(255,255,255,.95) 52%, rgba(255,255,255,0) 70%, transparent 100%);
+    transform:skewX(-18deg);
+    opacity:0;
+  }
+  .tab-indicator.sheen::after{
+    animation:tabSheen .7s ease;
+  }
+  @keyframes tabSheen{
+    0%{ left:-60%; opacity:0; }
+    12%{ opacity:1; }
+    85%{ opacity:1; }
+    100%{ left:130%; opacity:0; }
+  }
   .tab{
+    position:relative;
+    z-index:1;
     flex:0 0 auto;
     padding:9px 18px;
     text-align:center;
@@ -283,13 +322,11 @@
     cursor:pointer;
     white-space:nowrap;
     border-radius:9px;
-    transition:color .18s ease, background .18s ease, box-shadow .18s ease;
+    transition:color .25s ease;
   }
-  .tab:hover{color:#fff;background:rgba(255,255,255,.06);}
+  .tab:hover:not(.active){color:#fff;background:rgba(255,255,255,.06);}
   .tab.active{
     color:var(--navy);
-    background:var(--accent);
-    box-shadow:0 1px 4px rgba(0,0,0,.28), 0 1px 1px rgba(0,0,0,.1);
   }
   @media (max-width:900px){
     .tabbar-inner{padding:0 20px;}
@@ -1268,7 +1305,8 @@
   </div>
   <nav class="tabbar">
     <div class="tabbar-inner">
-      <div class="tabs">
+      <div class="tabs" id="tabsWrap">
+        <div class="tab-indicator" id="tabIndicator"></div>
         <div class="tab active" data-view="ekle">Kod Ekle</div>
         <div class="tab" data-view="log">Bloklu Bulunan Lastikler</div>
       </div>
@@ -1539,15 +1577,51 @@ function setConn(state){
   // Bağlantı durumu rozeti kaldırıldı; fonksiyon geriye dönük çağrılar bozulmasın diye no-op bırakıldı.
 }
 
-/* ---------- Sekme geçişi ---------- */
+/* ---------- Sekme geçişi (iPhone tarzı kayan pill + ayna/sheen efekti) ---------- */
+const tabsWrap = document.getElementById('tabsWrap');
+const tabIndicator = document.getElementById('tabIndicator');
+
+function tabIndicatorTasi(tab, animasyonlu){
+  if(!tab || !tabsWrap || !tabIndicator) return;
+  const wrapRect = tabsWrap.getBoundingClientRect();
+  const rect = tab.getBoundingClientRect();
+  if(!animasyonlu){
+    tabIndicator.style.transition = 'none';
+  }
+  tabIndicator.style.left = (rect.left - wrapRect.left) + 'px';
+  tabIndicator.style.width = rect.width + 'px';
+  if(!animasyonlu){
+    void tabIndicator.offsetWidth;
+    tabIndicator.style.transition = '';
+  }
+  // Ayna (sheen) efektini yeniden tetikle
+  tabIndicator.classList.remove('sheen');
+  void tabIndicator.offsetWidth;
+  tabIndicator.classList.add('sheen');
+}
+
 document.querySelectorAll('.tab').forEach(tab=>{
   tab.addEventListener('click', ()=>{
+    if(tab.classList.contains('active')) return;
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
     document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
     tab.classList.add('active');
     document.getElementById('view-' + tab.dataset.view).classList.add('active');
+    tabIndicatorTasi(tab, true);
   });
 });
+
+window.addEventListener('resize', ()=>{
+  const aktifTab = document.querySelector('.tab.active');
+  tabIndicatorTasi(aktifTab, false);
+});
+
+window.addEventListener('load', ()=>{
+  const aktifTab = document.querySelector('.tab.active');
+  tabIndicatorTasi(aktifTab, false);
+});
+// DOM zaten hazırsa (script sonda) hemen de konumlandır
+tabIndicatorTasi(document.querySelector('.tab.active'), false);
 
 /* ---------- Kod Ekle ---------- */
 const kodListe = document.getElementById('kodListe');
