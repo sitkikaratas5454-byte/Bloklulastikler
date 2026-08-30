@@ -59,6 +59,32 @@
     -webkit-font-smoothing:antialiased;
   }
 
+  /* ---------- Emniyet şeridi kenarlıklar (üst / sol / sağ) ---------- */
+  .emniyet-serit{
+    position:fixed;
+    z-index:4000;
+    background:repeating-linear-gradient(
+      45deg,
+      var(--primary) 0px,
+      var(--primary) 22px,
+      var(--accent) 22px,
+      var(--accent) 44px
+    );
+    pointer-events:none;
+  }
+  .emniyet-serit.ust{
+    top:0; left:0; right:0;
+    height:14px;
+  }
+  .emniyet-serit.sol{
+    top:0; left:0; bottom:0;
+    width:14px;
+  }
+  .emniyet-serit.sag{
+    top:0; right:0; bottom:0;
+    width:14px;
+  }
+
   /* ---------- Giriş ekranı ---------- */
   .giris-overlay{
     position:fixed;
@@ -1209,6 +1235,10 @@
 </style>
 </head>
 <body>
+
+<div class="emniyet-serit ust"></div>
+<div class="emniyet-serit sol"></div>
+<div class="emniyet-serit sag"></div>
 
 <div id="girisOverlay" class="giris-overlay">
   <div class="giris-panel">
