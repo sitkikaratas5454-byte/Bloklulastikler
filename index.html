@@ -918,9 +918,25 @@
     border-radius:22px;
     box-shadow:0 24px 60px rgba(8,14,34,.45), 0 2px 8px rgba(8,14,34,.2);
   }
+  .takvim-modal-card .modal-head{
+    position:relative;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    justify-content:flex-start;
+    padding-right:0;
+  }
   .takvim-modal-card .modal-head .tag{color:#c3cce3;}
-  .takvim-modal-card .modal-head .kodbaslik{color:#fff;}
+  .takvim-modal-card .modal-head .kodbaslik{
+    color:#fff;
+    font-size:28px;
+    font-weight:800;
+    text-transform:capitalize;
+    margin-top:2px;
+  }
   .takvim-modal-card .modal-close{
+    position:absolute;
+    top:0;right:0;
     background:rgba(255,255,255,.1);
     border:1px solid rgba(255,255,255,.2);
     color:#fff;
@@ -930,17 +946,22 @@
   /* Ay / Yıl hızlı seçim satırı */
   .takvim-select-row{
     display:flex;
-    gap:8px;
-    margin-top:8px;
+    gap:10px;
+    margin-top:14px;
   }
   .takvim-select-wrap{
     position:relative;
     flex:1 1 0;
+    border-radius:16px;
+    background:linear-gradient(160deg, rgba(255,255,255,.14), rgba(255,255,255,.03));
+    padding:1px;
+    transition:transform .12s ease;
   }
+  .takvim-select-wrap:active{transform:scale(.97);}
   .takvim-select-wrap::after{
     content:'';
     position:absolute;
-    right:13px;top:50%;
+    right:15px;top:50%;
     width:7px;height:7px;
     border-right:2px solid var(--accent);
     border-bottom:2px solid var(--accent);
@@ -951,22 +972,24 @@
     -webkit-appearance:none;
     appearance:none;
     width:100%;
-    height:44px;
-    padding:0 30px 0 14px;
-    border-radius:14px;
-    border:1px solid rgba(255,255,255,.18);
-    background:rgba(255,255,255,.08);
+    height:48px;
+    padding:0 32px 0 16px;
+    border-radius:15px;
+    border:1px solid rgba(255,255,255,.14);
+    background:rgba(20,24,42,.55);
+    backdrop-filter:blur(6px);
     color:#fff;
     font-family:var(--font-head);
     font-weight:700;
-    font-size:14.5px;
+    font-size:15.5px;
     text-transform:capitalize;
     cursor:pointer;
     outline:none;
-    transition:border-color .15s, background .15s;
+    box-shadow:0 2px 10px rgba(8,14,34,.25);
+    transition:border-color .15s, background .15s, box-shadow .15s;
   }
-  .takvim-select:hover{border-color:rgba(255,255,255,.32);}
-  .takvim-select:focus{border-color:var(--accent);background:rgba(255,255,255,.12);}
+  .takvim-select:hover{border-color:rgba(255,255,255,.34);}
+  .takvim-select:focus{border-color:var(--accent);background:rgba(20,24,42,.7);box-shadow:0 0 0 3px rgba(240,179,35,.22);}
   .takvim-select option{color:#0F172A;background:#fff;}
 
   .takvim-gun-basliklari{
