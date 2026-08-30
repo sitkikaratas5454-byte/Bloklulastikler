@@ -238,10 +238,9 @@
   .tabbar-inner::-webkit-scrollbar{display:none;}
   .tabs{
     display:inline-flex;
-    background:rgba(255,255,255,.08);
-    border-radius:12px;
-    padding:3px;
-    gap:2px;
+    background:transparent;
+    padding:0;
+    gap:6px;
     flex:0 0 auto;
   }
   .tab{
@@ -259,7 +258,7 @@
     border-radius:9px;
     transition:color .18s ease, background .18s ease, box-shadow .18s ease;
   }
-  .tab:hover{color:#fff;}
+  .tab:hover{color:#fff;background:rgba(255,255,255,.06);}
   .tab.active{
     color:var(--navy);
     background:var(--accent);
@@ -1644,17 +1643,20 @@ document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && beadcodGoru
 
 let tumKodKayitlari = [];
 const qKodlar = query(kodlarCol, orderBy('eklenme', 'desc'));
-onSnapshot(qKodlar, snap=>{
+let kodlarIlkYanit = false;
+function kodlarSnapshotIsle(snap){
+  kodlarIlkYanit = true;
   setConn('ok');
   mevcutKodlar = new Map();
   tumKodKayitlari = [];
   snap.forEach(d=>{
     const data = d.data();
+    const lastikKodu = data.lastikKodu || data.LastikKodu || '';
     const blokluKodlar = Array.isArray(data.blokluKodlar) ? data.blokluKodlar : [];
-    mevcutKodlar.set(data.lastikKodu, { id: d.id, blokluKodlar: new Set(blokluKodlar) });
+    mevcutKodlar.set(lastikKodu, { id: d.id, blokluKodlar: new Set(blokluKodlar) });
     tumKodKayitlari.push({
       id: d.id,
-      lastikKodu: data.lastikKodu,
+      lastikKodu,
       blokluKodlar,
       tarih: data.eklenme && data.eklenme.toDate ? data.eklenme.toDate() : null
     });
@@ -1662,10 +1664,30 @@ onSnapshot(qKodlar, snap=>{
   renderKodListe();
   renderLog();
   otomatikTemizleBulunanlar();
-}, err=>{
+}
+function kodlarSnapshotHata(err){
+  kodlarIlkYanit = true;
   setConn('err');
   kodListe.innerHTML = '<tr><td colspan="4" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
-});
+}
+onSnapshot(qKodlar, snap=>{
+  try{ kodlarSnapshotIsle(snap); }
+  catch(e){ kodListe.innerHTML = '<tr><td colspan="4" class="empty">Hata: ' + e.message + '</td></tr>'; }
+}, kodlarSnapshotHata);
+// Yavaş/kararsız bağlantılarda gerçek zamanlı dinleyici (onSnapshot) hiç
+// tetiklenmeyip "Yükleniyor..." ekranda takılı kalabiliyor. 7 saniye içinde
+// ilk yanıt gelmezse tek seferlik bir getDocs() ile yedekten yükle.
+setTimeout(()=>{
+  if(kodlarIlkYanit) return;
+  getDocs(qKodlar).then(snap=>{
+    if(kodlarIlkYanit) return;
+    try{ kodlarSnapshotIsle(snap); }
+    catch(e){ kodListe.innerHTML = '<tr><td colspan="4" class="empty">Hata: ' + e.message + '</td></tr>'; }
+  }).catch(err=>{
+    if(kodlarIlkYanit) return;
+    kodlarSnapshotHata(err);
+  });
+}, 7000);
 
 // Bir lastik kodu için, o lastiğe ait blokeli kodlardan hangilerinin
 // zaten okutulup bulunduğunu (tumOkutmalar içinde) döner.
@@ -1999,7 +2021,9 @@ btnLogTemizle.addEventListener('click', async ()=>{
 });
 
 const qLog = query(okutmalarCol, orderBy('tarih', 'desc'));
-onSnapshot(qLog, snap=>{
+let logIlkYanit = false;
+function logSnapshotIsle(snap){
+  logIlkYanit = true;
   setConn('ok');
   tumOkutmalar = [];
   snap.forEach(d=>{
@@ -2014,10 +2038,28 @@ onSnapshot(qLog, snap=>{
   });
   renderLog();
   renderKodListe();
-}, err=>{
+}
+function logSnapshotHata(err){
+  logIlkYanit = true;
   setConn('err');
   logBody.innerHTML = '<tr><td colspan="7" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
-});
+}
+onSnapshot(qLog, snap=>{
+  try{ logSnapshotIsle(snap); }
+  catch(e){ logBody.innerHTML = '<tr><td colspan="7" class="empty">Hata: ' + e.message + '</td></tr>'; }
+}, logSnapshotHata);
+// Aynı yedek mekanizma: 7 saniyede yanıt gelmezse tek seferlik getDocs() dene.
+setTimeout(()=>{
+  if(logIlkYanit) return;
+  getDocs(qLog).then(snap=>{
+    if(logIlkYanit) return;
+    try{ logSnapshotIsle(snap); }
+    catch(e){ logBody.innerHTML = '<tr><td colspan="7" class="empty">Hata: ' + e.message + '</td></tr>'; }
+  }).catch(err=>{
+    if(logIlkYanit) return;
+    logSnapshotHata(err);
+  });
+}, 7000);
 
 /* ---------- Yardımcılar ---------- */
 function formatTarih(d){
