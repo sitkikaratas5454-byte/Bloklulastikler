@@ -1166,6 +1166,7 @@
     <div class="card kod-listesi-card">
       <div class="card-header">
         <h2 class="card-title kod-listesi-baslik">Bloklu Kod Listesi</h2>
+        <button type="button" class="btn-secondary" id="btnKodListeYenile" style="font-size:12px;padding:6px 12px;">↻ Yenile</button>
       </div>
       <div class="tablo-3d tablo-duz" style="overflow-x:auto;">
           </thead>
@@ -1688,6 +1689,17 @@ setTimeout(()=>{
     kodlarSnapshotHata(err);
   });
 }, 7000);
+
+const btnKodListeYenile = document.getElementById('btnKodListeYenile');
+btnKodListeYenile.addEventListener('click', ()=>{
+  kodListe.innerHTML = '<tr><td colspan="4" class="empty">Yükleniyor...</td></tr>';
+  getDocs(qKodlar).then(snap=>{
+    try{ kodlarSnapshotIsle(snap); }
+    catch(e){ kodListe.innerHTML = '<tr><td colspan="4" class="empty">Hata: ' + e.message + '</td></tr>'; }
+  }).catch(err=>{
+    kodlarSnapshotHata(err);
+  });
+});
 
 // Bir lastik kodu için, o lastiğe ait blokeli kodlardan hangilerinin
 // zaten okutulup bulunduğunu (tumOkutmalar içinde) döner.
