@@ -1279,10 +1279,11 @@
               <th>Blokeli Kodlar</th>
               <th>Toplam Blokeli Kod Sayısı</th>
               <th>Bulunan Blokeli Kod Sayısı</th>
+              <th>Kalan Blokeli Kod Sayısı</th>
             </tr>
           </thead>
           <tbody id="kodListe">
-            <tr><td colspan="5" class="empty">Yükleniyor...</td></tr>
+            <tr><td colspan="6" class="empty">Yükleniyor...</td></tr>
           </tbody>
         </table>
       </div>
@@ -1786,11 +1787,11 @@ function kodlarSnapshotIsle(snap){
 function kodlarSnapshotHata(err){
   kodlarIlkYanit = true;
   setConn('err');
-  kodListe.innerHTML = '<tr><td colspan="5" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
+  kodListe.innerHTML = '<tr><td colspan="6" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
 }
 onSnapshot(qKodlar, snap=>{
   try{ kodlarSnapshotIsle(snap); }
-  catch(e){ kodListe.innerHTML = '<tr><td colspan="5" class="empty">Hata: ' + e.message + '</td></tr>'; }
+  catch(e){ kodListe.innerHTML = '<tr><td colspan="6" class="empty">Hata: ' + e.message + '</td></tr>'; }
 }, kodlarSnapshotHata);
 
 setTimeout(()=>{
@@ -1798,7 +1799,7 @@ setTimeout(()=>{
   getDocs(qKodlar).then(snap=>{
     if(kodlarIlkYanit) return;
     try{ kodlarSnapshotIsle(snap); }
-    catch(e){ kodListe.innerHTML = '<tr><td colspan="5" class="empty">Hata: ' + e.message + '</td></tr>'; }
+    catch(e){ kodListe.innerHTML = '<tr><td colspan="6" class="empty">Hata: ' + e.message + '</td></tr>'; }
   }).catch(err=>{
     if(kodlarIlkYanit) return;
     kodlarSnapshotHata(err);
@@ -1849,7 +1850,7 @@ function renderKodListe(){
     return true;
   });
   if(filtreli.length === 0){
-    kodListe.innerHTML = '<tr><td colspan="5" class="empty">' + (tumKodKayitlari.length === 0 ? 'Henüz bloklu kod eklenmedi.' : 'Seçilen tarihte kayıt yok.') + '</td></tr>';
+    kodListe.innerHTML = '<tr><td colspan="6" class="empty">' + (tumKodKayitlari.length === 0 ? 'Henüz bloklu kod eklenmedi.' : 'Seçilen tarihte kayıt yok.') + '</td></tr>';
     return;
   }
   let html = '';
@@ -1868,6 +1869,7 @@ function renderKodListe(){
       </td>
       <td class="adet">${k.blokluKodlar.length}</td>
       <td class="adet">${lastikIcinBulunanAdet(k.lastikKodu, k.blokluKodlar)}</td>
+      <td class="adet">${k.blokluKodlar.length - lastikIcinBulunanAdet(k.lastikKodu, k.blokluKodlar)}</td>
     </tr>`;
   });
   kodListe.innerHTML = html;
