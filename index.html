@@ -1869,7 +1869,8 @@ function kodListesiGoruntuleAc(baslik, kodlar, lastikKodlari){
       }).join('')
     : '<span class="beadcod-chip" style="opacity:.6;">Kod yok</span>';
   const bulunanAdet = kodlar.filter(k => bulunanSeti.has(String(k).toUpperCase())).length;
-  beadcodGoruntuleSayac.textContent = kodlar.length + ' adet blokeli kod / bulunan ' + bulunanAdet + ' adet';
+  const kalanAdet = kodlar.length - bulunanAdet;
+  beadcodGoruntuleSayac.textContent = kodlar.length + ' adet blokeli kod / bulunan ' + bulunanAdet + ' adet / kalan ' + kalanAdet + ' adet';
   beadcodGoruntuleOverlay.classList.add('open');
 }
 beadcodGoruntuleClose.addEventListener('click', beadcodGoruntuleKapat);
