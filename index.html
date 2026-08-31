@@ -1716,21 +1716,9 @@ function modalKodlariGuncelleSayac(){
 }
 modalTextarea.addEventListener('input', modalKodlariGuncelleSayac);
 
-async function kodGuncelle(id, lastikKodu, mevcutListe){
+function kodGuncelle(id, lastikKodu, mevcutListe){
   const bulunanlar = lastikIcinBulunanKodlar(lastikKodu, mevcutListe);
   const kalanKodlar = mevcutListe.filter(k => !bulunanlar.has(String(k).toUpperCase()));
-  if(bulunanlar.size > 0){
-    try{
-      if(kalanKodlar.length === 0){
-        await deleteDoc(doc(db, 'bloklu_kodlar', id));
-        return;
-      }else{
-        await updateDoc(doc(db, 'bloklu_kodlar', id), { blokluKodlar: kalanKodlar });
-      }
-    }catch(e){
-      console.error('Bulunan kodlar otomatik silinirken hata:', e);
-    }
-  }
   modalAktifId = id;
   modalAktifKod = lastikKodu;
   modalKod.textContent = lastikKodu;
