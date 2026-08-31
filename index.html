@@ -2463,18 +2463,18 @@ async function logAramaPdfIndir(){
   btnPdfIndir.disabled = true;
 
   const sarmalayici = document.createElement('div');
-  sarmalayici.style.cssText = 'position:fixed;left:-99999px;top:0;background:#ffffff;padding:26px;display:inline-block;font-family:Arial,Helvetica,sans-serif;';
+  sarmalayici.style.cssText = 'position:fixed;left:-99999px;top:0;background:#ffffff;padding:10px;display:inline-block;font-family:Arial,Helvetica,sans-serif;';
 
   const olusturmaTarihi = new Date().toLocaleString('tr-TR');
   const baslikMetni = sonAranankod ? ('Aranan Kod: ' + sonAranankod) : 'Bloklu Bulunan Lastikler';
 
   const baslik = document.createElement('div');
-  baslik.style.cssText = 'font-weight:800;font-size:20px;color:#0F172A;margin-bottom:4px;';
+  baslik.style.cssText = 'font-weight:800;font-size:13px;color:#0F172A;margin-bottom:2px;';
   baslik.textContent = 'Bloklu Bulunan Lastikler — Arama Sonucu';
   sarmalayici.appendChild(baslik);
 
   const altBaslik = document.createElement('div');
-  altBaslik.style.cssText = 'font-size:12.5px;color:#66738c;margin-bottom:16px;';
+  altBaslik.style.cssText = 'font-size:9px;color:#66738c;margin-bottom:6px;';
   altBaslik.textContent = baslikMetni + '   •   Oluşturulma: ' + olusturmaTarihi;
   sarmalayici.appendChild(altBaslik);
 
@@ -2482,31 +2482,31 @@ async function logAramaPdfIndir(){
   tablo.style.cssText = 'border-collapse:collapse;width:100%;';
   const basliklar = ['Sıra No', 'Tarih', 'Lastik Kodu', 'İstasyon', 'Bloklanan Kod', 'Saat'];
   const thead = document.createElement('thead');
-  thead.innerHTML = '<tr>' + basliklar.map(b=>`<th style="text-align:left;font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#1C2B6E;padding:8px 12px;border-bottom:2px solid #1C2B6E;white-space:nowrap;">${b}</th>`).join('') + '</tr>';
+  thead.innerHTML = '<tr>' + basliklar.map(b=>`<th style="text-align:left;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:#1C2B6E;padding:4px 8px;border-bottom:1.5px solid #1C2B6E;white-space:nowrap;">${b}</th>`).join('') + '</tr>';
   tablo.appendChild(thead);
 
   const tbody = document.createElement('tbody');
   sonAramaGruplari.forEach((g, i)=>{
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td style="padding:9px 12px;border-bottom:1px solid #e3e7ee;font-size:12.5px;color:#66738c;">${i + 1}</td>
-      <td style="padding:9px 12px;border-bottom:1px solid #e3e7ee;font-size:13px;color:#0F172A;white-space:nowrap;">${g.tarih ? formatTarihSadece(g.tarih) : '—'}</td>
-      <td style="padding:9px 12px;border-bottom:1px solid #e3e7ee;font-size:13px;color:#0F172A;font-weight:600;">${escapeHtml(g.anaLastikKodu)}</td>
-      <td style="padding:9px 12px;border-bottom:1px solid #e3e7ee;font-size:12.5px;color:#1C2B6E;font-weight:600;">${escapeHtml(g.istasyon || '—')}</td>
-      <td style="padding:9px 12px;border-bottom:1px solid #e3e7ee;font-size:13px;color:#dc3545;font-weight:700;">${escapeHtml(g.kod)}</td>
-      <td style="padding:9px 12px;border-bottom:1px solid #e3e7ee;font-size:12.5px;color:#66738c;white-space:nowrap;">${g.tarih ? formatSaatSadece(g.tarih) : '—'}</td>
+      <td style="padding:3px 8px;border-bottom:1px solid #e3e7ee;font-size:9px;color:#66738c;">${i + 1}</td>
+      <td style="padding:3px 8px;border-bottom:1px solid #e3e7ee;font-size:9.5px;color:#0F172A;white-space:nowrap;">${g.tarih ? formatTarihSadece(g.tarih) : '—'}</td>
+      <td style="padding:3px 8px;border-bottom:1px solid #e3e7ee;font-size:9.5px;color:#0F172A;font-weight:600;">${escapeHtml(g.anaLastikKodu)}</td>
+      <td style="padding:3px 8px;border-bottom:1px solid #e3e7ee;font-size:9px;color:#1C2B6E;font-weight:600;">${escapeHtml(g.istasyon || '—')}</td>
+      <td style="padding:3px 8px;border-bottom:1px solid #e3e7ee;font-size:9.5px;color:#dc3545;font-weight:700;">${escapeHtml(g.kod)}</td>
+      <td style="padding:3px 8px;border-bottom:1px solid #e3e7ee;font-size:9px;color:#66738c;white-space:nowrap;">${g.tarih ? formatSaatSadece(g.tarih) : '—'}</td>
     `;
     tbody.appendChild(tr);
   });
 
   const toplamTr = document.createElement('tr');
   toplamTr.innerHTML = `
-    <td style="padding:11px 12px;"></td>
-    <td style="padding:11px 12px;"></td>
-    <td style="padding:11px 12px;"></td>
-    <td style="padding:11px 12px;font-size:13px;color:#0F172A;font-weight:800;text-align:right;">GENEL TOPLAM</td>
-    <td style="padding:11px 12px;font-size:14px;color:#1f9d55;font-weight:800;border-top:2px solid #1C2B6E;">${sonAramaGruplari.length} adet</td>
-    <td style="padding:11px 12px;"></td>
+    <td style="padding:5px 8px;"></td>
+    <td style="padding:5px 8px;"></td>
+    <td style="padding:5px 8px;"></td>
+    <td style="padding:5px 8px;font-size:9.5px;color:#0F172A;font-weight:800;text-align:right;">GENEL TOPLAM</td>
+    <td style="padding:5px 8px;font-size:10px;color:#1f9d55;font-weight:800;border-top:1.5px solid #1C2B6E;">${sonAramaGruplari.length} adet</td>
+    <td style="padding:5px 8px;"></td>
   `;
   tbody.appendChild(toplamTr);
 
@@ -2521,10 +2521,10 @@ async function logAramaPdfIndir(){
     const pdf = new jsPDF({ orientation:'landscape', unit:'pt', format:'a4' });
     const sayfaGenislik = pdf.internal.pageSize.getWidth();
     const sayfaYukseklik = pdf.internal.pageSize.getHeight();
-    const kenarBosluk = 20;
+    const kenarBosluk = 8;
     const kullanilabilirGenislik = sayfaGenislik - kenarBosluk * 2;
     const kullanilabilirYukseklik = sayfaYukseklik - kenarBosluk * 2;
-    const oran = Math.min(kullanilabilirGenislik / canvas.width, kullanilabilirYukseklik / canvas.height, 1);
+    const oran = Math.min(kullanilabilirGenislik / canvas.width, kullanilabilirYukseklik / canvas.height);
     const imgGenislik = canvas.width * oran;
     const imgYukseklik = canvas.height * oran;
     const x = (sayfaGenislik - imgGenislik) / 2;
