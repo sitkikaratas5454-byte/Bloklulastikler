@@ -224,8 +224,9 @@
 
   /* ---------- Tab bar (üst navbar, iPhone tarzı segmented pill) ---------- */
   .tabbar{
-    background:var(--navy-2);
-    border-top:1px solid rgba(255,255,255,.06);
+    background:transparent;
+    border-top:none;
+    box-shadow:none;
     padding:10px 0;
   }
   .tabbar-inner{
@@ -2219,6 +2220,7 @@ let sonAramaBloklananKodlar = [];
 
 function renderLogArama(){
   const aranan = logAramaInput.value.trim().toUpperCase();
+  if(aranan){ logAramaInput.value = ''; }
 
   if(!aranan){
     logAramaBody.innerHTML = '<tr><td colspan="6" class="empty">Aramak için bir kod gir.</td></tr>';
@@ -2309,7 +2311,6 @@ btnKopyalaBloklanan.addEventListener('click', async ()=>{
 
 const btnLogSorgula = document.getElementById('btnLogSorgula');
 btnLogSorgula.addEventListener('click', renderLogArama);
-logAramaInput.addEventListener('input', renderLogArama);
 logAramaInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') renderLogArama(); });
 </script>
 </body>
