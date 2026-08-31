@@ -1608,6 +1608,7 @@ document.querySelectorAll('.tab').forEach(tab=>{
 /* ---------- Kod Ekle ---------- */
 const kodListe = document.getElementById('kodListe');
 let mevcutKodlar = new Map();
+let mevcutKodlarTumu = new Map();
 
 const kodInput = document.getElementById('kodInput');
 const bulkInput = document.getElementById('bulkInput');
@@ -1643,9 +1644,9 @@ async function hepsiniKaydet(){
 
   const cakisanlar = [];
   for(const kod of benzersizBlokluKodlar){
-    for(const [digerLastikKodu, veri] of mevcutKodlar.entries()){
+    for(const [digerLastikKodu, blokSeti] of mevcutKodlarTumu.entries()){
       if(digerLastikKodu === lastikKodu) continue;
-      if(veri.blokluKodlar.has(kod)){
+      if(blokSeti.has(kod)){
         cakisanlar.push(kod + ' → ' + digerLastikKodu);
         break;
       }
@@ -1660,19 +1661,20 @@ async function hepsiniKaydet(){
   btnKaydet.disabled = true;
   showMsg('Kaydediliyor...', '');
   try{
-    const mevcut = mevcutKodlar.get(lastikKodu);
-    if(mevcut){
-      const yeniler = benzersizBlokluKodlar.filter(k=>!mevcut.blokluKodlar.has(k));
-      if(yeniler.length === 0){
-        showMsg('Girdiğin blokeli kodların hepsi zaten ' + lastikKodu + ' kodunda kayıtlı.', 'err');
-      }else{
-        const birlesikListe = [...mevcut.blokluKodlar, ...yeniler];
-        await updateDoc(doc(db, 'bloklu_kodlar', mevcut.id), { blokluKodlar: birlesikListe });
-        showMsg(yeniler.length + ' yeni blokeli kod ' + lastikKodu + ' koduna eklendi.', 'ok');
-      }
+    const tumGecmisKodlar = mevcutKodlarTumu.get(lastikKodu) || new Set();
+    const yeniler = benzersizBlokluKodlar.filter(k=>!tumGecmisKodlar.has(k));
+    if(yeniler.length === 0){
+      showMsg('Girdiğin blokeli kodların hepsi zaten ' + lastikKodu + ' kodunda kayıtlı.', 'err');
     }else{
-      await addDoc(kodlarCol, { lastikKodu, blokluKodlar: benzersizBlokluKodlar, eklenme: serverTimestamp() });
-      showMsg(lastikKodu + ' lastik kodu ve ' + benzersizBlokluKodlar.length + ' blokeli kod kaydedildi.', 'ok');
+      const bugunkuKayit = mevcutKodlar.get(lastikKodu);
+      if(bugunkuKayit){
+        const birlesikListe = [...bugunkuKayit.blokluKodlar, ...yeniler];
+        await updateDoc(doc(db, 'bloklu_kodlar', bugunkuKayit.id), { blokluKodlar: birlesikListe });
+        showMsg(yeniler.length + ' yeni blokeli kod ' + lastikKodu + ' koduna eklendi.', 'ok');
+      }else{
+        await addDoc(kodlarCol, { lastikKodu, blokluKodlar: yeniler, eklenme: serverTimestamp() });
+        showMsg(lastikKodu + ' lastik kodu ve ' + yeniler.length + ' blokeli kod bugünün tarihiyle kaydedildi.', 'ok');
+      }
     }
     kodInput.value = '';
     bulkInput.value = '';
@@ -1881,17 +1883,30 @@ function kodlarSnapshotIsle(snap){
   kodlarIlkYanit = true;
   setConn('ok');
   mevcutKodlar = new Map();
+  mevcutKodlarTumu = new Map();
   tumKodKayitlari = [];
+  const bugun = new Date();
   snap.forEach(d=>{
     const data = d.data();
     const lastikKodu = data.lastikKodu || data.LastikKodu || '';
     const blokluKodlar = Array.isArray(data.blokluKodlar) ? data.blokluKodlar : [];
-    mevcutKodlar.set(lastikKodu, { id: d.id, blokluKodlar: new Set(blokluKodlar) });
+    const tarih = data.eklenme && data.eklenme.toDate ? data.eklenme.toDate() : null;
+
+    if(!mevcutKodlarTumu.has(lastikKodu)) mevcutKodlarTumu.set(lastikKodu, new Set());
+    blokluKodlar.forEach(k=>mevcutKodlarTumu.get(lastikKodu).add(k));
+
+    if(ayniGun(tarih, bugun)){
+      const oncekiBugunkuKayit = mevcutKodlar.get(lastikKodu);
+      if(!oncekiBugunkuKayit || (tarih && (!oncekiBugunkuKayit.tarih || tarih > oncekiBugunkuKayit.tarih))){
+        mevcutKodlar.set(lastikKodu, { id: d.id, blokluKodlar: new Set(blokluKodlar), tarih });
+      }
+    }
+
     tumKodKayitlari.push({
       id: d.id,
       lastikKodu,
       blokluKodlar,
-      tarih: data.eklenme && data.eklenme.toDate ? data.eklenme.toDate() : null
+      tarih
     });
   });
   renderKodListe();
@@ -2203,9 +2218,9 @@ async function otomatikTemizleBulunanlar(){
 function lastikKoduBul(kod){
   if(!kod) return null;
   const kodUpper = kod.toUpperCase();
-  if(mevcutKodlar.has(kodUpper)) return kodUpper;
-  for(const [lastikKodu, rec] of mevcutKodlar.entries()){
-    if(rec.blokluKodlar.has(kodUpper)) return lastikKodu;
+  if(mevcutKodlarTumu.has(kodUpper)) return kodUpper;
+  for(const [lastikKodu, blokSeti] of mevcutKodlarTumu.entries()){
+    if(blokSeti.has(kodUpper)) return lastikKodu;
   }
   return null;
 }
