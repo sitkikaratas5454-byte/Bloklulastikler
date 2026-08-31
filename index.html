@@ -1238,6 +1238,7 @@
       <div class="tabs">
         <div class="tab active" data-view="ekle">Kod Ekle</div>
         <div class="tab" data-view="log">Bloklu Bulunan Lastikler</div>
+        <div class="tab" data-view="kodara">Koda Göre Ara</div>
       </div>
     </div>
   </nav>
@@ -1334,6 +1335,31 @@
           </thead>
           <tbody id="logBody">
             <tr><td colspan="7" class="empty">Yükleniyor...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-kodara" class="view">
+    <div class="card lastik-ara-card">
+      <div class="card-header">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <h2 class="card-title" style="font-size:26px;text-transform:uppercase;color:var(--accent);">Koda Göre Ara</h2>
+          <span style="font-style:italic;font-size:12.5px;font-weight:400;color:#9fb0d6;text-transform:none;">(lastik kodu veya bloklu kod giriniz — hangi gün kaç tane eklendiğini gösterir)</span>
+        </div>
+      </div>
+      <div class="add-row">
+        <input type="text" id="kodAraInput" placeholder="Kod giriniz..." autocomplete="off" style="flex:1 1 auto;min-width:0;">
+        <button type="button" class="btn-secondary" id="btnKodAraSorgula" style="flex-shrink:0;">Sorgula</button>
+      </div>
+      <div class="tablo-3d tablo-duz" style="overflow-x:auto;margin-top:16px;">
+        <table>
+          <thead>
+            <tr><th>Sıra No</th><th>Tarih</th><th>Lastik Kodu</th><th>O Gün Eklenen Adet</th></tr>
+          </thead>
+          <tbody id="kodAraBody">
+            <tr><td colspan="4" class="empty">Aramak için bir kod gir.</td></tr>
           </tbody>
         </table>
       </div>
@@ -2328,6 +2354,77 @@ btnKopyalaBloklanan.addEventListener('click', async ()=>{
 const btnLogSorgula = document.getElementById('btnLogSorgula');
 btnLogSorgula.addEventListener('click', renderLogArama);
 logAramaInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') renderLogArama(); });
+
+/* ---------- KODA GÖRE ARA (hangi gün kaç tane eklenmiş) ---------- */
+const kodAraInput = document.getElementById('kodAraInput');
+const kodAraBody = document.getElementById('kodAraBody');
+const btnKodAraSorgula = document.getElementById('btnKodAraSorgula');
+
+function renderKodAra(){
+  const aranan = kodAraInput.value.trim().toUpperCase();
+  if(aranan){ kodAraInput.value = ''; }
+
+  if(!aranan){
+    kodAraBody.innerHTML = '<tr><td colspan="4" class="empty">Aramak için bir kod gir.</td></tr>';
+    return;
+  }
+
+  if(!Array.isArray(tumKodKayitlari) || tumKodKayitlari.length === 0){
+    kodAraBody.innerHTML = '<tr><td colspan="4" class="empty">Henüz bloklu kod eklenmedi.</td></tr>';
+    return;
+  }
+
+  // Aranan kod ya bir "ana lastik kodu" ya da o lastiğe eklenmiş "bloklu kodlardan" biri olabilir.
+  const eslesenler = [];
+  tumKodKayitlari.forEach(k=>{
+    const lastikUpper = String(k.lastikKodu || '').toUpperCase();
+    const blokluKodlar = Array.isArray(k.blokluKodlar) ? k.blokluKodlar : [];
+    const blokluUpper = blokluKodlar.map(x=>String(x).toUpperCase());
+
+    if(lastikUpper === aranan){
+      // Ana lastik kodu arandı: o kayıtta eklenen tüm bloklu kodlar sayılır.
+      eslesenler.push({ tarih: k.tarih, lastikKodu: k.lastikKodu, adet: blokluKodlar.length || 1 });
+    } else if(blokluUpper.includes(aranan)){
+      // Belirli bir bloklu kod arandı: bu kayıtta 1 kez eklenmiş demektir.
+      eslesenler.push({ tarih: k.tarih, lastikKodu: k.lastikKodu, adet: 1 });
+    }
+  });
+
+  if(eslesenler.length === 0){
+    kodAraBody.innerHTML = '<tr><td colspan="4" class="empty">"' + escapeHtml(aranan) + '" kodunda kayıt bulunamadı.</td></tr>';
+    return;
+  }
+
+  // Güne göre grupla (aynı gün birden fazla ekleme olabilir).
+  const grup = new Map();
+  eslesenler.forEach(e=>{
+    const gunAnahtari = e.tarih ? formatTarihSadece(e.tarih) : 'Tarih bilinmiyor';
+    if(!grup.has(gunAnahtari)){
+      grup.set(gunAnahtari, { tarih: e.tarih, adet: 0, lastikler: new Set() });
+    }
+    const g = grup.get(gunAnahtari);
+    g.adet += e.adet;
+    g.lastikler.add(e.lastikKodu);
+  });
+
+  const gruplar = [...grup.entries()].sort((a,b)=>{
+    const ta = a[1].tarih ? a[1].tarih.getTime() : 0;
+    const tb = b[1].tarih ? b[1].tarih.getTime() : 0;
+    return tb - ta;
+  });
+
+  kodAraBody.innerHTML = gruplar.map(([gun, g], i) => `
+    <tr>
+      <td class="sira">${i + 1}</td>
+      <td class="tarih">${escapeHtml(gun)}</td>
+      <td class="kod">${escapeHtml([...g.lastikler].join(', '))}</td>
+      <td class="adet">${g.adet}</td>
+    </tr>
+  `).join('');
+}
+
+btnKodAraSorgula.addEventListener('click', renderKodAra);
+kodAraInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') renderKodAra(); });
 </script>
 </body>
 </html>
