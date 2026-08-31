@@ -481,6 +481,11 @@
     background:var(--navy-tint);border:1px solid var(--line);
     border-radius:7px;padding:5px 10px;
   }
+  .beadcod-chip-bulundu{
+    color:var(--green);
+    background:var(--green-tint);
+    border-color:var(--green);
+  }
   @media (max-width:700px){
     .entry-row{flex-wrap:wrap;}
     .entry-field{flex:1 1 auto;max-width:none;}
@@ -1833,10 +1838,23 @@ function beadcodGoruntuleAc(lastikKodu, blokluKodlar){
 function beadcodGoruntuleKapat(){
   beadcodGoruntuleOverlay.classList.remove('open');
 }
-function kodListesiGoruntuleAc(baslik, kodlar){
+function kodListesiGoruntuleAc(baslik, kodlar, lastikKodlari){
+  const lastikSeti = new Set((lastikKodlari || []).map(x=>String(x).toUpperCase()));
+  const bulunanSeti = new Set();
+  if(Array.isArray(tumOkutmalar)){
+    tumOkutmalar.forEach(o=>{
+      const lastikUpper = (o.lastikKodu || '').toUpperCase();
+      if(lastikSeti.size && !lastikSeti.has(lastikUpper)) return;
+      const blokUpper = (o.bloklananKod || '').toUpperCase();
+      if(blokUpper) bulunanSeti.add(blokUpper);
+    });
+  }
   beadcodGoruntuleKod.textContent = baslik;
   beadcodGoruntuleListe.innerHTML = kodlar.length
-    ? kodlar.map(k=>`<span class="beadcod-chip">${escapeHtml(k)}</span>`).join('')
+    ? kodlar.map(k=>{
+        const bulunduMu = bulunanSeti.has(String(k).toUpperCase());
+        return `<span class="beadcod-chip${bulunduMu ? ' beadcod-chip-bulundu' : ''}">${escapeHtml(k)}</span>`;
+      }).join('')
     : '<span class="beadcod-chip" style="opacity:.6;">Kod yok</span>';
   beadcodGoruntuleSayac.textContent = kodlar.length + ' bloklu kod';
   beadcodGoruntuleOverlay.classList.add('open');
@@ -2303,7 +2321,7 @@ function formatTarihSadece(d){
   return d.toLocaleDateString('tr-TR');
 }
 function formatSaatSadece(d){
-  return d.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
+  return d.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
 }
 function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -2491,7 +2509,7 @@ function renderKodAra(){
     btn.addEventListener('click', ()=>{
       const idx = Number(btn.dataset.idx);
       const [gun, g] = gruplar[idx];
-      kodListesiGoruntuleAc(gun + ' — ' + [...g.lastikler].join(', '), [...g.kodlar]);
+      kodListesiGoruntuleAc(gun + ' — ' + [...g.lastikler].join(', '), [...g.kodlar], [...g.lastikler]);
     });
   });
 }
