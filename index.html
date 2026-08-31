@@ -845,6 +845,7 @@
   #view-ekle tbody tr:hover td{background:rgba(255,255,255,.06);}
   #view-log td.kod,
   #view-ekle td.kod{color:var(--accent);}
+  #view-log td.blok-kod{color:var(--red)!important;}
   #view-log td.istasyon,
   #view-ekle td.istasyon{color:#ffd873;}
   #view-log td.sira,
@@ -876,6 +877,43 @@
     color:#fff;
   }
   #view-log .btn-secondary:hover{border-color:var(--accent);color:var(--accent);background:rgba(240,179,35,.12);}
+
+  /* ---------- Koda Göre Ara sekmesi: sayfa arka planına uygun (beyaz kart yok) ---------- */
+  #view-kodara .lastik-ara-card{
+    background:transparent;
+    border:none;
+    box-shadow:none;
+    padding:0;
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+  }
+  #view-kodara h1{color:#fff;}
+  #view-kodara .page-head p{color:#c3cce3;}
+  #view-kodara .card-title{color:#fff;}
+  #view-kodara .card-title .tag-count{background:rgba(240,179,35,.18);color:var(--accent);}
+  #view-kodara .card-desc{color:#c3cce3;}
+  #view-kodara thead th{color:#9fb0d6;border-bottom-color:rgba(255,255,255,.16);}
+  #view-kodara tbody td{color:#e9edf7;border-bottom-color:rgba(255,255,255,.1);}
+  #view-kodara tbody tr:hover td{background:rgba(255,255,255,.06);}
+  #view-kodara td.kod{color:var(--accent);}
+  #view-kodara td.sira,
+  #view-kodara td.tarih,
+  #view-kodara td.saat{color:#9fb0d6;}
+  #view-kodara td.adet{color:var(--accent);}
+  #view-kodara .empty{color:#9fb0d6;}
+  #view-kodara input[type=text]{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.22);
+    color:#fff;
+  }
+  #view-kodara input[type=text]::placeholder{color:#a9b3cc;}
+  #view-kodara input[type=text]:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(240,179,35,.25);}
+  #view-kodara .btn-secondary{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.24);
+    color:#fff;
+  }
+  #view-kodara .btn-secondary:hover{border-color:var(--accent);color:var(--accent);background:rgba(240,179,35,.12);}
 
   /* ---------- Güncelle Modal shell ---------- */
   .modal-overlay{
@@ -1356,10 +1394,10 @@
       <div class="tablo-3d tablo-duz" style="overflow-x:auto;margin-top:16px;">
         <table>
           <thead>
-            <tr><th>Sıra No</th><th>Tarih</th><th>Lastik Kodu</th><th>O Gün Eklenen Adet</th></tr>
+            <tr><th>Sıra No</th><th>Tarih</th><th>Lastik Kodu</th><th>O Gün Eklenen Adet</th><th>Eklenen Bloklu Kodlar</th></tr>
           </thead>
           <tbody id="kodAraBody">
-            <tr><td colspan="4" class="empty">Aramak için bir kod gir.</td></tr>
+            <tr><td colspan="5" class="empty">Aramak için bir kod gir.</td></tr>
           </tbody>
         </table>
       </div>
@@ -2161,7 +2199,7 @@ function renderLog(){
       <td class="tarih">${g.tarih ? formatTarihSadece(g.tarih) : '—'}</td>
       <td class="kod">${escapeHtml(g.anaLastikKodu)}</td>
       <td class="istasyon">${escapeHtml(g.istasyon || '—')}</td>
-      <td class="kod">${escapeHtml(g.kod)}</td>
+      <td class="kod blok-kod">${escapeHtml(g.kod)}</td>
       <td class="saat">${g.tarih ? formatSaatSadece(g.tarih) : '—'}</td>
       <td class="adet">${g.adet}</td>
     </tr>`;
@@ -2317,7 +2355,7 @@ function renderLogArama(){
       <td class="tarih">${g.tarih ? formatTarihSadece(g.tarih) : '—'}</td>
       <td class="kod">${escapeHtml(g.anaLastikKodu)}</td>
       <td class="istasyon">${escapeHtml(g.istasyon || '—')}</td>
-      <td class="kod">${escapeHtml(g.kod)}</td>
+      <td class="kod blok-kod">${escapeHtml(g.kod)}</td>
       <td class="saat">${g.tarih ? formatSaatSadece(g.tarih) : '—'}</td>
     </tr>
   `).join('');
@@ -2365,12 +2403,12 @@ function renderKodAra(){
   if(aranan){ kodAraInput.value = ''; }
 
   if(!aranan){
-    kodAraBody.innerHTML = '<tr><td colspan="4" class="empty">Aramak için bir kod gir.</td></tr>';
+    kodAraBody.innerHTML = '<tr><td colspan="5" class="empty">Aramak için bir kod gir.</td></tr>';
     return;
   }
 
   if(!Array.isArray(tumKodKayitlari) || tumKodKayitlari.length === 0){
-    kodAraBody.innerHTML = '<tr><td colspan="4" class="empty">Henüz bloklu kod eklenmedi.</td></tr>';
+    kodAraBody.innerHTML = '<tr><td colspan="5" class="empty">Henüz bloklu kod eklenmedi.</td></tr>';
     return;
   }
 
@@ -2382,16 +2420,19 @@ function renderKodAra(){
     const blokluUpper = blokluKodlar.map(x=>String(x).toUpperCase());
 
     if(lastikUpper === aranan){
-      // Ana lastik kodu arandı: o kayıtta eklenen tüm bloklu kodlar sayılır.
-      eslesenler.push({ tarih: k.tarih, lastikKodu: k.lastikKodu, adet: blokluKodlar.length || 1 });
-    } else if(blokluUpper.includes(aranan)){
-      // Belirli bir bloklu kod arandı: bu kayıtta 1 kez eklenmiş demektir.
-      eslesenler.push({ tarih: k.tarih, lastikKodu: k.lastikKodu, adet: 1 });
+      // Ana lastik kodu arandı: o kayıtta eklenen tüm bloklu kodlar sayılır ve listelenir.
+      eslesenler.push({ tarih: k.tarih, lastikKodu: k.lastikKodu, adet: blokluKodlar.length || 1, kodlar: blokluKodlar });
+    } else {
+      const idx = blokluUpper.indexOf(aranan);
+      if(idx !== -1){
+        // Belirli bir bloklu kod arandı: bu kayıtta 1 kez eklenmiş demektir.
+        eslesenler.push({ tarih: k.tarih, lastikKodu: k.lastikKodu, adet: 1, kodlar: [blokluKodlar[idx]] });
+      }
     }
   });
 
   if(eslesenler.length === 0){
-    kodAraBody.innerHTML = '<tr><td colspan="4" class="empty">"' + escapeHtml(aranan) + '" kodunda kayıt bulunamadı.</td></tr>';
+    kodAraBody.innerHTML = '<tr><td colspan="5" class="empty">"' + escapeHtml(aranan) + '" kodunda kayıt bulunamadı.</td></tr>';
     return;
   }
 
@@ -2400,11 +2441,12 @@ function renderKodAra(){
   eslesenler.forEach(e=>{
     const gunAnahtari = e.tarih ? formatTarihSadece(e.tarih) : 'Tarih bilinmiyor';
     if(!grup.has(gunAnahtari)){
-      grup.set(gunAnahtari, { tarih: e.tarih, adet: 0, lastikler: new Set() });
+      grup.set(gunAnahtari, { tarih: e.tarih, adet: 0, lastikler: new Set(), kodlar: new Set() });
     }
     const g = grup.get(gunAnahtari);
     g.adet += e.adet;
     g.lastikler.add(e.lastikKodu);
+    (e.kodlar || []).forEach(kd=> g.kodlar.add(kd));
   });
 
   const gruplar = [...grup.entries()].sort((a,b)=>{
@@ -2419,6 +2461,7 @@ function renderKodAra(){
       <td class="tarih">${escapeHtml(gun)}</td>
       <td class="kod">${escapeHtml([...g.lastikler].join(', '))}</td>
       <td class="adet">${g.adet}</td>
+      <td class="kod">${escapeHtml([...g.kodlar].join(', ') || '—')}</td>
     </tr>
   `).join('');
 }
