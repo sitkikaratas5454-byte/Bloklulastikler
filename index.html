@@ -34,6 +34,8 @@
     --red-tint:#fbe7e9;
     --green:#1f9d55;
     --green-tint:#e6f6ec;
+    --blue:#2563eb;
+    --blue-tint:#e5edfc;
     --text:var(--text-dark);
     --heading:var(--text-dark);
     --muted:#66738c;
@@ -783,6 +785,9 @@
   td.tarih{color:var(--muted);font-size:12.5px;white-space:nowrap;}
   td.saat{color:var(--muted);font-size:12.5px;white-space:nowrap;}
   td.adet{font-family:var(--mono);color:var(--primary);font-size:12.5px;text-align:center;font-weight:600;}
+  td.adet-blokeli{font-family:var(--mono);color:var(--red);font-size:13px;text-align:center;font-weight:800;}
+  td.adet-bulunan{font-family:var(--mono);color:var(--green);font-size:13px;text-align:center;font-weight:800;}
+  td.adet-kalan{font-family:var(--mono);color:var(--blue);font-size:13px;text-align:center;font-weight:800;}
 
   /* ---------- Kod Ekle + Bloklu Bulunan Lastikler sekmeleri: sayfa arka planına uygun (beyaz kart yok) ---------- */
   #view-log .card,
@@ -1270,11 +1275,13 @@
               <th>Tarih</th>
               <th>Lastik Kodu</th>
               <th>Blokeli Kodlar</th>
-              <th>Adet</th>
+              <th>Blokeli Kod Sayısı</th>
+              <th>Bulunan Kod Sayısı</th>
+              <th>Kalan Blokeli Kod</th>
             </tr>
           </thead>
           <tbody id="kodListe">
-            <tr><td colspan="4" class="empty">Yükleniyor...</td></tr>
+            <tr><td colspan="6" class="empty">Yükleniyor...</td></tr>
           </tbody>
         </table>
       </div>
@@ -1776,11 +1783,11 @@ function kodlarSnapshotIsle(snap){
 function kodlarSnapshotHata(err){
   kodlarIlkYanit = true;
   setConn('err');
-  kodListe.innerHTML = '<tr><td colspan="4" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
+  kodListe.innerHTML = '<tr><td colspan="6" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
 }
 onSnapshot(qKodlar, snap=>{
   try{ kodlarSnapshotIsle(snap); }
-  catch(e){ kodListe.innerHTML = '<tr><td colspan="4" class="empty">Hata: ' + e.message + '</td></tr>'; }
+  catch(e){ kodListe.innerHTML = '<tr><td colspan="6" class="empty">Hata: ' + e.message + '</td></tr>'; }
 }, kodlarSnapshotHata);
 
 setTimeout(()=>{
@@ -1788,7 +1795,7 @@ setTimeout(()=>{
   getDocs(qKodlar).then(snap=>{
     if(kodlarIlkYanit) return;
     try{ kodlarSnapshotIsle(snap); }
-    catch(e){ kodListe.innerHTML = '<tr><td colspan="4" class="empty">Hata: ' + e.message + '</td></tr>'; }
+    catch(e){ kodListe.innerHTML = '<tr><td colspan="6" class="empty">Hata: ' + e.message + '</td></tr>'; }
   }).catch(err=>{
     if(kodlarIlkYanit) return;
     kodlarSnapshotHata(err);
@@ -1817,7 +1824,7 @@ function renderKodListe(){
     return true;
   });
   if(filtreli.length === 0){
-    kodListe.innerHTML = '<tr><td colspan="4" class="empty">' + (tumKodKayitlari.length === 0 ? 'Henüz bloklu kod eklenmedi.' : 'Seçilen tarihte kayıt yok.') + '</td></tr>';
+    kodListe.innerHTML = '<tr><td colspan="6" class="empty">' + (tumKodKayitlari.length === 0 ? 'Henüz bloklu kod eklenmedi.' : 'Seçilen tarihte kayıt yok.') + '</td></tr>';
     return;
   }
   let html = '';
@@ -1834,7 +1841,9 @@ function renderKodListe(){
           <button type="button" class="beadcod-buyut-btn" data-id="${k.id}" title="Tümünü Gör">⤢</button>
         </div>
       </td>
-      <td class="adet">${k.blokluKodlar.length}/${bulunanlar.size}</td>
+      <td class="adet-blokeli">${k.blokluKodlar.length}</td>
+      <td class="adet-bulunan">${bulunanlar.size}</td>
+      <td class="adet-kalan">${kalanKodlar.length}</td>
     </tr>`;
   });
   kodListe.innerHTML = html;
