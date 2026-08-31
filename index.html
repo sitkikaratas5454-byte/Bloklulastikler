@@ -463,6 +463,14 @@
     transition:color .15s, border-color .15s, background .15s;
   }
   .beadcod-buyut-btn:hover{color:var(--primary);border-color:var(--accent);background:var(--accent-tint);}
+  .kod-ara-gor-btn{
+    width:auto;
+    height:auto;
+    padding:6px 12px;
+    font-size:12.5px;
+    font-weight:600;
+    white-space:nowrap;
+  }
   .beadcod-goruntule-liste{
     display:flex;flex-wrap:wrap;gap:7px;
     max-height:50vh;overflow-y:auto;
@@ -1825,6 +1833,14 @@ function beadcodGoruntuleAc(lastikKodu, blokluKodlar){
 function beadcodGoruntuleKapat(){
   beadcodGoruntuleOverlay.classList.remove('open');
 }
+function kodListesiGoruntuleAc(baslik, kodlar){
+  beadcodGoruntuleKod.textContent = baslik;
+  beadcodGoruntuleListe.innerHTML = kodlar.length
+    ? kodlar.map(k=>`<span class="beadcod-chip">${escapeHtml(k)}</span>`).join('')
+    : '<span class="beadcod-chip" style="opacity:.6;">Kod yok</span>';
+  beadcodGoruntuleSayac.textContent = kodlar.length + ' bloklu kod';
+  beadcodGoruntuleOverlay.classList.add('open');
+}
 beadcodGoruntuleClose.addEventListener('click', beadcodGoruntuleKapat);
 beadcodGoruntuleOverlay.addEventListener('click', (e)=>{ if(e.target === beadcodGoruntuleOverlay) beadcodGoruntuleKapat(); });
 document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && beadcodGoruntuleOverlay.classList.contains('open')) beadcodGoruntuleKapat(); });
@@ -2463,9 +2479,21 @@ function renderKodAra(){
       <td class="tarih">${escapeHtml(gun)}</td>
       <td class="kod">${escapeHtml([...g.lastikler].join(', '))}</td>
       <td class="adet">${g.adet}</td>
-      <td class="kod">${escapeHtml([...g.kodlar].join(', ') || '—')}</td>
+      <td class="kod">
+        ${g.kodlar.size
+          ? `<button type="button" class="beadcod-buyut-btn kod-ara-gor-btn" data-idx="${i}">Kodları Gör (${g.kodlar.size})</button>`
+          : '—'}
+      </td>
     </tr>
   `).join('');
+
+  kodAraBody.querySelectorAll('.kod-ara-gor-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const idx = Number(btn.dataset.idx);
+      const [gun, g] = gruplar[idx];
+      kodListesiGoruntuleAc(gun + ' — ' + [...g.lastikler].join(', '), [...g.kodlar]);
+    });
+  });
 }
 
 btnKodAraSorgula.addEventListener('click', renderKodAra);
