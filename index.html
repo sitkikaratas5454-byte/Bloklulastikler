@@ -53,7 +53,7 @@
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    background:linear-gradient(135deg, var(--primary) 0%, var(--bg-dark) 42%, #4b4420 75%, var(--accent) 100%) fixed;
+    background:linear-gradient(135deg, var(--primary) 0%, var(--bg-dark) 55%, #10184a 100%) fixed;
     color:var(--text);
     font-family:var(--font);
     min-height:100vh;
@@ -788,6 +788,12 @@
   td.adet-blokeli{font-family:var(--mono);color:var(--red);font-size:13px;text-align:center;font-weight:800;}
   td.adet-bulunan{font-family:var(--mono);color:var(--green);font-size:13px;text-align:center;font-weight:800;}
   td.adet-kalan{font-family:var(--mono);color:var(--blue);font-size:13px;text-align:center;font-weight:800;}
+  #view-ekle tbody td.adet-blokeli,
+  #view-log tbody td.adet-blokeli{color:var(--red)!important;}
+  #view-ekle tbody td.adet-bulunan,
+  #view-log tbody td.adet-bulunan{color:var(--green)!important;}
+  #view-ekle tbody td.adet-kalan,
+  #view-log tbody td.adet-kalan{color:var(--blue)!important;}
 
   /* ---------- Kod Ekle + Bloklu Bulunan Lastikler sekmeleri: sayfa arka planına uygun (beyaz kart yok) ---------- */
   #view-log .card,
