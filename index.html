@@ -762,7 +762,7 @@
   table{width:100%;border-collapse:collapse;}
   thead th{
     text-align:left;
-    font-size:11px;
+    font-size:15px;
     font-weight:700;
     text-transform:uppercase;
     letter-spacing:.06em;
@@ -773,7 +773,7 @@
   tbody td{
     padding:13px 12px;
     border-bottom:1px solid var(--line);
-    font-size:13.5px;
+    font-size:16px;
     color:var(--text);
   }
   tbody tr:last-child td{border-bottom:none;}
@@ -782,12 +782,12 @@
   td.kod{font-family:var(--mono);color:var(--navy);font-weight:600;letter-spacing:.01em;}
   td.istasyon{color:var(--primary);font-size:12.5px;font-weight:600;}
   td.sira{color:var(--muted);font-family:var(--mono);font-size:12px;}
-  td.tarih{color:var(--muted);font-size:12.5px;white-space:nowrap;}
+  td.tarih{color:var(--muted);font-size:16px;white-space:nowrap;}
   td.saat{color:var(--muted);font-size:12.5px;white-space:nowrap;}
   td.adet{font-family:var(--mono);color:var(--primary);font-size:12.5px;text-align:center;font-weight:600;}
-  td.adet-blokeli{font-family:var(--mono);color:var(--red);font-size:13px;text-align:center;font-weight:800;}
-  td.adet-bulunan{font-family:var(--mono);color:var(--green);font-size:13px;text-align:center;font-weight:800;}
-  td.adet-kalan{font-family:var(--mono);color:var(--blue);font-size:13px;text-align:center;font-weight:800;}
+  td.adet-blokeli{font-family:var(--mono);color:var(--red);font-size:16px;text-align:center;font-weight:800;}
+  td.adet-bulunan{font-family:var(--mono);color:var(--green);font-size:16px;text-align:center;font-weight:800;}
+  td.adet-kalan{font-family:var(--mono);color:var(--blue);font-size:16px;text-align:center;font-weight:800;}
   #view-ekle tbody td.adet-blokeli,
   #view-log tbody td.adet-blokeli{color:var(--red)!important;}
   #view-ekle tbody td.adet-bulunan,
@@ -1281,9 +1281,9 @@
               <th>Tarih</th>
               <th>Lastik Kodu</th>
               <th>Blokeli Kodlar</th>
-              <th>Blokeli Kod Sayısı</th>
-              <th>Bulunan Kod Sayısı</th>
-              <th>Kalan Blokeli Kod</th>
+              <th>Toplam Blokeli Kod Sayısı</th>
+              <th>Bulunan Blokeli Kod Sayısı</th>
+              <th>Kalan Blokeli Kod Sayısı</th>
             </tr>
           </thead>
           <tbody id="kodListe">
