@@ -487,6 +487,12 @@
     border-color:var(--green);
     box-shadow:0 0 0 1px rgba(31,157,85,.35);
   }
+  .beadcod-chip-bulunmayan{
+    color:#fff;
+    background:var(--red);
+    border-color:var(--red);
+    box-shadow:0 0 0 1px rgba(220,53,69,.35);
+  }
   @media (max-width:700px){
     .entry-row{flex-wrap:wrap;}
     .entry-field{flex:1 1 auto;max-width:none;}
@@ -1854,7 +1860,7 @@ function kodListesiGoruntuleAc(baslik, kodlar, lastikKodlari){
   beadcodGoruntuleListe.innerHTML = kodlar.length
     ? kodlar.map(k=>{
         const bulunduMu = bulunanSeti.has(String(k).toUpperCase());
-        return `<span class="beadcod-chip${bulunduMu ? ' beadcod-chip-bulundu' : ''}">${escapeHtml(k)}</span>`;
+        return `<span class="beadcod-chip ${bulunduMu ? 'beadcod-chip-bulundu' : 'beadcod-chip-bulunmayan'}">${escapeHtml(k)}</span>`;
       }).join('')
     : '<span class="beadcod-chip" style="opacity:.6;">Kod yok</span>';
   beadcodGoruntuleSayac.textContent = kodlar.length + ' bloklu kod';
