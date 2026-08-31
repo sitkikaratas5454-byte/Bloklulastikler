@@ -1364,6 +1364,7 @@
         <div style="display:flex;align-items:center;gap:12px;">
           <span id="bloklananAdetMsg" style="display:none;font-size:13px;font-weight:600;color:var(--muted);"></span>
           <button type="button" class="btn-secondary" id="btnKopyalaBloklanan" style="display:none;">📋 Bloklu Bulunan Beadcodeleri Kopyala</button>
+          <button type="button" class="btn-secondary" id="btnPdfIndir" style="display:none;">📄 PDF İndir</button>
         </div>
       </div>
       <div class="add-row">
@@ -1533,6 +1534,8 @@
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
@@ -1863,7 +1866,8 @@ function kodListesiGoruntuleAc(baslik, kodlar, lastikKodlari){
         return `<span class="beadcod-chip ${bulunduMu ? 'beadcod-chip-bulundu' : 'beadcod-chip-bulunmayan'}">${escapeHtml(k)}</span>`;
       }).join('')
     : '<span class="beadcod-chip" style="opacity:.6;">Kod yok</span>';
-  beadcodGoruntuleSayac.textContent = kodlar.length + ' bloklu kod';
+  const bulunanAdet = kodlar.filter(k => bulunanSeti.has(String(k).toUpperCase())).length;
+  beadcodGoruntuleSayac.textContent = kodlar.length + ' adet blokeli kod / bulunan ' + bulunanAdet + ' adet';
   beadcodGoruntuleOverlay.classList.add('open');
 }
 beadcodGoruntuleClose.addEventListener('click', beadcodGoruntuleKapat);
@@ -2339,17 +2343,23 @@ const logAramaInput = document.getElementById('logAramaInput');
 const logAramaBody = document.getElementById('logAramaBody');
 const btnKopyalaBloklanan = document.getElementById('btnKopyalaBloklanan');
 const bloklananAdetMsg = document.getElementById('bloklananAdetMsg');
+const btnPdfIndir = document.getElementById('btnPdfIndir');
 let sonAramaBloklananKodlar = [];
+let sonAramaGruplari = [];
+let sonAranankod = '';
 
 function renderLogArama(){
   const aranan = logAramaInput.value.trim().toUpperCase();
   if(aranan){ logAramaInput.value = ''; }
+  sonAranankod = aranan;
 
   if(!aranan){
     logAramaBody.innerHTML = '<tr><td colspan="6" class="empty">Aramak için bir kod gir.</td></tr>';
     sonAramaBloklananKodlar = [];
+    sonAramaGruplari = [];
     btnKopyalaBloklanan.style.display = 'none';
     bloklananAdetMsg.style.display = 'none';
+    btnPdfIndir.style.display = 'none';
     return;
   }
 
@@ -2362,8 +2372,10 @@ function renderLogArama(){
   if(eslesenler.length === 0){
     logAramaBody.innerHTML = '<tr><td colspan="6" class="empty">"' + escapeHtml(aranan) + '" kodunda kayıt bulunamadı.</td></tr>';
     sonAramaBloklananKodlar = [];
+    sonAramaGruplari = [];
     btnKopyalaBloklanan.style.display = 'none';
     bloklananAdetMsg.style.display = 'none';
+    btnPdfIndir.style.display = 'none';
     return;
   }
 
@@ -2391,6 +2403,7 @@ function renderLogArama(){
   });
   
   const gruplar = [...grup.values()].sort((a,b)=> (b.tarih ? b.tarih.getTime() : 0) - (a.tarih ? a.tarih.getTime() : 0));
+  sonAramaGruplari = gruplar;
 
   logAramaBody.innerHTML = gruplar.map((g, i) => `
     <tr>
@@ -2405,6 +2418,7 @@ function renderLogArama(){
 
   sonAramaBloklananKodlar = [...new Set(gruplar.map(g => g.kod))];
   btnKopyalaBloklanan.style.display = sonAramaBloklananKodlar.length ? '' : 'none';
+  btnPdfIndir.style.display = gruplar.length ? '' : 'none';
   if(sonAramaBloklananKodlar.length){
     bloklananAdetMsg.textContent = sonAramaBloklananKodlar.length + ' adet bloklu kod';
     bloklananAdetMsg.style.display = '';
@@ -2435,6 +2449,99 @@ btnKopyalaBloklanan.addEventListener('click', async ()=>{
 const btnLogSorgula = document.getElementById('btnLogSorgula');
 btnLogSorgula.addEventListener('click', renderLogArama);
 logAramaInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') renderLogArama(); });
+
+/* ---------- PDF İNDİR (Kod Ara sonuç tablosu, yatay, Türkçe karakter destekli) ---------- */
+async function logAramaPdfIndir(){
+  if(!sonAramaGruplari.length) return;
+  if(typeof html2canvas === 'undefined' || !window.jspdf){
+    alert('PDF oluşturucu yüklenemedi. İnternet bağlantını kontrol edip tekrar dene.');
+    return;
+  }
+
+  const eskiYazi = btnPdfIndir.textContent;
+  btnPdfIndir.textContent = 'Hazırlanıyor...';
+  btnPdfIndir.disabled = true;
+
+  const sarmalayici = document.createElement('div');
+  sarmalayici.style.cssText = 'position:fixed;left:-99999px;top:0;background:#ffffff;padding:26px;display:inline-block;font-family:Arial,Helvetica,sans-serif;';
+
+  const olusturmaTarihi = new Date().toLocaleString('tr-TR');
+  const baslikMetni = sonAranankod ? ('Aranan Kod: ' + sonAranankod) : 'Bloklu Bulunan Lastikler';
+
+  const baslik = document.createElement('div');
+  baslik.style.cssText = 'font-weight:800;font-size:20px;color:#0F172A;margin-bottom:4px;';
+  baslik.textContent = 'Bloklu Bulunan Lastikler — Arama Sonucu';
+  sarmalayici.appendChild(baslik);
+
+  const altBaslik = document.createElement('div');
+  altBaslik.style.cssText = 'font-size:12.5px;color:#66738c;margin-bottom:16px;';
+  altBaslik.textContent = baslikMetni + '   •   Oluşturulma: ' + olusturmaTarihi;
+  sarmalayici.appendChild(altBaslik);
+
+  const tablo = document.createElement('table');
+  tablo.style.cssText = 'border-collapse:collapse;width:100%;';
+  const basliklar = ['Sıra No', 'Tarih', 'Lastik Kodu', 'İstasyon', 'Bloklanan Kod', 'Saat'];
+  const thead = document.createElement('thead');
+  thead.innerHTML = '<tr>' + basliklar.map(b=>`<th style="text-align:left;font-size:12.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#1C2B6E;padding:8px 12px;border-bottom:2px solid #1C2B6E;white-space:nowrap;">${b}</th>`).join('') + '</tr>';
+  tablo.appendChild(thead);
+
+  const tbody = document.createElement('tbody');
+  sonAramaGruplari.forEach((g, i)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="padding:9px 12px;border-bottom:1px solid #e3e7ee;font-size:12.5px;color:#66738c;">${i + 1}</td>
+      <td style="padding:9px 12px;border-bottom:1px solid #e3e7ee;font-size:13px;color:#0F172A;white-space:nowrap;">${g.tarih ? formatTarihSadece(g.tarih) : '—'}</td>
+      <td style="padding:9px 12px;border-bottom:1px solid #e3e7ee;font-size:13px;color:#0F172A;font-weight:600;">${escapeHtml(g.anaLastikKodu)}</td>
+      <td style="padding:9px 12px;border-bottom:1px solid #e3e7ee;font-size:12.5px;color:#1C2B6E;font-weight:600;">${escapeHtml(g.istasyon || '—')}</td>
+      <td style="padding:9px 12px;border-bottom:1px solid #e3e7ee;font-size:13px;color:#dc3545;font-weight:700;">${escapeHtml(g.kod)}</td>
+      <td style="padding:9px 12px;border-bottom:1px solid #e3e7ee;font-size:12.5px;color:#66738c;white-space:nowrap;">${g.tarih ? formatSaatSadece(g.tarih) : '—'}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  const toplamTr = document.createElement('tr');
+  toplamTr.innerHTML = `
+    <td style="padding:11px 12px;"></td>
+    <td style="padding:11px 12px;"></td>
+    <td style="padding:11px 12px;"></td>
+    <td style="padding:11px 12px;font-size:13px;color:#0F172A;font-weight:800;text-align:right;">GENEL TOPLAM</td>
+    <td style="padding:11px 12px;font-size:14px;color:#1f9d55;font-weight:800;border-top:2px solid #1C2B6E;">${sonAramaGruplari.length} adet</td>
+    <td style="padding:11px 12px;"></td>
+  `;
+  tbody.appendChild(toplamTr);
+
+  tablo.appendChild(tbody);
+  sarmalayici.appendChild(tablo);
+  document.body.appendChild(sarmalayici);
+
+  try{
+    const canvas = await html2canvas(sarmalayici, { scale:2, backgroundColor:'#ffffff' });
+    const imgData = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation:'landscape', unit:'pt', format:'a4' });
+    const sayfaGenislik = pdf.internal.pageSize.getWidth();
+    const sayfaYukseklik = pdf.internal.pageSize.getHeight();
+    const kenarBosluk = 20;
+    const kullanilabilirGenislik = sayfaGenislik - kenarBosluk * 2;
+    const kullanilabilirYukseklik = sayfaYukseklik - kenarBosluk * 2;
+    const oran = Math.min(kullanilabilirGenislik / canvas.width, kullanilabilirYukseklik / canvas.height, 1);
+    const imgGenislik = canvas.width * oran;
+    const imgYukseklik = canvas.height * oran;
+    const x = (sayfaGenislik - imgGenislik) / 2;
+    pdf.addImage(imgData, 'PNG', x, kenarBosluk, imgGenislik, imgYukseklik);
+
+    const dosyaKodu = (sonAranankod || 'arama').replace(/[^A-Z0-9]/gi, '');
+    const dosyaTarih = new Date().toISOString().slice(0,10);
+    pdf.save('bloklu-lastik-' + dosyaKodu + '-' + dosyaTarih + '.pdf');
+  }catch(e){
+    alert('PDF oluşturulurken hata oluştu: ' + e.message);
+  }finally{
+    document.body.removeChild(sarmalayici);
+    btnPdfIndir.textContent = eskiYazi;
+    btnPdfIndir.disabled = false;
+  }
+}
+btnPdfIndir.addEventListener('click', logAramaPdfIndir);
 
 /* ---------- KODA GÖRE ARA (hangi gün kaç tane eklenmiş) ---------- */
 const kodAraInput = document.getElementById('kodAraInput');
