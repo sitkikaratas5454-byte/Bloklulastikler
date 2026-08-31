@@ -2226,7 +2226,8 @@ function renderLog(){
   const grup = new Map();
   filtreli.forEach(o=>{
     const anaLastikKodu = o.lastikKodu || '?';
-    const key = anaLastikKodu + '||' + (o.bloklananKod || '');
+    const gunAnahtari = o.tarih ? (o.tarih.getFullYear() + '-' + o.tarih.getMonth() + '-' + o.tarih.getDate()) : 'tarihsiz';
+    const key = anaLastikKodu + '||' + (o.bloklananKod || '') + '||' + (o.istasyon || '') + '||' + gunAnahtari;
     if(!grup.has(key)){
       grup.set(key, { anaLastikKodu, kod: o.bloklananKod || '', istasyon: o.istasyon, tarih: o.tarih, adet: 0 });
     }
@@ -2384,7 +2385,8 @@ function renderLogArama(){
     const anaLastikKodu = o.lastikKodu || '?';
     const blokKod = o.bloklananKod || '';
     const istasyon = o.istasyon || '—';
-    const key = anaLastikKodu + '||' + blokKod + '||' + istasyon;
+    const gunAnahtari = o.tarih ? (o.tarih.getFullYear() + '-' + o.tarih.getMonth() + '-' + o.tarih.getDate()) : 'tarihsiz';
+    const key = anaLastikKodu + '||' + blokKod + '||' + istasyon + '||' + gunAnahtari;
     
     if(!grup.has(key)){
       grup.set(key, { 
