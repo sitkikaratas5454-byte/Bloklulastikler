@@ -51,38 +51,12 @@
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    background:linear-gradient(135deg, var(--primary) 0%, var(--bg-dark) 60%, #10193f 100%) fixed;
+    background:linear-gradient(135deg, var(--primary) 0%, var(--bg-dark) 42%, #4b4420 75%, var(--accent) 100%) fixed;
     color:var(--text);
     font-family:var(--font);
     min-height:100vh;
     -webkit-tap-highlight-color:transparent;
     -webkit-font-smoothing:antialiased;
-  }
-
-  /* ---------- Emniyet şeridi kenarlıklar (üst / sol / sağ) ---------- */
-  .emniyet-serit{
-    position:fixed;
-    z-index:4000;
-    background:repeating-linear-gradient(
-      45deg,
-      var(--primary) 0px,
-      var(--primary) 22px,
-      var(--accent) 22px,
-      var(--accent) 44px
-    );
-    pointer-events:none;
-  }
-  .emniyet-serit.ust{
-    top:0; left:0; right:0;
-    height:14px;
-  }
-  .emniyet-serit.sol{
-    top:0; left:0; bottom:0;
-    width:14px;
-  }
-  .emniyet-serit.sag{
-    top:0; right:0; bottom:0;
-    width:14px;
   }
 
   /* ---------- Giriş ekranı ---------- */
@@ -96,7 +70,7 @@
     padding:20px;
     background:
       radial-gradient(circle at 20% 10%, rgba(240,179,35,.16) 0%, rgba(240,179,35,0) 45%),
-      linear-gradient(150deg, var(--primary) 0%, var(--bg-dark) 60%, #10193f 100%);
+      linear-gradient(150deg, var(--primary) 0%, var(--bg-dark) 48%, #4b4420 80%, var(--accent-hover) 100%);
   }
   .giris-panel{
     width:100%;
@@ -162,7 +136,7 @@
 
   /* ---------- Navbar ---------- */
   .navbar{
-    background:transparent;
+    background:var(--navy);
     color:#fff;
   }
   .navbar-inner{
@@ -185,7 +159,6 @@
     color:var(--accent);
     text-align:center;
     white-space:nowrap;
-    margin-top:10px;
   }
   .brand-title span{color:var(--accent);}
   .brand-sub{
@@ -251,8 +224,8 @@
 
   /* ---------- Tab bar (üst navbar, iPhone tarzı segmented pill) ---------- */
   .tabbar{
-    background:transparent;
-    border-top:none;
+    background:var(--navy-2);
+    border-top:1px solid rgba(255,255,255,.06);
     padding:10px 0;
   }
   .tabbar-inner{
@@ -265,51 +238,13 @@
   }
   .tabbar-inner::-webkit-scrollbar{display:none;}
   .tabs{
-    position:relative;
     display:inline-flex;
-    background:rgba(255,255,255,.06);
-    padding:4px;
-    border-radius:12px;
+    background:transparent;
+    padding:0;
     gap:6px;
     flex:0 0 auto;
   }
-  .tab-indicator{
-    position:absolute;
-    top:4px;
-    left:4px;
-    height:calc(100% - 8px);
-    width:0;
-    background:var(--accent);
-    border-radius:9px;
-    box-shadow:0 1px 4px rgba(0,0,0,.28), 0 1px 1px rgba(0,0,0,.1);
-    overflow:hidden;
-    z-index:0;
-    pointer-events:none;
-    transition:left .38s cubic-bezier(.5,0,.2,1), width .38s cubic-bezier(.5,0,.2,1);
-  }
-  .tab-indicator::after{
-    content:'';
-    position:absolute;
-    top:0;
-    left:-60%;
-    width:45%;
-    height:100%;
-    background:linear-gradient(115deg, transparent 0%, rgba(255,255,255,0) 30%, rgba(255,255,255,.85) 48%, rgba(255,255,255,.95) 52%, rgba(255,255,255,0) 70%, transparent 100%);
-    transform:skewX(-18deg);
-    opacity:0;
-  }
-  .tab-indicator.sheen::after{
-    animation:tabSheen .7s ease;
-  }
-  @keyframes tabSheen{
-    0%{ left:-60%; opacity:0; }
-    12%{ opacity:1; }
-    85%{ opacity:1; }
-    100%{ left:130%; opacity:0; }
-  }
   .tab{
-    position:relative;
-    z-index:1;
     flex:0 0 auto;
     padding:9px 18px;
     text-align:center;
@@ -322,11 +257,13 @@
     cursor:pointer;
     white-space:nowrap;
     border-radius:9px;
-    transition:color .25s ease;
+    transition:color .18s ease, background .18s ease, box-shadow .18s ease;
   }
-  .tab:hover:not(.active){color:#fff;background:rgba(255,255,255,.06);}
+  .tab:hover{color:#fff;background:rgba(255,255,255,.06);}
   .tab.active{
     color:var(--navy);
+    background:var(--accent);
+    box-shadow:0 1px 4px rgba(0,0,0,.28), 0 1px 1px rgba(0,0,0,.1);
   }
   @media (max-width:900px){
     .tabbar-inner{padding:0 20px;}
@@ -636,15 +573,13 @@
     max-width:360px;
     text-align:center;
     padding:32px 26px calc(24px + env(safe-area-inset-bottom));
-    background:linear-gradient(160deg, var(--primary) 0%, var(--bg-dark) 55%, #4b4420 100%);
-    border:1px solid rgba(255,255,255,.16);
   }
   .onay-ikon{
     width:52px;height:52px;
     margin:0 auto 16px;
     border-radius:50%;
-    background:rgba(220,53,69,.18);
-    color:#ff8a94;
+    background:var(--red-tint);
+    color:var(--red);
     display:flex;align-items:center;justify-content:center;
     font-family:var(--font-head);
     font-weight:800;
@@ -654,22 +589,16 @@
     font-family:var(--font-head);
     font-weight:800;
     font-size:17px;
-    color:#fff;
+    color:var(--heading);
     margin:0 0 8px;
   }
   .onay-metin{
-    color:#c3cce3;
+    color:var(--muted);
     font-size:13.5px;
     line-height:1.5;
     margin:0 0 22px;
   }
   .onay-modal-card .modal-actions{margin-top:0;}
-  .onay-modal-card .btn-secondary{
-    background:rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.24);
-    color:#fff;
-  }
-  .onay-modal-card .btn-secondary:hover{border-color:var(--accent);color:var(--accent);background:rgba(240,179,35,.12);}
 
   .btn-upd{
     background:transparent;
@@ -830,15 +759,6 @@
   td.tarih{color:var(--muted);font-size:12.5px;white-space:nowrap;}
   td.saat{color:var(--muted);font-size:12.5px;white-space:nowrap;}
   td.adet{font-family:var(--mono);color:var(--primary);font-size:12.5px;text-align:center;font-weight:600;}
-  .kod-listesi-card tbody td{font-size:16px;}
-  .kod-listesi-card thead th{font-size:15px;font-weight:800;}
-  .lastik-ara-card thead th{font-size:15px;font-weight:800;}
-  .lastik-ara-card tbody td{font-size:16px;}
-  .lastik-ara-card td.kod-bloklanan{color:var(--red);}
-  #view-log .lastik-ara-card td.kod-bloklanan{color:var(--red);}
-  #view-ekle td.adet.adet-toplam{color:#ff6b6b;}
-  #view-ekle td.adet.adet-bulunan{color:#3ddc84;}
-  #view-ekle td.adet.adet-kalan{color:#4da3ff;}
 
   /* ---------- Kod Ekle + Bloklu Bulunan Lastikler sekmeleri: sayfa arka planına uygun (beyaz kart yok) ---------- */
   #view-log .card,
@@ -957,23 +877,6 @@
     .modal-overlay.open .modal-card{transform:translateY(0) scale(1);}
   }
 
-  .modal-card.onay-modal-card{
-    max-width:360px;
-    text-align:center;
-    padding:32px 26px calc(24px + env(safe-area-inset-bottom));
-    background:linear-gradient(160deg, var(--primary) 0%, var(--bg-dark) 55%, #4b4420 100%);
-    border:1px solid rgba(255,255,255,.16);
-  }
-  .modal-card.onay-modal-card .btn-danger{
-    background:rgba(220,53,69,.16);
-    border:1px solid #ff8a94;
-    color:#ff8a94;
-  }
-  .modal-card.onay-modal-card .btn-danger:hover{
-    background:rgba(220,53,69,.28);
-    color:#fff;
-  }
-
   /* ---------- Güncelleme modalı: sayfa arka planına uygun (beyaz değil) ---------- */
   .guncelle-modal-card{
     background:linear-gradient(160deg, var(--primary) 0%, var(--bg-dark) 55%, #4b4420 100%);
@@ -1004,15 +907,9 @@
   .guncelle-modal-card .modal-count{
     color:var(--navy);
     background:var(--accent);
-    margin-top:14px;
   }
   .guncelle-modal-card .modal-msg.err{color:#ff9aa2;}
   .guncelle-modal-card .modal-msg.ok{color:#7be3a3;}
-  .guncelle-modal-card .beadcod-chip{
-    color:var(--navy);
-    background:var(--accent);
-    border-color:rgba(240,179,35,.45);
-  }
 
   /* ---------- Yeni Takvim Bileşeni (iOS tarzı, hızlı Ay/Yıl seçimli) ---------- */
   .takvim-modal-card{
@@ -1277,8 +1174,6 @@
 </head>
 <body>
 
-<div class="emniyet-serit ust"></div>
-
 <div id="girisOverlay" class="giris-overlay">
   <div class="giris-panel">
     <p class="giris-baslik">Panele Giriş</p>
@@ -1305,8 +1200,7 @@
   </div>
   <nav class="tabbar">
     <div class="tabbar-inner">
-      <div class="tabs" id="tabsWrap">
-        <div class="tab-indicator" id="tabIndicator"></div>
+      <div class="tabs">
         <div class="tab active" data-view="ekle">Kod Ekle</div>
         <div class="tab" data-view="log">Bloklu Bulunan Lastikler</div>
       </div>
@@ -1352,13 +1246,11 @@
               <th>Tarih</th>
               <th>Lastik Kodu</th>
               <th>Blokeli Kodlar</th>
-              <th style="text-align:center;">Toplam Blokeli Kod Sayısı</th>
-              <th style="text-align:center;">Bulunan Blokeli Kod Sayısı</th>
-              <th style="text-align:center;">Kalan Blokeli Kod Sayısı</th>
+              <th>Adet</th>
             </tr>
           </thead>
           <tbody id="kodListe">
-            <tr><td colspan="6" class="empty">Yükleniyor...</td></tr>
+            <tr><td colspan="4" class="empty">Yükleniyor...</td></tr>
           </tbody>
         </table>
       </div>
@@ -1423,7 +1315,7 @@
 
     <p class="modal-label">Blokeli Kodlar <span style="color:var(--muted);text-transform:none;letter-spacing:0;font-weight:400;">(virgülle ayır)</span></p>
     <textarea id="modalTextarea" autocomplete="off"></textarea>
-    <p class="modal-hint">Burada sadece henüz bulunmamış (kalan) blokeli kodlar listelenir; daha önce bulunan kodlar otomatik olarak korunur. Lastik kodunu komple kaldırmak için aşağıdaki "Kaydı Sil" butonunu kullan.</p>
+    <p class="modal-hint">Kutuyu tamamen boşaltıp Güncelle'ye basarsan tüm blokeli kodlar silinir. Lastik kodunu komple kaldırmak için aşağıdaki "Kaydı Sil" butonunu kullan.</p>
     <span class="modal-count" id="modalCount">0 blokeli kod</span>
 
     <div class="modal-actions">
@@ -1447,7 +1339,7 @@
 </div>
 
 <div class="modal-overlay" id="bulkModalOverlay">
-  <div class="modal-card guncelle-modal-card">
+  <div class="modal-card">
     <div class="modal-head">
       <div>
         <p class="tag">Kod Ekle</p>
@@ -1467,7 +1359,7 @@
 </div>
 
 <div class="modal-overlay" id="beadcodGoruntuleOverlay">
-  <div class="modal-card guncelle-modal-card">
+  <div class="modal-card">
     <div class="modal-head">
       <div>
         <p class="tag">Lastik Kodu</p>
@@ -1577,51 +1469,15 @@ function setConn(state){
   // Bağlantı durumu rozeti kaldırıldı; fonksiyon geriye dönük çağrılar bozulmasın diye no-op bırakıldı.
 }
 
-/* ---------- Sekme geçişi (iPhone tarzı kayan pill + ayna/sheen efekti) ---------- */
-const tabsWrap = document.getElementById('tabsWrap');
-const tabIndicator = document.getElementById('tabIndicator');
-
-function tabIndicatorTasi(tab, animasyonlu){
-  if(!tab || !tabsWrap || !tabIndicator) return;
-  const wrapRect = tabsWrap.getBoundingClientRect();
-  const rect = tab.getBoundingClientRect();
-  if(!animasyonlu){
-    tabIndicator.style.transition = 'none';
-  }
-  tabIndicator.style.left = (rect.left - wrapRect.left) + 'px';
-  tabIndicator.style.width = rect.width + 'px';
-  if(!animasyonlu){
-    void tabIndicator.offsetWidth;
-    tabIndicator.style.transition = '';
-  }
-  // Ayna (sheen) efektini yeniden tetikle
-  tabIndicator.classList.remove('sheen');
-  void tabIndicator.offsetWidth;
-  tabIndicator.classList.add('sheen');
-}
-
+/* ---------- Sekme geçişi ---------- */
 document.querySelectorAll('.tab').forEach(tab=>{
   tab.addEventListener('click', ()=>{
-    if(tab.classList.contains('active')) return;
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
     document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
     tab.classList.add('active');
     document.getElementById('view-' + tab.dataset.view).classList.add('active');
-    tabIndicatorTasi(tab, true);
   });
 });
-
-window.addEventListener('resize', ()=>{
-  const aktifTab = document.querySelector('.tab.active');
-  tabIndicatorTasi(aktifTab, false);
-});
-
-window.addEventListener('load', ()=>{
-  const aktifTab = document.querySelector('.tab.active');
-  tabIndicatorTasi(aktifTab, false);
-});
-// DOM zaten hazırsa (script sonda) hemen de konumlandır
-tabIndicatorTasi(document.querySelector('.tab.active'), false);
 
 /* ---------- Kod Ekle ---------- */
 const kodListe = document.getElementById('kodListe');
@@ -1744,7 +1600,6 @@ const modalMsg = document.getElementById('modalMsg');
 
 let modalAktifId = null;
 let modalAktifKod = null;
-let modalBulunanKodlar = [];
 let modalIslemde = false;
 
 function modalShowMsg(text, type){
@@ -1762,10 +1617,7 @@ function kodGuncelle(id, lastikKodu, mevcutListe){
   modalAktifId = id;
   modalAktifKod = lastikKodu;
   modalKod.textContent = lastikKodu;
-  const bulunanlar = lastikIcinBulunanKodlar(lastikKodu, mevcutListe);
-  modalBulunanKodlar = mevcutListe.filter(kod => bulunanlar.has(String(kod).toUpperCase()));
-  const kalanListe = mevcutListe.filter(kod => !bulunanlar.has(String(kod).toUpperCase()));
-  modalTextarea.value = kalanListe.join(', ');
+  modalTextarea.value = mevcutListe.join(', ');
   modalShowMsg('', '');
   modalKodlariGuncelleSayac();
   modalOverlay.classList.add('open');
@@ -1775,7 +1627,6 @@ function modalKapat(){
   modalOverlay.classList.remove('open');
   modalAktifId = null;
   modalAktifKod = null;
-  modalBulunanKodlar = [];
 }
 modalClose.addEventListener('click', modalKapat);
 modalOverlay.addEventListener('click', (e)=>{ if(e.target === modalOverlay) modalKapat(); });
@@ -1783,8 +1634,7 @@ document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && modalOverla
 
 modalGuncelleBtn.addEventListener('click', async ()=>{
   if(modalIslemde || !modalAktifId) return;
-  const girilenListe = [...new Set(modalTextarea.value.split(/[\s,;]+/).map(s=>s.trim().toUpperCase()).filter(Boolean))];
-  const yeniListe = [...new Set([...modalBulunanKodlar.map(k=>String(k).toUpperCase()), ...girilenListe])];
+  const yeniListe = [...new Set(modalTextarea.value.split(/[\s,;]+/).map(s=>s.trim().toUpperCase()).filter(Boolean))];
   modalIslemde = true;
   modalGuncelleBtn.disabled = true;
   modalSilBtn.disabled = true;
@@ -1815,17 +1665,14 @@ const onayVazgecBtn = document.getElementById('onayVazgec');
 const onayOnaylaBtn = document.getElementById('onayOnayla');
 let onayCozumle = null;
 
-function onayAc(baslik, metin, onayYazi){
+function onayAc(baslik, metin){
   onayBaslik.textContent = baslik;
   onayMetin.textContent = metin;
-  onayOnaylaBtn.textContent = onayYazi || 'Evet, Sil';
-  onayVazgecBtn.style.display = onayYazi === 'Tamam' ? 'none' : '';
   onayModalOverlay.classList.add('open');
   return new Promise(resolve=>{ onayCozumle = resolve; });
 }
 function onayKapat(sonuc){
   onayModalOverlay.classList.remove('open');
-  onayVazgecBtn.style.display = '';
   if(onayCozumle){ onayCozumle(sonuc); onayCozumle = null; }
 }
 onayVazgecBtn.addEventListener('click', ()=> onayKapat(false));
@@ -1904,11 +1751,11 @@ function kodlarSnapshotIsle(snap){
 function kodlarSnapshotHata(err){
   kodlarIlkYanit = true;
   setConn('err');
-  kodListe.innerHTML = '<tr><td colspan="6" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
+  kodListe.innerHTML = '<tr><td colspan="4" class="empty">Bağlantı hatası: ' + err.message + '</td></tr>';
 }
 onSnapshot(qKodlar, snap=>{
   try{ kodlarSnapshotIsle(snap); }
-  catch(e){ kodListe.innerHTML = '<tr><td colspan="6" class="empty">Hata: ' + e.message + '</td></tr>'; }
+  catch(e){ kodListe.innerHTML = '<tr><td colspan="4" class="empty">Hata: ' + e.message + '</td></tr>'; }
 }, kodlarSnapshotHata);
 
 setTimeout(()=>{
@@ -1916,7 +1763,7 @@ setTimeout(()=>{
   getDocs(qKodlar).then(snap=>{
     if(kodlarIlkYanit) return;
     try{ kodlarSnapshotIsle(snap); }
-    catch(e){ kodListe.innerHTML = '<tr><td colspan="6" class="empty">Hata: ' + e.message + '</td></tr>'; }
+    catch(e){ kodListe.innerHTML = '<tr><td colspan="4" class="empty">Hata: ' + e.message + '</td></tr>'; }
   }).catch(err=>{
     if(kodlarIlkYanit) return;
     kodlarSnapshotHata(err);
@@ -1928,34 +1775,12 @@ function lastikIcinBulunanKodlar(lastikKodu, blokluKodlar){
   if(!Array.isArray(tumOkutmalar) || tumOkutmalar.length === 0 || !Array.isArray(blokluKodlar)) return bulunanlar;
   const lastikUpper = String(lastikKodu || '').toUpperCase();
   const kodSeti = new Set(blokluKodlar.map(k=>String(k).toUpperCase()));
-  const { start, end } = filtreAraligi('log');
   tumOkutmalar.forEach(o=>{
     if((o.lastikKodu || '').toUpperCase() !== lastikUpper) return;
-    if(start && (!o.tarih || o.tarih < start)) return;
-    if(end && o.tarih && o.tarih >= end) return;
     const blok = (o.bloklananKod || '').toUpperCase();
     if(kodSeti.has(blok)) bulunanlar.add(blok);
   });
   return bulunanlar;
-}
-
-function lastikIcinBulunanAdet(lastikKodu, blokluKodlar){
-  if(!Array.isArray(tumOkutmalar) || tumOkutmalar.length === 0) return 0;
-  const lastikUpper = String(lastikKodu || '').toUpperCase();
-  const kodSeti = Array.isArray(blokluKodlar)
-    ? new Set(blokluKodlar.map(k=>String(k).toUpperCase()))
-    : null;
-  const { start, end } = filtreAraligi('log');
-  let adet = 0;
-  tumOkutmalar.forEach(o=>{
-    if((o.lastikKodu || '').toUpperCase() !== lastikUpper) return;
-    if(start && (!o.tarih || o.tarih < start)) return;
-    if(end && o.tarih && o.tarih >= end) return;
-    const blok = (o.bloklananKod || '').toUpperCase();
-    if(kodSeti && !kodSeti.has(blok)) return;
-    adet += Number(o.adet) || 1;
-  });
-  return adet;
 }
 
 function renderKodListe(){
@@ -1967,7 +1792,7 @@ function renderKodListe(){
     return true;
   });
   if(filtreli.length === 0){
-    kodListe.innerHTML = '<tr><td colspan="6" class="empty">' + (tumKodKayitlari.length === 0 ? 'Henüz bloklu kod eklenmedi.' : 'Seçilen tarihte kayıt yok.') + '</td></tr>';
+    kodListe.innerHTML = '<tr><td colspan="4" class="empty">' + (tumKodKayitlari.length === 0 ? 'Henüz bloklu kod eklenmedi.' : 'Seçilen tarihte kayıt yok.') + '</td></tr>';
     return;
   }
   let html = '';
@@ -1984,9 +1809,7 @@ function renderKodListe(){
           <button type="button" class="beadcod-buyut-btn" data-id="${k.id}" title="Tümünü Gör">⤢</button>
         </div>
       </td>
-      <td class="adet adet-toplam">${k.blokluKodlar.length}</td>
-      <td class="adet adet-bulunan">${lastikIcinBulunanAdet(k.lastikKodu, k.blokluKodlar)}</td>
-      <td class="adet adet-kalan">${k.blokluKodlar.length - lastikIcinBulunanAdet(k.lastikKodu, k.blokluKodlar)}</td>
+      <td class="adet">${k.blokluKodlar.length}/${bulunanlar.size}</td>
     </tr>`;
   });
   kodListe.innerHTML = html;
@@ -2283,18 +2106,10 @@ function renderLog(){
 const btnLogTemizle = document.getElementById('btnLogTemizle');
 let logTemizleniyor = false;
 
-function logEkraniniTemizle(){
-  tumOkutmalar = [];
-  renderLog();
-  renderKodListe();
-  renderLogArama();
-}
-
 btnLogTemizle.addEventListener('click', async ()=>{
   if(logTemizleniyor) return;
   if(tumOkutmalar.length === 0){ return; }
-  const onay = await onayAc('Okutmaları silmek üzeresin', 'Tüm okutma kayıtlarını komple silmek istediğine emin misin? Bu işlem geri alınamaz.');
-  if(!onay) return;
+  if(!confirm('Tüm okutma kayıtlarını komple silmek istediğine emin misin?')) return;
   logTemizleniyor = true;
   btnLogTemizle.disabled = true;
   btnLogTemizle.textContent = 'Temizleniyor...';
@@ -2307,9 +2122,8 @@ btnLogTemizle.addEventListener('click', async ()=>{
       docs.slice(i, i+parcaBoyutu).forEach(d=> batch.delete(d.ref));
       await batch.commit();
     }
-    logEkraniniTemizle();
   }catch(e){
-    await onayAc('Silinemedi', 'Hata: ' + e.message, 'Tamam');
+    alert('Hata: ' + e.message);
   }finally{
     logTemizleniyor = false;
     btnLogTemizle.disabled = false;
@@ -2335,7 +2149,6 @@ function logSnapshotIsle(snap){
   });
   renderLog();
   renderKodListe();
-  renderLogArama();
 }
 function logSnapshotHata(err){
   logIlkYanit = true;
@@ -2436,7 +2249,7 @@ function renderLogArama(){
       <td class="tarih">${g.tarih ? formatTarihSadece(g.tarih) : '—'}</td>
       <td class="kod">${escapeHtml(g.anaLastikKodu)}</td>
       <td class="istasyon">${escapeHtml(g.istasyon || '—')}</td>
-      <td class="kod kod-bloklanan">${escapeHtml(g.kod)}</td>
+      <td class="kod">${escapeHtml(g.kod)}</td>
       <td class="saat">${g.tarih ? formatSaatSadece(g.tarih) : '—'}</td>
     </tr>
   `).join('');
