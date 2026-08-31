@@ -261,9 +261,32 @@
   }
   .tab:hover{color:#fff;background:rgba(255,255,255,.06);}
   .tab.active{
+    position:relative;
+    overflow:hidden;
     color:var(--navy);
     background:var(--accent);
     box-shadow:0 1px 4px rgba(0,0,0,.28), 0 1px 1px rgba(0,0,0,.1);
+    animation:tabAktifParilti 2.2s ease-in-out infinite;
+  }
+  .tab.active::after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-60%;
+    width:45%;
+    height:100%;
+    background:linear-gradient(115deg, transparent 0%, rgba(255,255,255,.75) 50%, transparent 100%);
+    transform:skewX(-20deg);
+    animation:tabAynaEfekti 2.2s linear infinite;
+    pointer-events:none;
+  }
+  @keyframes tabAynaEfekti{
+    0%{left:-60%;}
+    100%{left:130%;}
+  }
+  @keyframes tabAktifParilti{
+    0%, 100%{box-shadow:0 1px 4px rgba(0,0,0,.28), 0 1px 1px rgba(0,0,0,.1), 0 0 0 rgba(240,179,35,0);}
+    50%{box-shadow:0 1px 4px rgba(0,0,0,.28), 0 1px 1px rgba(0,0,0,.1), 0 0 12px rgba(240,179,35,.65);}
   }
   @media (max-width:900px){
     .tabbar-inner{padding:0 20px;}
@@ -1270,7 +1293,8 @@
         </div>
       </div>
       <div class="add-row">
-        <input type="text" id="logAramaInput" placeholder="Kod giriniz..." autocomplete="off">
+        <input type="text" id="logAramaInput" placeholder="Kod giriniz..." autocomplete="off" style="flex:1 1 auto;min-width:0;">
+        <button type="button" class="btn-secondary" id="btnLogSorgula" style="flex-shrink:0;">Sorgula</button>
       </div>
       <div class="tablo-3d tablo-duz" style="overflow-x:auto;margin-top:16px;">
         <table>
@@ -2283,6 +2307,8 @@ btnKopyalaBloklanan.addEventListener('click', async ()=>{
   setTimeout(()=>{ btnKopyalaBloklanan.textContent = eskiYazi; }, 1500);
 });
 
+const btnLogSorgula = document.getElementById('btnLogSorgula');
+btnLogSorgula.addEventListener('click', renderLogArama);
 logAramaInput.addEventListener('input', renderLogArama);
 logAramaInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') renderLogArama(); });
 </script>
