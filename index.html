@@ -72,20 +72,21 @@
     justify-content:center;
     padding:32px 20px;
     background:
-      radial-gradient(circle at 88% 92%, rgba(240,179,35,.35) 0%, rgba(240,179,35,0) 42%),
-      linear-gradient(150deg, #1c2b6e 0%, #131e50 45%, #0e1638 75%, #10184a 100%);
+      radial-gradient(circle at 50% 0%, rgba(224,33,47,.28) 0%, rgba(224,33,47,0) 45%),
+      radial-gradient(circle at 85% 95%, rgba(224,33,47,.22) 0%, rgba(224,33,47,0) 45%),
+      linear-gradient(160deg, #0a0a0c 0%, #17090b 45%, #0d0d10 78%, #000000 100%);
     overflow-y:auto;
   }
   .giris-logo-wrap{
     display:flex;
     flex-direction:column;
     align-items:center;
-    margin-bottom:28px;
+    margin-bottom:22px;
   }
   .giris-logo-icon{
-    width:190px;
+    width:280px;
     height:auto;
-    filter:drop-shadow(0 6px 18px rgba(224,33,47,.35));
+    filter:drop-shadow(0 8px 24px rgba(224,33,47,.45));
   }
   .giris-logo-title{
     font-family:var(--font-head);
@@ -120,12 +121,12 @@
   .giris-panel{
     width:100%;
     max-width:340px;
-    background:linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
-    border:1px solid rgba(255,255,255,.14);
+    background:linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,.015));
+    border:1px solid rgba(224,33,47,.4);
     border-radius:var(--radius-lg);
     padding:26px 26px 24px;
     text-align:center;
-    box-shadow:0 18px 46px rgba(0,0,0,.35);
+    box-shadow:0 18px 50px rgba(0,0,0,.55), 0 0 0 1px rgba(224,33,47,.08), 0 0 40px rgba(224,33,47,.12);
     backdrop-filter:blur(10px);
     -webkit-backdrop-filter:blur(10px);
   }
@@ -137,7 +138,7 @@
     margin:0 0 4px;
   }
   .giris-panel .giris-alt{
-    color:#c3cce3;
+    color:#b8bcc9;
     font-size:13.5px;
     margin:0 0 22px;
   }
@@ -167,24 +168,27 @@
     transition:border-color .15s, box-shadow .15s;
   }
   .giris-panel input:focus{
-    border-color:var(--accent);
-    box-shadow:0 0 0 3px var(--accent-tint);
+    border-color:#e0212f;
+    box-shadow:0 0 0 3px rgba(224,33,47,.18);
   }
   .giris-panel button{
     width:100%;
     padding:13px 14px;
     border-radius:var(--radius-sm);
     border:none;
-    background:var(--accent);
-    color:var(--navy);
+    background:linear-gradient(160deg, #ff3b46 0%, #e0212f 55%, #a8121d 100%);
+    color:#fff;
     font-weight:700;
     font-size:14.5px;
     cursor:pointer;
-    transition:background .15s;
+    letter-spacing:.02em;
+    box-shadow:0 8px 20px rgba(224,33,47,.35);
+    transition:filter .15s, transform .1s;
   }
-  .giris-panel button:hover{background:var(--accent-2);color:var(--primary);}
+  .giris-panel button:hover{filter:brightness(1.1);}
+  .giris-panel button:active{transform:translateY(1px);}
   .giris-hata{
-    color:var(--red);
+    color:#ff5a63;
     font-size:12.5px;
     margin:12px 0 0;
     min-height:16px;
@@ -765,13 +769,13 @@
     padding-left:40px;
   }
   .giris-panel input:focus{
-    background:linear-gradient(160deg, #ffffff 0%, #f5f2e0 55%, #ecdca0 100%);
+    background:linear-gradient(160deg, #ffffff 0%, #fdeeee 55%, #f6d3d5 100%);
     box-shadow:
       6px 6px 14px rgba(28,43,110,.18),
       -6px -6px 14px rgba(255,255,255,.9),
       inset 0 1px 0 rgba(255,255,255,.9),
-      inset 0 -6px 10px rgba(240,179,35,.18),
-      0 0 0 3px var(--accent-tint);
+      inset 0 -6px 10px rgba(224,33,47,.18),
+      0 0 0 3px rgba(224,33,47,.18);
   }
 
   .empty{color:var(--muted);font-size:13.5px;padding:26px 0;text-align:center;}
