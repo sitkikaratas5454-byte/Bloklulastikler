@@ -80,6 +80,24 @@
     transform:scale(1.02);
     pointer-events:none;
   }
+  .giris-bg-art{
+    position:absolute;
+    inset:0;
+    z-index:0;
+    overflow:hidden;
+    pointer-events:none;
+  }
+  .giris-bg-art svg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
+  }
+  .giris-marka, .giris-panel{
+    position:relative;
+    z-index:1;
+  }
 
   /* Giriş overlay kapanırken sayfanın kendisi de yumuşakça belirsin (ani "pat" geçişi engeller) */
   body > header, body > main{
@@ -166,16 +184,17 @@
   }
   .giris-input-wrap svg{
     position:absolute;
-    left:14px;
+    left:16px;
     top:50%;
     transform:translateY(-50%);
     color:#9fb0d6;
     pointer-events:none;
+    z-index:1;
   }
   .giris-panel input{
     width:100%;
     height:42px;
-    padding:0 14px 0 40px;
+    padding:0 14px 0 48px;
     border-radius:var(--radius-sm);
     border:1px solid rgba(255,255,255,.22);
     background:rgba(255,255,255,.08);
@@ -190,7 +209,7 @@
     outline:none;
     transition:border-color .15s ease, background .15s ease, box-shadow .15s ease;
   }
-  .giris-panel input::placeholder{color:#a9b3cc; letter-spacing:normal;}
+  .giris-panel input::placeholder{color:#a9b3cc; letter-spacing:normal; font-size:15px; font-weight:500;}
   .giris-panel input:focus{
     border-color:var(--accent);
     background:rgba(255,255,255,.1);
@@ -340,18 +359,21 @@
   .tabs{
     position:relative;
     display:inline-flex;
-    background:transparent;
-    padding:0;
-    gap:6px;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.14);
+    padding:4px;
+    gap:2px;
+    border-radius:14px;
     flex:0 0 auto;
+    box-shadow:inset 0 1px 2px rgba(0,0,0,.18);
   }
   .tab-pill{
     position:absolute;
-    top:0;
+    top:4px;
     left:0;
-    height:100%;
+    height:calc(100% - 8px);
     width:0;
-    border-radius:9px;
+    border-radius:10px;
     background:var(--accent);
     box-shadow:0 1px 4px rgba(0,0,0,.28), 0 1px 1px rgba(0,0,0,.1);
     overflow:hidden;
@@ -386,7 +408,7 @@
     text-transform:uppercase;
     cursor:pointer;
     white-space:nowrap;
-    border-radius:9px;
+    border-radius:10px;
     transition:color .28s ease .05s;
   }
   .tab:hover{color:#fff;background:rgba(255,255,255,.06);}
@@ -684,6 +706,7 @@
     margin-top:10px;
   }
   .btn-kaydet-full{
+    position:relative;
     flex:0 0 auto;
     height:42px;
     padding:0 28px;
@@ -699,10 +722,25 @@
     font-size:13.5px;
     letter-spacing:.01em;
     cursor:pointer;
-    box-shadow:0 6px 16px rgba(240,179,35,.32);
+    overflow:hidden;
+    box-shadow:0 1px 4px rgba(0,0,0,.28), 0 1px 1px rgba(0,0,0,.1);
+    animation:tabAktifParilti 2.2s ease-in-out infinite;
+  }
+  .btn-kaydet-full::after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-60%;
+    width:45%;
+    height:100%;
+    background:linear-gradient(115deg, transparent 0%, rgba(255,255,255,.75) 50%, transparent 100%);
+    transform:skewX(-20deg);
+    animation:tabAynaEfekti 2.2s linear infinite;
+    pointer-events:none;
   }
   .btn-kaydet-full:hover{background:var(--accent-2);color:var(--primary);}
-  .btn-kaydet-full:disabled{opacity:.55;cursor:not-allowed;}
+  .btn-kaydet-full:disabled{opacity:.55;cursor:not-allowed;animation:none;}
+  .btn-kaydet-full:disabled::after{display:none;}
   .entry-card .msg{margin:0;}
   .entry-actions .msg{flex:1;}
 
@@ -821,6 +859,16 @@
     background:transparent;
     box-shadow:none;
     padding:0;
+  }
+
+  /* "Bloklu Beadcode'lar Listesi" tablosu: sütunlar dikey çizgiyle ayrılsın */
+  .kod-listesi-card table th,
+  .kod-listesi-card table td{
+    border-right:1px solid rgba(255,255,255,.14);
+  }
+  .kod-listesi-card table th:last-child,
+  .kod-listesi-card table td:last-child{
+    border-right:none;
   }
 
   .empty{color:var(--muted);font-size:13.5px;padding:26px 0;text-align:center;}
@@ -1373,6 +1421,152 @@
 
 <div id="girisOverlay" class="giris-overlay">
 
+  <div class="giris-bg-art" aria-hidden="true">
+    <svg viewBox="0 0 390 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="tireTreadGold" cx="35%" cy="30%" r="75%">
+          <stop offset="0%" stop-color="#5a4517" stop-opacity=".6"/>
+          <stop offset="55%" stop-color="#2a2010" stop-opacity=".55"/>
+          <stop offset="100%" stop-color="#0a0805" stop-opacity=".6"/>
+        </radialGradient>
+        <radialGradient id="tireSidewallGold" cx="35%" cy="30%" r="75%">
+          <stop offset="0%" stop-color="#7a5e1c" stop-opacity=".5"/>
+          <stop offset="100%" stop-color="#1c1608" stop-opacity=".6"/>
+        </radialGradient>
+        <radialGradient id="tireRimGold" cx="35%" cy="30%" r="75%">
+          <stop offset="0%" stop-color="#ffe08a" stop-opacity=".95"/>
+          <stop offset="55%" stop-color="#f0b323" stop-opacity=".85"/>
+          <stop offset="100%" stop-color="#7a4e08" stop-opacity=".7"/>
+        </radialGradient>
+        <radialGradient id="tireHubGold" cx="35%" cy="30%" r="75%">
+          <stop offset="0%" stop-color="#fff6da"/>
+          <stop offset="100%" stop-color="#c98f12"/>
+        </radialGradient>
+
+        <radialGradient id="tireTreadBlue" cx="35%" cy="30%" r="75%">
+          <stop offset="0%" stop-color="#22314f" stop-opacity=".6"/>
+          <stop offset="55%" stop-color="#141d33" stop-opacity=".55"/>
+          <stop offset="100%" stop-color="#050810" stop-opacity=".6"/>
+        </radialGradient>
+        <radialGradient id="tireSidewallBlue" cx="35%" cy="30%" r="75%">
+          <stop offset="0%" stop-color="#33456e" stop-opacity=".5"/>
+          <stop offset="100%" stop-color="#0b1120" stop-opacity=".6"/>
+        </radialGradient>
+        <radialGradient id="tireRimBlue" cx="35%" cy="30%" r="75%">
+          <stop offset="0%" stop-color="#bcd0ff" stop-opacity=".95"/>
+          <stop offset="55%" stop-color="#5b8dff" stop-opacity=".85"/>
+          <stop offset="100%" stop-color="#1b2f66" stop-opacity=".7"/>
+        </radialGradient>
+        <radialGradient id="tireHubBlue" cx="35%" cy="30%" r="75%">
+          <stop offset="0%" stop-color="#eaf1ff"/>
+          <stop offset="100%" stop-color="#3f66c9"/>
+        </radialGradient>
+
+        <symbol id="tireGold" viewBox="-22 -22 44 44">
+          <ellipse cx="0" cy="15.5" rx="12.5" ry="3.2" fill="#000" opacity=".28"/>
+          <circle r="19" fill="url(#tireTreadGold)" stroke="rgba(8,8,10,.5)" stroke-width="1"/>
+          <g fill="#140f04" opacity=".6">
+      <path d="M15.5 0.0 L19.0 0.0 L18.7 3.3 L15.3 2.7 Z"/>
+      <path d="M14.7 4.8 L18.1 5.9 L16.8 8.9 L13.7 7.3 Z"/>
+      <path d="M12.5 9.1 L15.4 11.2 L13.2 13.6 L10.8 11.1 Z"/>
+      <path d="M9.1 12.5 L11.2 15.4 L8.4 17.1 L6.8 13.9 Z"/>
+      <path d="M4.8 14.7 L5.9 18.1 L2.7 18.8 L2.2 15.3 Z"/>
+      <path d="M0.0 15.5 L0.0 19.0 L-3.3 18.7 L-2.7 15.3 Z"/>
+      <path d="M-4.8 14.7 L-5.9 18.1 L-8.9 16.8 L-7.3 13.7 Z"/>
+      <path d="M-9.1 12.5 L-11.2 15.4 L-13.6 13.2 L-11.1 10.8 Z"/>
+      <path d="M-12.5 9.1 L-15.4 11.2 L-17.1 8.4 L-13.9 6.8 Z"/>
+      <path d="M-14.7 4.8 L-18.1 5.9 L-18.8 2.7 L-15.3 2.2 Z"/>
+      <path d="M-15.5 0.0 L-19.0 0.0 L-18.7 -3.3 L-15.3 -2.7 Z"/>
+      <path d="M-14.7 -4.8 L-18.1 -5.9 L-16.8 -8.9 L-13.7 -7.3 Z"/>
+      <path d="M-12.5 -9.1 L-15.4 -11.2 L-13.2 -13.6 L-10.8 -11.1 Z"/>
+      <path d="M-9.1 -12.5 L-11.2 -15.4 L-8.4 -17.1 L-6.8 -13.9 Z"/>
+      <path d="M-4.8 -14.7 L-5.9 -18.1 L-2.7 -18.8 L-2.2 -15.3 Z"/>
+      <path d="M-0.0 -15.5 L-0.0 -19.0 L3.3 -18.7 L2.7 -15.3 Z"/>
+      <path d="M4.8 -14.7 L5.9 -18.1 L8.9 -16.8 L7.3 -13.7 Z"/>
+      <path d="M9.1 -12.5 L11.2 -15.4 L13.6 -13.2 L11.1 -10.8 Z"/>
+      <path d="M12.5 -9.1 L15.4 -11.2 L17.1 -8.4 L13.9 -6.8 Z"/>
+      <path d="M14.7 -4.8 L18.1 -5.9 L18.8 -2.7 L15.3 -2.2 Z"/>
+          </g>
+          <circle r="15.5" fill="url(#tireSidewallGold)"/>
+          <circle r="7.6" fill="url(#tireRimGold)" stroke="rgba(255,255,255,.3)" stroke-width=".5"/>
+          <g fill="url(#tireRimGold)" opacity=".95">
+      <path d="M-0.7 -2.9 L-0.7 -7.4 L0.7 -7.4 L0.7 -2.9 Z"/>
+      <path d="M2.6 -1.5 L6.8 -2.9 L7.2 -1.6 L3.0 -0.3 Z"/>
+      <path d="M2.3 2.0 L4.9 5.6 L3.8 6.4 L1.2 2.8 Z"/>
+      <path d="M-1.2 2.8 L-3.8 6.4 L-4.9 5.6 L-2.3 2.0 Z"/>
+      <path d="M-3.0 -0.3 L-7.2 -1.6 L-6.8 -2.9 L-2.6 -1.5 Z"/>
+          </g>
+          <circle r="2.7" fill="url(#tireHubGold)" stroke="rgba(0,0,0,.35)" stroke-width=".4"/>
+          <ellipse cx="-6.5" cy="-8.5" rx="7.5" ry="3.6" fill="#fff" opacity=".16" transform="rotate(-28)"/>
+        </symbol>
+
+        <symbol id="tireBlue" viewBox="-22 -22 44 44">
+          <ellipse cx="0" cy="15.5" rx="12.5" ry="3.2" fill="#000" opacity=".28"/>
+          <circle r="19" fill="url(#tireTreadBlue)" stroke="rgba(8,8,10,.5)" stroke-width="1"/>
+          <g fill="#04070f" opacity=".6">
+      <path d="M15.5 0.0 L19.0 0.0 L18.7 3.3 L15.3 2.7 Z"/>
+      <path d="M14.7 4.8 L18.1 5.9 L16.8 8.9 L13.7 7.3 Z"/>
+      <path d="M12.5 9.1 L15.4 11.2 L13.2 13.6 L10.8 11.1 Z"/>
+      <path d="M9.1 12.5 L11.2 15.4 L8.4 17.1 L6.8 13.9 Z"/>
+      <path d="M4.8 14.7 L5.9 18.1 L2.7 18.8 L2.2 15.3 Z"/>
+      <path d="M0.0 15.5 L0.0 19.0 L-3.3 18.7 L-2.7 15.3 Z"/>
+      <path d="M-4.8 14.7 L-5.9 18.1 L-8.9 16.8 L-7.3 13.7 Z"/>
+      <path d="M-9.1 12.5 L-11.2 15.4 L-13.6 13.2 L-11.1 10.8 Z"/>
+      <path d="M-12.5 9.1 L-15.4 11.2 L-17.1 8.4 L-13.9 6.8 Z"/>
+      <path d="M-14.7 4.8 L-18.1 5.9 L-18.8 2.7 L-15.3 2.2 Z"/>
+      <path d="M-15.5 0.0 L-19.0 0.0 L-18.7 -3.3 L-15.3 -2.7 Z"/>
+      <path d="M-14.7 -4.8 L-18.1 -5.9 L-16.8 -8.9 L-13.7 -7.3 Z"/>
+      <path d="M-12.5 -9.1 L-15.4 -11.2 L-13.2 -13.6 L-10.8 -11.1 Z"/>
+      <path d="M-9.1 -12.5 L-11.2 -15.4 L-8.4 -17.1 L-6.8 -13.9 Z"/>
+      <path d="M-4.8 -14.7 L-5.9 -18.1 L-2.7 -18.8 L-2.2 -15.3 Z"/>
+      <path d="M-0.0 -15.5 L-0.0 -19.0 L3.3 -18.7 L2.7 -15.3 Z"/>
+      <path d="M4.8 -14.7 L5.9 -18.1 L8.9 -16.8 L7.3 -13.7 Z"/>
+      <path d="M9.1 -12.5 L11.2 -15.4 L13.6 -13.2 L11.1 -10.8 Z"/>
+      <path d="M12.5 -9.1 L15.4 -11.2 L17.1 -8.4 L13.9 -6.8 Z"/>
+      <path d="M14.7 -4.8 L18.1 -5.9 L18.8 -2.7 L15.3 -2.2 Z"/>
+          </g>
+          <circle r="15.5" fill="url(#tireSidewallBlue)"/>
+          <circle r="7.6" fill="url(#tireRimBlue)" stroke="rgba(255,255,255,.3)" stroke-width=".5"/>
+          <g fill="url(#tireRimBlue)" opacity=".95">
+      <path d="M-0.7 -2.9 L-0.7 -7.4 L0.7 -7.4 L0.7 -2.9 Z"/>
+      <path d="M2.6 -1.5 L6.8 -2.9 L7.2 -1.6 L3.0 -0.3 Z"/>
+      <path d="M2.3 2.0 L4.9 5.6 L3.8 6.4 L1.2 2.8 Z"/>
+      <path d="M-1.2 2.8 L-3.8 6.4 L-4.9 5.6 L-2.3 2.0 Z"/>
+      <path d="M-3.0 -0.3 L-7.2 -1.6 L-6.8 -2.9 L-2.6 -1.5 Z"/>
+          </g>
+          <circle r="2.7" fill="url(#tireHubBlue)" stroke="rgba(0,0,0,.35)" stroke-width=".4"/>
+          <ellipse cx="-6.5" cy="-8.5" rx="7.5" ry="3.6" fill="#fff" opacity=".16" transform="rotate(-28)"/>
+        </symbol>
+
+        <pattern id="girisHex" width="52" height="90" patternUnits="userSpaceOnUse" patternTransform="translate(0,0)">
+          <path d="M26 0 L52 15 L52 45 L26 60 L0 45 L0 15 Z" fill="none" stroke="rgba(140,168,235,.16)" stroke-width="1"/>
+        </pattern>
+        <linearGradient id="girisHexFade" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#fff" stop-opacity=".9"/>
+          <stop offset=".5" stop-color="#fff" stop-opacity=".45"/>
+          <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+        </linearGradient>
+        <mask id="girisHexMask">
+          <rect x="0" y="0" width="390" height="900" fill="url(#girisHexFade)"/>
+        </mask>
+        <filter id="girisGlow" x="-300%" y="-300%" width="700%" height="700%">
+          <feGaussianBlur stdDeviation="3.2" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <rect x="0" y="0" width="390" height="900" fill="url(#girisHex)" mask="url(#girisHexMask)"/>
+
+      <!-- lastik süslemeleri (3D) -->
+      <use href="#tireGold" transform="translate(64,447)"/>
+      <use href="#tireBlue" transform="translate(344,485)"/>
+      <use href="#tireBlue" transform="translate(332,717)"/>
+      <use href="#tireGold" transform="translate(66,629) scale(.7)"/>
+      <use href="#tireBlue" transform="translate(326,843)"/>
+      <use href="#tireBlue" transform="translate(46,795)"/>
+    </svg>
+  </div>
+
   <div class="giris-marka">
     <div class="giris-icon-wrap">
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -1447,7 +1641,7 @@
 
     <div class="card kod-listesi-card">
       <div class="card-header">
-        <h2 class="card-title kod-listesi-baslik">Bloklu Kod Listesi</h2>
+        <h2 class="card-title kod-listesi-baslik">Bloklu Beadcode'lar Listesi</h2>
       </div>
       <div class="tablo-3d tablo-duz" style="overflow-x:auto;">
         <table>
@@ -1521,7 +1715,6 @@
       <div class="card-header">
         <div style="display:flex;align-items:center;gap:12px;">
           <h2 class="card-title" style="font-size:26px;text-transform:uppercase;color:var(--accent);">Koda Göre Ara</h2>
-          <span style="font-style:italic;font-size:12.5px;font-weight:400;color:#9fb0d6;text-transform:none;">(lastik kodu veya bloklu kod giriniz — hangi gün kaç tane eklendiğini gösterir)</span>
         </div>
       </div>
       <div class="add-row">
@@ -1773,6 +1966,24 @@ bulkInput.addEventListener('input', ()=>{
   const temiz = bulkInput.value.replace(/[^0-9\s,;]/g, '');
   if(temiz !== bulkInput.value) bulkInput.value = temiz;
 });
+function textareaEnterVirgulle(el){
+  el.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      const basi = el.selectionStart;
+      const sonu = el.selectionEnd;
+      const oncesi = el.value.slice(0, basi);
+      const sonrasi = el.value.slice(sonu);
+      const ekle = (oncesi && !/[,\s]$/.test(oncesi)) ? ', ' : '';
+      el.value = oncesi + ekle + sonrasi;
+      const yeniKonum = basi + ekle.length;
+      el.setSelectionRange(yeniKonum, yeniKonum);
+      el.dispatchEvent(new Event('input'));
+    }
+  });
+}
+textareaEnterVirgulle(bulkInput);
+
 
 function showMsg(text, type){
   kaydetMsg.textContent = text;
@@ -1861,6 +2072,7 @@ bulkModalClose.addEventListener('click', bulkModalKapat);
 bulkModalTamam.addEventListener('click', bulkModalKapat);
 bulkModalOverlay.addEventListener('click', (e)=>{ if(e.target === bulkModalOverlay) bulkModalKapat(); });
 bulkModalTextarea.addEventListener('input', bulkModalSayacGuncelle);
+textareaEnterVirgulle(bulkModalTextarea);
 
 /* ---------- Güncelle Modal ---------- */
 const modalOverlay = document.getElementById('modalOverlay');
