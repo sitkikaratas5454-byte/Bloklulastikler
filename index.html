@@ -2638,6 +2638,9 @@ function formatTarihSadece(d){
 function formatSaatSadece(d){
   return d.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
 }
+function formatTarihSaat(d){
+  return d.toLocaleDateString('tr-TR') + ' ' + d.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+}
 function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
@@ -2902,6 +2905,9 @@ function renderKodAra(){
     g.adet += e.adet;
     g.lastikler.add(e.lastikKodu);
     (e.kodlar || []).forEach(kd=> g.kodlar.add(kd));
+    if(e.tarih && (!g.tarih || e.tarih > g.tarih)){
+      g.tarih = e.tarih;
+    }
   });
 
   const gruplar = [...grup.entries()].sort((a,b)=>{
@@ -2913,7 +2919,7 @@ function renderKodAra(){
   kodAraBody.innerHTML = gruplar.map(([gun, g], i) => `
     <tr>
       <td class="sira">${i + 1}</td>
-      <td class="tarih">${escapeHtml(gun)}</td>
+      <td class="tarih">${g.tarih ? escapeHtml(formatTarihSaat(g.tarih)) : escapeHtml(gun)}</td>
       <td class="kod">${escapeHtml([...g.lastikler].join(', '))}</td>
       <td class="adet">${g.adet}</td>
       <td class="kod">
