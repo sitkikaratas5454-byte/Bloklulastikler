@@ -815,15 +815,125 @@
   #view-ekle tbody td.adet-kalan,
   #view-log tbody td.adet-kalan{color:var(--blue)!important;}
 
-  /* ---------- Kod Ekle / Bloklu Bulunan Lastikler / Koda Göre Ara sekmeleri: her biri kendi ayrı beyaz kartı içinde ---------- */
-  .view.active{
-    background:var(--surface);
-    border:1px solid var(--line);
-    border-radius:var(--radius-lg);
-    box-shadow:var(--shadow-lg);
-    padding:22px clamp(16px,3vw,30px) 28px;
+  /* ---------- Kod Ekle + Bloklu Bulunan Lastikler sekmeleri: sayfa arka planına uygun (beyaz kart yok) ---------- */
+  #view-log .card,
+  #view-ekle .card{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.16);
+    box-shadow:none;
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
   }
+  #view-ekle .entry-card{
+    background:transparent;
+    border:none;
+    box-shadow:none;
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+  }
+  #view-ekle .kod-listesi-card{
+    background:transparent;
+    border:none;
+    box-shadow:none;
+    padding:0;
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+  }
+  #view-log .lastik-ara-card{
+    background:transparent;
+    border:none;
+    box-shadow:none;
+    padding:0;
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+  }
+  #view-log h1,
+  #view-ekle h1{color:#fff;}
+  #view-log .page-head p,
+  #view-ekle .page-head p{color:#c3cce3;}
+  #view-log .card-title,
+  #view-ekle .card-title{color:#fff;}
+  #view-log .card-title .tag-count,
+  #view-ekle .card-title .tag-count{background:rgba(240,179,35,.18);color:var(--accent);}
+  #view-log .card-desc,
+  #view-ekle .card-desc{color:#c3cce3;}
+  #view-log thead th,
+  #view-ekle thead th{color:#9fb0d6;border-bottom-color:rgba(255,255,255,.16);}
+  #view-log tbody td,
+  #view-ekle tbody td{color:#e9edf7;border-bottom-color:rgba(255,255,255,.1);}
+  #view-log tbody tr:hover td,
+  #view-ekle tbody tr:hover td{background:rgba(255,255,255,.06);}
+  #view-log td.kod,
+  #view-ekle td.kod{color:var(--accent);}
   #view-log td.blok-kod{color:var(--red)!important;}
+  #view-log td.istasyon,
+  #view-ekle td.istasyon{color:#ffd873;}
+  #view-log td.sira,
+  #view-log td.tarih,
+  #view-log td.saat,
+  #view-ekle td.sira,
+  #view-ekle td.tarih,
+  #view-ekle td.saat{color:#9fb0d6;}
+  #view-log td.adet,
+  #view-ekle td.adet{color:var(--accent);}
+  #view-log .empty,
+  #view-ekle .empty{color:#9fb0d6;}
+  #view-log input[type=text],
+  #view-ekle input[type=text],
+  #view-ekle textarea{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.22);
+    color:#fff;
+  }
+  #view-log input[type=text]::placeholder,
+  #view-ekle input[type=text]::placeholder,
+  #view-ekle textarea::placeholder{color:#a9b3cc;}
+  #view-log input[type=text]:focus,
+  #view-ekle input[type=text]:focus,
+  #view-ekle textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(240,179,35,.25);}
+  #view-log .btn-secondary{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.24);
+    color:#fff;
+  }
+  #view-log .btn-secondary:hover{border-color:var(--accent);color:var(--accent);background:rgba(240,179,35,.12);}
+
+  /* ---------- Koda Göre Ara sekmesi: sayfa arka planına uygun (beyaz kart yok) ---------- */
+  #view-kodara .lastik-ara-card{
+    background:transparent;
+    border:none;
+    box-shadow:none;
+    padding:0;
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+  }
+  #view-kodara h1{color:#fff;}
+  #view-kodara .page-head p{color:#c3cce3;}
+  #view-kodara .card-title{color:#fff;}
+  #view-kodara .card-title .tag-count{background:rgba(240,179,35,.18);color:var(--accent);}
+  #view-kodara .card-desc{color:#c3cce3;}
+  #view-kodara thead th{color:#9fb0d6;border-bottom-color:rgba(255,255,255,.16);}
+  #view-kodara tbody td{color:#e9edf7;border-bottom-color:rgba(255,255,255,.1);}
+  #view-kodara tbody tr:hover td{background:rgba(255,255,255,.06);}
+  #view-kodara td.kod{color:var(--accent);}
+  #view-kodara td.sira,
+  #view-kodara td.tarih,
+  #view-kodara td.saat{color:#9fb0d6;}
+  #view-kodara td.adet{color:var(--accent);}
+  #view-kodara .empty{color:#9fb0d6;}
+  #view-kodara input[type=text]{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.22);
+    color:#fff;
+  }
+  #view-kodara input[type=text]::placeholder{color:#a9b3cc;}
+  #view-kodara input[type=text]:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(240,179,35,.25);}
+  #view-kodara .btn-secondary{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.24);
+    color:#fff;
+  }
+  #view-kodara .btn-secondary:hover{border-color:var(--accent);color:var(--accent);background:rgba(240,179,35,.12);}
 
   /* ---------- Güncelle Modal shell ---------- */
   .modal-overlay{
