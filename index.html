@@ -61,7 +61,7 @@
     -webkit-font-smoothing:antialiased;
   }
 
-  /* ---------- Giriş ekranı (iOS tarzı minimal) ---------- */
+  /* ---------- Giriş ekranı (uygulamanın ana tasarımıyla birebir uyumlu) ---------- */
   .giris-overlay{
     position:fixed;
     inset:0;
@@ -71,56 +71,83 @@
     align-items:center;
     justify-content:center;
     padding:40px 20px;
-    background:linear-gradient(165deg, #101a45 0%, #1C2B6E 45%, #0c1436 100%);
+    background:linear-gradient(135deg, var(--primary) 0%, var(--bg-dark) 55%, #10184a 100%);
     overflow-y:auto;
+    transition:opacity .38s cubic-bezier(.4,0,.2,1), transform .38s cubic-bezier(.4,0,.2,1);
+  }
+  .giris-overlay.giris-kapaniyor{
+    opacity:0;
+    transform:scale(1.02);
+    pointer-events:none;
+  }
+
+  .giris-marka{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    margin-bottom:26px;
+    animation:girisFadeIn .5s cubic-bezier(.4,0,.2,1) both;
   }
   .giris-icon-wrap{
-    width:72px;
-    height:72px;
-    border-radius:20px;
+    width:60px;
+    height:60px;
+    border-radius:16px;
     display:flex;
     align-items:center;
     justify-content:center;
-    background:linear-gradient(160deg, rgba(255,255,255,.14) 0%, rgba(255,255,255,.05) 100%);
-    border:1px solid rgba(255,255,255,.14);
-    margin-bottom:22px;
-    animation:girisFadeIn .5s cubic-bezier(.4,0,.2,1) both;
+    background:rgba(240,179,35,.12);
+    border:1px solid rgba(240,179,35,.35);
   }
   .giris-icon-wrap svg{color:var(--accent);}
+  .giris-marka-baslik{
+    font-family:var(--font-head);
+    font-weight:800;
+    font-size:20px;
+    letter-spacing:.02em;
+    text-transform:uppercase;
+    color:var(--accent);
+    text-align:center;
+    margin:0;
+  }
 
-  /* ---------- Giriş Paneli ---------- */
+  /* ---------- Giriş Paneli: view-ekle içindeki .card ile aynı dil (düz cam kart) ---------- */
   .giris-panel{
     width:100%;
     max-width:340px;
     position:relative;
-    padding:36px 28px 30px;
-    background:rgba(255,255,255,.07);
-    border:1px solid rgba(255,255,255,.12);
-    border-radius:24px;
-    backdrop-filter:blur(24px) saturate(150%);
-    -webkit-backdrop-filter:blur(24px) saturate(150%);
-    box-shadow:0 20px 50px rgba(0,0,0,.35);
+    padding:30px 26px 26px;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.16);
+    border-radius:var(--radius-lg);
     text-align:center;
     animation:girisFadeIn .5s cubic-bezier(.4,0,.2,1) both;
     animation-delay:.05s;
   }
+  .giris-panel.giris-sallan{animation:girisSallan .4s ease;}
   @keyframes girisFadeIn{
     from{opacity:0; transform:translateY(10px) scale(.97);}
     to{opacity:1; transform:translateY(0) scale(1);}
   }
+  @keyframes girisSallan{
+    10%,90%{transform:translateX(-2px);}
+    20%,80%{transform:translateX(4px);}
+    30%,50%,70%{transform:translateX(-7px);}
+    40%,60%{transform:translateX(7px);}
+  }
   .giris-panel .giris-baslik{
     font-family:var(--font-head);
     font-weight:700;
-    font-size:19px;
+    font-size:16px;
     letter-spacing:.01em;
     color:#ffffff;
     margin:0 0 4px;
   }
   .giris-panel .giris-alt{
-    color:rgba(255,255,255,.55);
-    font-size:13px;
+    color:#c3cce3;
+    font-size:12.5px;
     letter-spacing:.01em;
-    margin:0 0 24px;
+    margin:0 0 22px;
   }
   .giris-input-wrap{
     position:relative;
@@ -128,52 +155,55 @@
   }
   .giris-input-wrap svg{
     position:absolute;
-    left:16px;
+    left:14px;
     top:50%;
     transform:translateY(-50%);
-    color:rgba(255,255,255,.4);
+    color:#9fb0d6;
     pointer-events:none;
   }
   .giris-panel input{
     width:100%;
-    padding:15px 16px 15px 44px;
-    border-radius:14px;
-    border:1px solid rgba(255,255,255,.14);
-    background:rgba(255,255,255,.06);
+    height:42px;
+    padding:0 14px 0 40px;
+    border-radius:var(--radius-sm);
+    border:1px solid rgba(255,255,255,.22);
+    background:rgba(255,255,255,.08);
     color:#ffffff !important;
     -webkit-text-fill-color:#ffffff;
     caret-color:var(--accent);
-    font-family:var(--font);
-    font-size:16px;
+    font-family:var(--mono);
+    font-size:15px;
     text-align:left;
-    letter-spacing:.1em;
+    letter-spacing:.15em;
     outline:none;
-    transition:border-color .2s ease, background .2s ease;
+    transition:border-color .15s ease, background .15s ease, box-shadow .15s ease;
   }
-  .giris-panel input::placeholder{color:rgba(255,255,255,.35); letter-spacing:normal;}
+  .giris-panel input::placeholder{color:#a9b3cc; letter-spacing:normal;}
   .giris-panel input:focus{
-    border-color:rgba(240,179,35,.55);
-    background:rgba(255,255,255,.09);
+    border-color:var(--accent);
+    background:rgba(255,255,255,.1);
+    box-shadow:0 0 0 3px rgba(240,179,35,.25);
   }
   .giris-panel button{
     width:100%;
-    padding:15px 14px;
+    height:42px;
     border:none;
-    border-radius:14px;
+    border-radius:var(--radius-sm);
     background:var(--accent);
-    color:#1C2B6E;
+    color:var(--navy);
     font-family:var(--font-head);
     font-weight:700;
-    font-size:15px;
+    font-size:14px;
     letter-spacing:.01em;
     cursor:pointer;
-    margin-top:6px;
-    transition:transform .12s ease, opacity .12s ease;
+    margin-top:8px;
+    box-shadow:0 6px 16px rgba(240,179,35,.32);
+    transition:background .15s ease, color .15s ease, transform .06s ease;
   }
-  .giris-panel button:hover{opacity:.92;}
-  .giris-panel button:active{transform:scale(.98); opacity:.85;}
+  .giris-panel button:hover{background:var(--accent-hover);color:var(--primary);}
+  .giris-panel button:active{transform:translateY(1px);}
   .giris-panel-footnote{
-    color:rgba(255,255,255,.32);
+    color:#8892a6;
     font-size:11px;
     letter-spacing:.02em;
     margin:18px 0 0;
@@ -182,7 +212,7 @@
   .giris-hata{
     color:#ff8a90;
     background:rgba(255,90,99,.12);
-    border-radius:10px;
+    border-radius:8px;
     padding:0;
     font-size:12.5px;
     margin:14px 0 0;
@@ -1303,11 +1333,14 @@
 
 <div id="girisOverlay" class="giris-overlay">
 
-  <div class="giris-icon-wrap">
-    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+  <div class="giris-marka">
+    <div class="giris-icon-wrap">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </div>
+    <p class="giris-marka-baslik">Blokeli Beadcode Takibi</p>
   </div>
 
-  <div class="giris-panel">
+  <div class="giris-panel" id="girisPanel">
     <p class="giris-baslik">Erişim Paneli</p>
     <p class="giris-alt">Devam etmek için şifreni gir</p>
     <div class="giris-input-wrap">
@@ -1588,18 +1621,27 @@ import {
 /* ---------- Giriş şifresi ---------- */
 const GIRIS_SIFRE = "2515";
 const girisOverlay = document.getElementById('girisOverlay');
+const girisPanel = document.getElementById('girisPanel');
 const girisSifreInput = document.getElementById('girisSifre');
 const girisBtn = document.getElementById('girisBtn');
 const girisHata = document.getElementById('girisHata');
 
+function girisAc(){
+  girisOverlay.classList.add('giris-kapaniyor');
+  setTimeout(()=>{ girisOverlay.style.display = 'none'; }, 380);
+}
+
 function girisDeneme(){
   if(girisSifreInput.value.trim() === GIRIS_SIFRE){
     sessionStorage.setItem('blokluGiris', '1');
-    girisOverlay.style.display = 'none';
+    girisAc();
   }else{
     girisHata.textContent = 'Şifre yanlış.';
     girisSifreInput.value = '';
     girisSifreInput.focus();
+    girisPanel.classList.remove('giris-sallan');
+    void girisPanel.offsetWidth;
+    girisPanel.classList.add('giris-sallan');
   }
 }
 if(sessionStorage.getItem('blokluGiris') === '1'){
