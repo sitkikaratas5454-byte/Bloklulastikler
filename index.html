@@ -74,7 +74,10 @@
     background:
       radial-gradient(circle at 50% 0%, rgba(224,33,47,.28) 0%, rgba(224,33,47,0) 45%),
       radial-gradient(circle at 85% 95%, rgba(224,33,47,.22) 0%, rgba(224,33,47,0) 45%),
-      linear-gradient(160deg, #0a0a0c 0%, #17090b 45%, #0d0d10 78%, #000000 100%);
+      linear-gradient(160deg, #0a0a0c 0%, #17090b 45%, #0d0d10 78%, #000000 100%),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><g fill='none' stroke='%23234a63' stroke-width='1.4' opacity='0.55'><path d='M12 12 H92 V62 H172 V12 H228'/><path d='M12 120 H62 V190 H12'/><path d='M132 30 V100 H228'/><path d='M160 140 H228 M160 140 V210 H90'/><path d='M40 210 V235'/><path d='M200 60 V0'/></g><g fill='%232a5578' opacity='0.7'><circle cx='92' cy='12' r='3'/><circle cx='172' cy='62' r='3'/><circle cx='62' cy='120' r='3'/><circle cx='62' cy='190' r='3'/><circle cx='132' cy='100' r='3'/><circle cx='160' cy='140' r='3'/><circle cx='90' cy='210' r='3'/><circle cx='228' cy='12' r='3'/></g></svg>");
+    background-repeat:no-repeat, no-repeat, no-repeat, repeat;
+    background-size:auto, auto, auto, 240px 240px;
     overflow-y:auto;
   }
   .giris-logo-wrap{
@@ -121,79 +124,119 @@
     height:2px;
     background:#e0212f;
   }
+
+  /* ---------- Teknik Erişim Paneli ---------- */
   .giris-panel{
     width:100%;
-    max-width:340px;
-    background:linear-gradient(160deg, #232327 0%, #17171a 45%, #0a0a0c 100%);
-    border:1px solid rgba(255,255,255,.1);
-    border-radius:var(--radius-lg);
-    padding:26px 26px 24px;
-    text-align:center;
-    box-shadow:
-      16px 16px 34px rgba(0,0,0,.7),
-      -12px -12px 28px rgba(255,255,255,.06),
-      inset 0 2px 0 rgba(255,255,255,.16),
-      inset 0 -3px 8px rgba(0,0,0,.6),
-      inset 6px 0 14px rgba(255,255,255,.03),
-      inset -6px 0 14px rgba(0,0,0,.35);
+    max-width:380px;
     position:relative;
+    padding:26px 22px 26px;
+    background:linear-gradient(160deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.03) 45%, rgba(224,33,47,.06) 100%);
+    border:1px solid rgba(255,255,255,.18);
+    backdrop-filter:blur(18px) saturate(140%);
+    -webkit-backdrop-filter:blur(18px) saturate(140%);
+    clip-path:polygon(18px 0,calc(100% - 18px) 0,100% 18px,100% calc(100% - 18px),calc(100% - 18px) 100%,18px 100%,0 calc(100% - 18px),0 18px);
+    box-shadow:
+      18px 18px 40px rgba(0,0,0,.6),
+      -14px -14px 32px rgba(255,255,255,.05),
+      inset 0 2px 0 rgba(255,255,255,.35),
+      inset 0 -3px 12px rgba(0,0,0,.55),
+      inset 3px 0 10px rgba(255,255,255,.08),
+      inset -3px 0 10px rgba(0,0,0,.3),
+      0 0 40px rgba(224,33,47,.3);
+    text-align:center;
+  }
+  .giris-panel::before{
+    content:"";
+    position:absolute;
+    inset:6px;
+    border:1px solid rgba(224,33,47,.3);
+    background:linear-gradient(160deg, rgba(255,255,255,.08) 0%, rgba(255,255,255,0) 40%);
+    clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 14px,100% calc(100% - 14px),calc(100% - 14px) 100%,14px 100%,0 calc(100% - 14px),0 14px);
+    pointer-events:none;
+  }
+  .giris-panel::after{
+    content:"";
+    position:absolute;
+    top:6px;
+    left:6px;
+    right:6px;
+    height:40%;
+    background:linear-gradient(180deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 100%);
+    clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 100%,0 100%);
+    pointer-events:none;
   }
   .giris-panel .giris-baslik{
     font-family:var(--font-head);
     font-weight:800;
     font-size:19px;
-    color:#fff;
-    margin:0 0 4px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:#f4f4f6;
+    text-shadow:0 0 14px rgba(224,33,47,.5);
+    margin:2px 0 6px;
   }
   .giris-panel .giris-alt{
-    color:#b8bcc9;
-    font-size:13.5px;
-    margin:0 0 22px;
+    color:#9aa0ad;
+    font-size:12px;
+    letter-spacing:.02em;
+    margin:0 0 20px;
   }
   .giris-input-wrap{
     position:relative;
-    margin-bottom:14px;
+    margin-bottom:16px;
   }
   .giris-input-wrap svg{
     position:absolute;
     left:14px;
     top:50%;
     transform:translateY(-50%);
-    color:#8892a6;
+    color:#e0212f;
     pointer-events:none;
   }
   .giris-panel input{
     width:100%;
     padding:13px 14px 13px 40px;
-    border-radius:var(--radius-sm);
-    border:1px solid var(--line-strong);
-    background:var(--surface-2);
-    color:var(--text);
-    font-size:16px;
+    border-radius:6px;
+    border:1px solid rgba(224,33,47,.4);
+    background:linear-gradient(160deg, #16161a 0%, #0e0e11 100%);
+    color:#f4f4f6;
+    font-family:var(--mono);
+    font-size:15px;
     text-align:left;
-    letter-spacing:.1em;
+    letter-spacing:.14em;
     outline:none;
     transition:border-color .15s, box-shadow .15s;
   }
+  .giris-panel input::placeholder{color:#5b6270;}
   .giris-panel input:focus{
-    border-color:#e0212f;
+    border-color:rgba(224,33,47,.75);
   }
   .giris-panel button{
     width:100%;
-    padding:13px 14px;
-    border-radius:var(--radius-sm);
+    padding:14px 14px;
     border:none;
     background:linear-gradient(160deg, #ff3b46 0%, #e0212f 55%, #a8121d 100%);
     color:#fff;
-    font-weight:700;
-    font-size:14.5px;
+    font-family:var(--font-head);
+    font-weight:800;
+    font-size:14px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
     cursor:pointer;
-    letter-spacing:.02em;
+    clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,14px 100%,0 50%);
     box-shadow:0 0 18px 4px rgba(224,33,47,.55), 0 8px 22px rgba(224,33,47,.4), inset 0 1px 0 rgba(255,255,255,.25);
     transition:filter .15s, transform .1s, box-shadow .15s;
   }
   .giris-panel button:hover{filter:brightness(1.12);box-shadow:0 0 26px 6px rgba(224,33,47,.7), 0 10px 26px rgba(224,33,47,.5), inset 0 1px 0 rgba(255,255,255,.3);}
   .giris-panel button:active{transform:translateY(1px);}
+  .giris-panel-footnote{
+    color:#7a808d;
+    font-size:10.5px;
+    letter-spacing:.03em;
+    margin:16px 0 0;
+    line-height:1.5;
+  }
   .giris-hata{
     color:#ff5a63;
     font-size:12.5px;
@@ -763,25 +806,26 @@
     padding:0;
   }
 
-  /* ---------- Giriş ekranı: şifre alanı 3D kabarık + ayna efekti ---------- */
+  /* ---------- Giriş ekranı: şifre alanı dark tech kabarık efekt ---------- */
   .giris-panel input{
-    background:linear-gradient(160deg, #ffffff 0%, #eef1f8 55%, #dfe4ee 100%);
-    border:1px solid rgba(255,255,255,.6);
+    background:linear-gradient(160deg, #1a1a1f 0%, #101013 55%, #0a0a0c 100%);
+    border:1px solid rgba(224,33,47,.4);
     box-shadow:
-      6px 6px 14px rgba(28,43,110,.18),
-      -6px -6px 14px rgba(255,255,255,.9),
-      inset 0 1px 0 rgba(255,255,255,.9),
-      inset 0 -6px 10px rgba(28,43,110,.06);
+      6px 6px 14px rgba(0,0,0,.6),
+      -6px -6px 14px rgba(255,255,255,.03),
+      inset 0 1px 0 rgba(255,255,255,.08),
+      inset 0 -6px 10px rgba(0,0,0,.5);
     position:relative;
     padding-left:40px;
   }
   .giris-panel input:focus{
-    background:linear-gradient(160deg, #ffffff 0%, #eef1f8 55%, #dfe4ee 100%);
+    background:linear-gradient(160deg, #201417 0%, #150d0f 55%, #0a0708 100%);
     box-shadow:
-      6px 6px 14px rgba(28,43,110,.18),
-      -6px -6px 14px rgba(255,255,255,.9),
-      inset 0 1px 0 rgba(255,255,255,.9),
-      inset 0 -6px 10px rgba(28,43,110,.06);
+      6px 6px 14px rgba(0,0,0,.6),
+      -6px -6px 14px rgba(255,255,255,.03),
+      inset 0 1px 0 rgba(255,255,255,.08),
+      inset 0 -6px 10px rgba(224,33,47,.15);
+    border-color:rgba(224,33,47,.75);
   }
 
   .empty{color:var(--muted);font-size:13.5px;padding:26px 0;text-align:center;}
@@ -1339,8 +1383,7 @@
   </div>
 
   <div class="giris-panel">
-    <p class="giris-baslik">Panele Giriş</p>
-    <p class="giris-alt">Devam etmek için şifreni gir</p>
+    <p class="giris-baslik">Teknik Erişim Paneli</p>
     <div class="giris-input-wrap">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       <input type="password" id="girisSifre" placeholder="Şifre" autocomplete="off" inputmode="numeric">
