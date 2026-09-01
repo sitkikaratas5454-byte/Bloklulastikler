@@ -73,7 +73,13 @@
     padding:40px 20px;
     background:linear-gradient(135deg, var(--primary) 0%, var(--bg-dark) 55%, #10184a 100%);
     overflow-y:auto;
+    opacity:0;
     transition:opacity .38s cubic-bezier(.4,0,.2,1), transform .38s cubic-bezier(.4,0,.2,1);
+    animation:girisOverlayBelir .6s cubic-bezier(.4,0,.2,1) forwards;
+  }
+  @keyframes girisOverlayBelir{
+    from{opacity:0;}
+    to{opacity:1;}
   }
   .giris-overlay.giris-kapaniyor{
     opacity:0;
@@ -701,7 +707,7 @@
     justify-content:center;
     border-radius:var(--radius-sm);
     border:none;
-    background:var(--accent);
+    background:linear-gradient(180deg, #ffd75e 0%, var(--accent) 55%, #dc9d15 100%);
     color:var(--navy);
     font-family:var(--font-head);
     font-weight:700;
@@ -709,8 +715,49 @@
     letter-spacing:.01em;
     cursor:pointer;
     overflow:hidden;
-    box-shadow:0 1px 4px rgba(0,0,0,.28), 0 1px 1px rgba(0,0,0,.1);
+    box-shadow:
+      0 4px 0 #b8790c,
+      0 7px 14px rgba(0,0,0,.3),
+      inset 0 1px 0 rgba(255,255,255,.65),
+      inset 0 -2px 3px rgba(0,0,0,.12);
+    transform:translateY(0);
+    transition:transform .12s ease, box-shadow .12s ease, background .15s ease;
     animation:tabAktifParilti 2.2s ease-in-out infinite;
+  }
+  .btn-kaydet-full:active{
+    transform:translateY(3px);
+    box-shadow:
+      0 1px 0 #b8790c,
+      0 2px 6px rgba(0,0,0,.25),
+      inset 0 1px 0 rgba(255,255,255,.5),
+      inset 0 -1px 2px rgba(0,0,0,.15);
+  }
+
+  /* ---------- Sorgula butonu: Kaydet butonuyla aynı 3D kabarık efekt ---------- */
+  .btn-sorgula-3d{
+    position:relative;
+    background:linear-gradient(180deg, #ffd75e 0%, var(--accent) 55%, #dc9d15 100%)!important;
+    color:var(--navy)!important;
+    border:none!important;
+    box-shadow:
+      0 4px 0 #b8790c,
+      0 7px 14px rgba(0,0,0,.3),
+      inset 0 1px 0 rgba(255,255,255,.65),
+      inset 0 -2px 3px rgba(0,0,0,.12);
+    transform:translateY(0);
+    transition:transform .12s ease, box-shadow .12s ease, background .15s ease;
+  }
+  .btn-sorgula-3d:hover{
+    background:linear-gradient(180deg, #ffd75e 0%, var(--accent-2) 55%, #dc9d15 100%)!important;
+    color:var(--navy)!important;
+  }
+  .btn-sorgula-3d:active{
+    transform:translateY(3px);
+    box-shadow:
+      0 1px 0 #b8790c,
+      0 2px 6px rgba(0,0,0,.25),
+      inset 0 1px 0 rgba(255,255,255,.5),
+      inset 0 -1px 2px rgba(0,0,0,.15);
   }
   .btn-kaydet-full::after{
     content:"";
@@ -847,13 +894,22 @@
     padding:0;
   }
 
-  /* "Bloklu Beadcode'lar Listesi" tablosu: sütunlar dikey çizgiyle ayrılsın */
+  /* "Bloklu Beadcode'lar Listesi" tablosu: sütunlar dikey çizgiyle ayrılsın
+     (aynı özellik Bloklu Bulunan Lastikler ve Koda Göre Ara tablolarına da uygulanır) */
   .kod-listesi-card table th,
-  .kod-listesi-card table td{
+  .kod-listesi-card table td,
+  #view-log table th,
+  #view-log table td,
+  #view-kodara table th,
+  #view-kodara table td{
     border-right:1px solid rgba(255,255,255,.14);
   }
   .kod-listesi-card table th:last-child,
-  .kod-listesi-card table td:last-child{
+  .kod-listesi-card table td:last-child,
+  #view-log table th:last-child,
+  #view-log table td:last-child,
+  #view-kodara table th:last-child,
+  #view-kodara table td:last-child{
     border-right:none;
   }
 
@@ -1520,7 +1576,7 @@
       </div>
       <div class="add-row">
         <input type="text" id="logAramaInput" placeholder="Kod giriniz..." autocomplete="off" style="flex:1 1 auto;min-width:0;">
-        <button type="button" class="btn-secondary" id="btnLogSorgula" style="flex-shrink:0;">Sorgula</button>
+        <button type="button" class="btn-secondary btn-sorgula-3d" id="btnLogSorgula" style="flex-shrink:0;">Sorgula</button>
       </div>
       <div class="tablo-3d tablo-duz" style="overflow-x:auto;margin-top:16px;">
         <table>
@@ -1560,7 +1616,7 @@
       </div>
       <div class="add-row">
         <input type="text" id="kodAraInput" placeholder="Kod giriniz..." autocomplete="off" style="flex:1 1 auto;min-width:0;">
-        <button type="button" class="btn-secondary" id="btnKodAraSorgula" style="flex-shrink:0;">Sorgula</button>
+        <button type="button" class="btn-secondary btn-sorgula-3d" id="btnKodAraSorgula" style="flex-shrink:0;">Sorgula</button>
       </div>
       <div class="tablo-3d tablo-duz" style="overflow-x:auto;margin-top:16px;">
         <table>
