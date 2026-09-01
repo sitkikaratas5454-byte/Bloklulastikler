@@ -730,13 +730,15 @@
     max-width:360px;
     text-align:center;
     padding:32px 26px calc(24px + env(safe-area-inset-bottom));
+    background:linear-gradient(160deg, var(--primary) 0%, var(--bg-dark) 55%, #10184a 100%);
+    border:1px solid rgba(255,255,255,.16);
   }
   .onay-ikon{
     width:52px;height:52px;
     margin:0 auto 16px;
     border-radius:50%;
-    background:var(--red-tint);
-    color:var(--red);
+    background:rgba(255,90,99,.15);
+    color:#ff8a90;
     display:flex;align-items:center;justify-content:center;
     font-family:var(--font-head);
     font-weight:800;
@@ -746,16 +748,28 @@
     font-family:var(--font-head);
     font-weight:800;
     font-size:17px;
-    color:var(--heading);
+    color:#fff;
     margin:0 0 8px;
   }
   .onay-metin{
-    color:var(--muted);
+    color:#c3cce3;
     font-size:13.5px;
     line-height:1.5;
     margin:0 0 22px;
   }
   .onay-modal-card .modal-actions{margin-top:0;}
+  .onay-modal-card .btn-secondary{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.22);
+    color:#fff;
+  }
+  .onay-modal-card .btn-secondary:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.35);}
+  .onay-modal-card .btn-danger{
+    background:transparent;
+    border:1px solid #ff8a90;
+    color:#ff8a90;
+  }
+  .onay-modal-card .btn-danger:hover{background:rgba(255,90,99,.15);}
 
   .btn-upd{
     background:transparent;
