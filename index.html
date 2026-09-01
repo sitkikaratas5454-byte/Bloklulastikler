@@ -517,25 +517,6 @@
   }
   .entry-field-bulk{flex:1 1 auto;}
   .entry-field-save{flex:0 0 auto;}
-  .entry-field-tarih{flex:0 0 auto;}
-  #kodTarihInput{
-    height:44px;
-    padding:0 14px;
-    border-radius:var(--radius-sm);
-    border:1px solid rgba(255,255,255,.22);
-    background:rgba(255,255,255,.08);
-    color:#fff;
-    font-family:var(--font);
-    font-size:14px;
-    outline:none;
-    transition:border-color .15s ease, background .15s ease, box-shadow .15s ease;
-    color-scheme:dark;
-  }
-  #kodTarihInput:focus{
-    border-color:var(--accent);
-    background:rgba(255,255,255,.1);
-    box-shadow:0 0 0 3px rgba(240,179,35,.25);
-  }
   .entry-label{
     font-size:14px;
     font-weight:700;
@@ -1538,10 +1519,6 @@
           <label class="entry-label" for="kodInput">Lastik Kodu</label>
           <input id="kodInput" type="text" autocomplete="off" maxlength="10" placeholder="" aria-label="Lastik Kodu Giriniz" class="entry-kod-input">
         </div>
-        <div class="entry-field entry-field-tarih">
-          <label class="entry-label" for="kodTarihInput">Tarih</label>
-          <input id="kodTarihInput" type="date" aria-label="Ekleme Tarihi">
-        </div>
         <div class="entry-field entry-field-bulk">
           <label class="entry-label" for="bulkInput">Blokeli Kodları Giriniz</label>
           <div class="bulk-box" id="bulkBox">
@@ -1871,12 +1848,6 @@ let mevcutKodlarTumu = new Map();
 
 const kodInput = document.getElementById('kodInput');
 const bulkInput = document.getElementById('bulkInput');
-const kodTarihInput = document.getElementById('kodTarihInput');
-(function(){
-  const s = new Date();
-  kodTarihInput.max = s.getFullYear() + '-' + String(s.getMonth()+1).padStart(2,'0') + '-' + String(s.getDate()).padStart(2,'0');
-  kodTarihInput.value = kodTarihInput.max;
-})();
 const btnKaydet = document.getElementById('btnKaydet');
 const kaydetMsg = document.getElementById('kaydetMsg');
 let kaydediliyor = false;
@@ -1940,19 +1911,19 @@ async function hepsiniKaydet(){
     return;
   }
 
-  // Seçilen tarihe göre kaydet: alan boşsa veya bugünse gerçek zamanlı sunucu saati kullanılır,
-  // geçmiş bir tarih seçildiyse o güne ait bir zaman damgası oluşturulur.
+  // Sağ üstteki tarih filtresinde seçili gün varsa kayıt o tarihe eklenir,
+  // "Tüm Tarihler" seçiliyse veya özel bir gün seçili değilse bugünün tarihi kullanılır.
   const simdi = new Date();
   const bugunStr = simdi.getFullYear() + '-' + String(simdi.getMonth()+1).padStart(2,'0') + '-' + String(simdi.getDate()).padStart(2,'0');
-  const seciliTarihStr = kodTarihInput.value;
-  const bugunMu = !seciliTarihStr || seciliTarihStr === bugunStr;
+  const navSeciliGun = (filtreDurumu.kod.aktifFiltre === 'ozel-gun' && filtreDurumu.kod.seciliGun) ? filtreDurumu.kod.seciliGun : null;
+  const navSeciliGunStr = navSeciliGun ? (navSeciliGun.getFullYear() + '-' + String(navSeciliGun.getMonth()+1).padStart(2,'0') + '-' + String(navSeciliGun.getDate()).padStart(2,'0')) : bugunStr;
+  const bugunMu = navSeciliGunStr === bugunStr;
   let eklenmeDegeri;
   let secilenTarihObj = simdi;
   if(bugunMu){
     eklenmeDegeri = serverTimestamp();
   }else{
-    const [yil, ay, gun] = seciliTarihStr.split('-').map(Number);
-    secilenTarihObj = new Date(yil, ay - 1, gun, simdi.getHours(), simdi.getMinutes(), simdi.getSeconds());
+    secilenTarihObj = new Date(navSeciliGun.getFullYear(), navSeciliGun.getMonth(), navSeciliGun.getDate(), simdi.getHours(), simdi.getMinutes(), simdi.getSeconds());
     eklenmeDegeri = Timestamp.fromDate(secilenTarihObj);
   }
 
