@@ -74,7 +74,7 @@
     background:linear-gradient(135deg, var(--primary) 0%, var(--bg-dark) 55%, #10184a 100%);
     overflow-y:auto;
     opacity:0;
-    transition:opacity .38s cubic-bezier(.4,0,.2,1), transform .38s cubic-bezier(.4,0,.2,1);
+    transition:opacity 1.1s cubic-bezier(.4,0,.2,1), transform 1.1s cubic-bezier(.4,0,.2,1);
     animation:girisOverlayBelir .6s cubic-bezier(.4,0,.2,1) forwards;
   }
   @keyframes girisOverlayBelir{
@@ -95,7 +95,7 @@
   body > header, body > main{
     opacity:0;
     transform:translateY(8px);
-    transition:opacity .55s cubic-bezier(.4,0,.2,1), transform .55s cubic-bezier(.4,0,.2,1);
+    transition:opacity 1.3s cubic-bezier(.4,0,.2,1) .15s, transform 1.3s cubic-bezier(.4,0,.2,1) .15s;
   }
   body.giris-tamam > header, body.giris-tamam > main{
     opacity:1;
@@ -1760,7 +1760,7 @@ const girisHata = document.getElementById('girisHata');
 function girisAc(){
   girisOverlay.classList.add('giris-kapaniyor');
   document.body.classList.add('giris-tamam');
-  setTimeout(()=>{ girisOverlay.style.display = 'none'; }, 380);
+  setTimeout(()=>{ girisOverlay.style.display = 'none'; }, 1100);
 }
 
 function girisDeneme(){
@@ -1996,8 +1996,8 @@ function modalKodlariGuncelleSayac(){
 }
 modalTextarea.addEventListener('input', modalKodlariGuncelleSayac);
 
-function kodGuncelle(id, lastikKodu, mevcutListe){
-  const bulunanlar = lastikIcinBulunanKodlar(lastikKodu, mevcutListe);
+function kodGuncelle(id, lastikKodu, mevcutListe, kayitTarihi){
+  const bulunanlar = lastikIcinBulunanKodlar(lastikKodu, mevcutListe, kayitTarihi);
   const kalanKodlar = mevcutListe.filter(k => !bulunanlar.has(String(k).toUpperCase()));
   modalAktifId = id;
   modalAktifKod = lastikKodu;
@@ -2092,8 +2092,8 @@ const beadcodGoruntuleListe = document.getElementById('beadcodGoruntuleListe');
 const beadcodGoruntuleSayac = document.getElementById('beadcodGoruntuleSayac');
 const beadcodGoruntuleClose = document.getElementById('beadcodGoruntuleClose');
 
-function beadcodGoruntuleAc(lastikKodu, blokluKodlar){
-  const bulunanlar = lastikIcinBulunanKodlar(lastikKodu, blokluKodlar);
+function beadcodGoruntuleAc(lastikKodu, blokluKodlar, kayitTarihi){
+  const bulunanlar = lastikIcinBulunanKodlar(lastikKodu, blokluKodlar, kayitTarihi);
   const kalanKodlar = blokluKodlar.filter(k => !bulunanlar.has(String(k).toUpperCase()));
   beadcodGoruntuleKod.textContent = lastikKodu;
   beadcodGoruntuleListe.innerHTML = kalanKodlar.length
@@ -2191,15 +2191,32 @@ setTimeout(()=>{
   });
 }, 7000);
 
-function lastikIcinBulunanKodlar(lastikKodu, blokluKodlar){
+function lastikIcinBulunanKodlar(lastikKodu, blokluKodlar, kayitTarihi){
   const bulunanlar = new Set();
   if(!Array.isArray(tumOkutmalar) || tumOkutmalar.length === 0 || !Array.isArray(blokluKodlar)) return bulunanlar;
   const lastikUpper = String(lastikKodu || '').toUpperCase();
   const kodSeti = new Set(blokluKodlar.map(k=>String(k).toUpperCase()));
+
+  // Aynı lastik kodu için bu kayıttan SONRA açılmış bir sonraki kayıt var mı?
+  // Varsa, o kayıttan itibaren yapılan okutmalar bu güne değil, o sonraki kayda ait sayılır.
+  let pencereBitis = null;
+  if(kayitTarihi){
+    tumKodKayitlari.forEach(diger=>{
+      if(String(diger.lastikKodu||'').toUpperCase() !== lastikUpper) return;
+      if(!diger.tarih) return;
+      if(diger.tarih > kayitTarihi){
+        if(pencereBitis === null || diger.tarih < pencereBitis) pencereBitis = diger.tarih;
+      }
+    });
+  }
+
   tumOkutmalar.forEach(o=>{
     if((o.lastikKodu || '').toUpperCase() !== lastikUpper) return;
     const blok = (o.bloklananKod || '').toUpperCase();
-    if(kodSeti.has(blok)) bulunanlar.add(blok);
+    if(!kodSeti.has(blok)) return;
+    if(kayitTarihi && o.tarih && o.tarih < kayitTarihi) return;
+    if(pencereBitis && o.tarih && o.tarih >= pencereBitis) return;
+    bulunanlar.add(blok);
   });
   return bulunanlar;
 }
@@ -2219,7 +2236,7 @@ function renderKodListe(){
   let html = '';
   filtreli.forEach(k=>{
     const tarih = k.tarih ? formatTarih(k.tarih) : '—';
-    const bulunanlar = lastikIcinBulunanKodlar(k.lastikKodu, k.blokluKodlar);
+    const bulunanlar = lastikIcinBulunanKodlar(k.lastikKodu, k.blokluKodlar, k.tarih);
     const kalanKodlar = k.blokluKodlar.filter(kod => !bulunanlar.has(String(kod).toUpperCase()));
     html += `<tr class="kod-row" data-id="${k.id}">
       <td class="tarih">${tarih}</td>
@@ -2239,14 +2256,14 @@ function renderKodListe(){
   kodListe.querySelectorAll('tr.kod-row').forEach(tr=>{
     tr.addEventListener('click', ()=>{
       const kayit = tumKodKayitlari.find(k=>k.id === tr.dataset.id);
-      if(kayit) kodGuncelle(kayit.id, kayit.lastikKodu, kayit.blokluKodlar);
+      if(kayit) kodGuncelle(kayit.id, kayit.lastikKodu, kayit.blokluKodlar, kayit.tarih);
     });
   });
   kodListe.querySelectorAll('.beadcod-buyut-btn').forEach(b=>{
     b.addEventListener('click', (e)=>{
       e.stopPropagation();
       const kayit = tumKodKayitlari.find(k=>k.id === b.dataset.id);
-      if(kayit) beadcodGoruntuleAc(kayit.lastikKodu, kayit.blokluKodlar);
+      if(kayit) beadcodGoruntuleAc(kayit.lastikKodu, kayit.blokluKodlar, kayit.tarih);
     });
   });
 }
