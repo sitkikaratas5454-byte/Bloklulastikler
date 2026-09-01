@@ -81,6 +81,17 @@
     pointer-events:none;
   }
 
+  /* Giriş overlay kapanırken sayfanın kendisi de yumuşakça belirsin (ani "pat" geçişi engeller) */
+  body > header, body > main{
+    opacity:0;
+    transform:translateY(8px);
+    transition:opacity .55s cubic-bezier(.4,0,.2,1), transform .55s cubic-bezier(.4,0,.2,1);
+  }
+  body.giris-tamam > header, body.giris-tamam > main{
+    opacity:1;
+    transform:translateY(0);
+  }
+
   .giris-marka{
     display:flex;
     flex-direction:column;
@@ -168,13 +179,14 @@
     border-radius:var(--radius-sm);
     border:1px solid rgba(255,255,255,.22);
     background:rgba(255,255,255,.08);
-    color:#ffffff !important;
-    -webkit-text-fill-color:#ffffff;
+    color:var(--accent) !important;
+    -webkit-text-fill-color:var(--accent);
     caret-color:var(--accent);
     font-family:var(--mono);
-    font-size:15px;
+    font-size:20px;
+    font-weight:700;
     text-align:left;
-    letter-spacing:.15em;
+    letter-spacing:.35em;
     outline:none;
     transition:border-color .15s ease, background .15s ease, box-shadow .15s ease;
   }
@@ -326,13 +338,43 @@
   }
   .tabbar-inner::-webkit-scrollbar{display:none;}
   .tabs{
+    position:relative;
     display:inline-flex;
     background:transparent;
     padding:0;
     gap:6px;
     flex:0 0 auto;
   }
+  .tab-pill{
+    position:absolute;
+    top:0;
+    left:0;
+    height:100%;
+    width:0;
+    border-radius:9px;
+    background:var(--accent);
+    box-shadow:0 1px 4px rgba(0,0,0,.28), 0 1px 1px rgba(0,0,0,.1);
+    overflow:hidden;
+    z-index:0;
+    pointer-events:none;
+    transition:left .4s cubic-bezier(.34,1.56,.64,1), width .4s cubic-bezier(.34,1.56,.64,1);
+    animation:tabAktifParilti 2.2s ease-in-out infinite;
+  }
+  .tab-pill::after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-60%;
+    width:45%;
+    height:100%;
+    background:linear-gradient(115deg, transparent 0%, rgba(255,255,255,.75) 50%, transparent 100%);
+    transform:skewX(-20deg);
+    animation:tabAynaEfekti 2.2s linear infinite;
+    pointer-events:none;
+  }
   .tab{
+    position:relative;
+    z-index:1;
     flex:0 0 auto;
     padding:9px 18px;
     text-align:center;
@@ -345,28 +387,12 @@
     cursor:pointer;
     white-space:nowrap;
     border-radius:9px;
-    transition:color .18s ease, background .18s ease, box-shadow .18s ease;
+    transition:color .28s ease .05s;
   }
   .tab:hover{color:#fff;background:rgba(255,255,255,.06);}
   .tab.active{
-    position:relative;
-    overflow:hidden;
     color:var(--navy);
-    background:var(--accent);
-    box-shadow:0 1px 4px rgba(0,0,0,.28), 0 1px 1px rgba(0,0,0,.1);
-    animation:tabAktifParilti 2.2s ease-in-out infinite;
-  }
-  .tab.active::after{
-    content:"";
-    position:absolute;
-    top:0;
-    left:-60%;
-    width:45%;
-    height:100%;
-    background:linear-gradient(115deg, transparent 0%, rgba(255,255,255,.75) 50%, transparent 100%);
-    transform:skewX(-20deg);
-    animation:tabAynaEfekti 2.2s linear infinite;
-    pointer-events:none;
+    background:transparent;
   }
   @keyframes tabAynaEfekti{
     0%{left:-60%;}
@@ -1369,6 +1395,7 @@
   <nav class="tabbar">
     <div class="tabbar-inner">
       <div class="tabs">
+        <span class="tab-pill" id="tabPill"></span>
         <div class="tab active" data-view="ekle">Kod Ekle</div>
         <div class="tab" data-view="log">Bloklu Bulunan Lastikler</div>
         <div class="tab" data-view="kodara">Koda Göre Ara</div>
@@ -1628,6 +1655,7 @@ const girisHata = document.getElementById('girisHata');
 
 function girisAc(){
   girisOverlay.classList.add('giris-kapaniyor');
+  document.body.classList.add('giris-tamam');
   setTimeout(()=>{ girisOverlay.style.display = 'none'; }, 380);
 }
 
@@ -1646,6 +1674,7 @@ function girisDeneme(){
 }
 if(sessionStorage.getItem('blokluGiris') === '1'){
   girisOverlay.style.display = 'none';
+  document.body.classList.add('giris-tamam');
 }
 girisBtn.addEventListener('click', girisDeneme);
 girisSifreInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') girisDeneme(); });
@@ -1680,14 +1709,33 @@ function setConn(state){
 }
 
 /* ---------- Sekme geçişi ---------- */
+const tabPill = document.getElementById('tabPill');
+
+function pillGuncelle(tab, animasyonsuz){
+  if(!tab || !tabPill) return;
+  if(animasyonsuz){
+    tabPill.style.transition = 'none';
+  }
+  tabPill.style.left = tab.offsetLeft + 'px';
+  tabPill.style.width = tab.offsetWidth + 'px';
+  if(animasyonsuz){
+    void tabPill.offsetWidth;
+    tabPill.style.transition = '';
+  }
+}
+
 document.querySelectorAll('.tab').forEach(tab=>{
   tab.addEventListener('click', ()=>{
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
     document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
     tab.classList.add('active');
     document.getElementById('view-' + tab.dataset.view).classList.add('active');
+    pillGuncelle(tab);
   });
 });
+
+requestAnimationFrame(()=>{ pillGuncelle(document.querySelector('.tab.active'), true); });
+window.addEventListener('resize', ()=>{ pillGuncelle(document.querySelector('.tab.active'), true); });
 
 /* ---------- Kod Ekle ---------- */
 const kodListe = document.getElementById('kodListe');
