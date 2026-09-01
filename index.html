@@ -1565,12 +1565,9 @@
       <div class="card-header">
         <div style="display:flex;align-items:center;gap:12px;">
           <h2 class="card-title" style="font-size:26px;text-transform:uppercase;color:var(--accent);">Lastik Kodu Ara</h2>
-          <span style="font-style:italic;font-size:12.5px;font-weight:400;color:#9fb0d6;text-transform:none;">(incelemek istediğiniz kodu giriniz)</span>
           <button class="btn-danger" id="btnLogTemizle">Temizle</button>
         </div>
         <div style="display:flex;align-items:center;gap:12px;">
-          <span id="bloklananAdetMsg" style="display:none;font-size:13px;font-weight:600;color:var(--muted);"></span>
-          <button type="button" class="btn-secondary" id="btnKopyalaBloklanan" style="display:none;">📋 Bloklu Bulunan Beadcodeleri Kopyala</button>
           <button type="button" class="btn-secondary" id="btnPdfIndir" style="display:none;">📄 PDF İndir</button>
         </div>
       </div>
@@ -1885,8 +1882,17 @@ textareaEnterVirgulle(bulkInput);
 function showMsg(text, type){
   kaydetMsg.textContent = text;
   kaydetMsg.className = 'msg ' + (type || '');
-  if(text){ setTimeout(()=>{ kaydetMsg.textContent=''; kaydetMsg.className='msg'; }, 3000); }
+  // Hatalı (kırmızı) uyarılar otomatik kaybolmaz; kullanıcı kodu düzeltene/değiştirene kadar ekranda kalır.
+  if(text && type !== 'err'){ setTimeout(()=>{ kaydetMsg.textContent=''; kaydetMsg.className='msg'; }, 3000); }
 }
+function kaydetHataTemizle(){
+  if(kaydetMsg.classList.contains('err')){
+    kaydetMsg.textContent = '';
+    kaydetMsg.className = 'msg';
+  }
+}
+kodInput.addEventListener('input', kaydetHataTemizle);
+bulkInput.addEventListener('input', kaydetHataTemizle);
 
 async function hepsiniKaydet(){
   if(kaydediliyor) return;
@@ -2648,10 +2654,7 @@ function escapeHtml(s){
 /* ---------- KOD ARA ---------- */
 const logAramaInput = document.getElementById('logAramaInput');
 const logAramaBody = document.getElementById('logAramaBody');
-const btnKopyalaBloklanan = document.getElementById('btnKopyalaBloklanan');
-const bloklananAdetMsg = document.getElementById('bloklananAdetMsg');
 const btnPdfIndir = document.getElementById('btnPdfIndir');
-let sonAramaBloklananKodlar = [];
 let sonAramaGruplari = [];
 let sonAranankod = '';
 
@@ -2662,10 +2665,7 @@ function renderLogArama(){
 
   if(!aranan){
     logAramaBody.innerHTML = '<tr><td colspan="6" class="empty">Aramak için bir kod gir.</td></tr>';
-    sonAramaBloklananKodlar = [];
     sonAramaGruplari = [];
-    btnKopyalaBloklanan.style.display = 'none';
-    bloklananAdetMsg.style.display = 'none';
     btnPdfIndir.style.display = 'none';
     return;
   }
@@ -2678,10 +2678,7 @@ function renderLogArama(){
 
   if(eslesenler.length === 0){
     logAramaBody.innerHTML = '<tr><td colspan="6" class="empty">"' + escapeHtml(aranan) + '" kodunda kayıt bulunamadı.</td></tr>';
-    sonAramaBloklananKodlar = [];
     sonAramaGruplari = [];
-    btnKopyalaBloklanan.style.display = 'none';
-    bloklananAdetMsg.style.display = 'none';
     btnPdfIndir.style.display = 'none';
     return;
   }
@@ -2724,35 +2721,8 @@ function renderLogArama(){
     </tr>
   `).join('');
 
-  sonAramaBloklananKodlar = [...new Set(gruplar.map(g => g.kod))];
-  btnKopyalaBloklanan.style.display = sonAramaBloklananKodlar.length ? '' : 'none';
   btnPdfIndir.style.display = gruplar.length ? '' : 'none';
-  if(sonAramaBloklananKodlar.length){
-    bloklananAdetMsg.textContent = sonAramaBloklananKodlar.length + ' adet bloklu kod';
-    bloklananAdetMsg.style.display = '';
-  }else{
-    bloklananAdetMsg.style.display = 'none';
-  }
 }
-
-btnKopyalaBloklanan.addEventListener('click', async ()=>{
-  if(sonAramaBloklananKodlar.length === 0) return;
-  const metin = sonAramaBloklananKodlar.join(', ');
-  const eskiYazi = btnKopyalaBloklanan.textContent;
-  try{
-    await navigator.clipboard.writeText(metin);
-    btnKopyalaBloklanan.textContent = '✓ Kopyalandı';
-  }catch(e){
-    const alan = document.createElement('textarea');
-    alan.value = metin;
-    document.body.appendChild(alan);
-    alan.select();
-    document.execCommand('copy');
-    document.body.removeChild(alan);
-    btnKopyalaBloklanan.textContent = '✓ Kopyalandı';
-  }
-  setTimeout(()=>{ btnKopyalaBloklanan.textContent = eskiYazi; }, 1500);
-});
 
 const btnLogSorgula = document.getElementById('btnLogSorgula');
 btnLogSorgula.addEventListener('click', renderLogArama);
