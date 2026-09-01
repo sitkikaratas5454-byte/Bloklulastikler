@@ -69,8 +69,8 @@
     display:flex;
     flex-direction:column;
     align-items:center;
-    justify-content:center;
-    padding:32px 20px;
+    justify-content:flex-start;
+    padding:40px 20px 40px;
     background:
       radial-gradient(circle at 50% 0%, rgba(224,33,47,.28) 0%, rgba(224,33,47,0) 45%),
       radial-gradient(circle at 85% 95%, rgba(224,33,47,.22) 0%, rgba(224,33,47,0) 45%),
@@ -81,13 +81,15 @@
     display:flex;
     flex-direction:column;
     align-items:center;
-    margin-bottom:22px;
+    margin-bottom:0;
   }
   .giris-logo-icon{
-    width:500px;
-    height:500px;
+    width:1000px;
+    height:1000px;
+    max-width:90vw;
     object-fit:contain;
     filter:drop-shadow(0 8px 24px rgba(224,33,47,.45));
+    margin-bottom:0;
   }
   .giris-logo-title{
     font-family:var(--font-head);
@@ -122,17 +124,18 @@
   .giris-panel{
     width:100%;
     max-width:340px;
-    background:linear-gradient(160deg, #1c1c20 0%, #131316 55%, #0c0c0e 100%);
-    border:1px solid rgba(255,255,255,.08);
+    background:linear-gradient(160deg, #232327 0%, #17171a 45%, #0a0a0c 100%);
+    border:1px solid rgba(255,255,255,.1);
     border-radius:var(--radius-lg);
     padding:26px 26px 24px;
     text-align:center;
     box-shadow:
-      10px 10px 24px rgba(0,0,0,.6),
-      -8px -8px 20px rgba(255,255,255,.05),
-      inset 0 1px 0 rgba(255,255,255,.12),
-      inset 0 -2px 6px rgba(0,0,0,.5),
-      0 0 46px rgba(224,33,47,.18);
+      16px 16px 34px rgba(0,0,0,.7),
+      -12px -12px 28px rgba(255,255,255,.06),
+      inset 0 2px 0 rgba(255,255,255,.16),
+      inset 0 -3px 8px rgba(0,0,0,.6),
+      inset 6px 0 14px rgba(255,255,255,.03),
+      inset -6px 0 14px rgba(0,0,0,.35);
     position:relative;
   }
   .giris-panel .giris-baslik{
@@ -174,7 +177,6 @@
   }
   .giris-panel input:focus{
     border-color:#e0212f;
-    box-shadow:0 0 0 3px rgba(224,33,47,.18);
   }
   .giris-panel button{
     width:100%;
@@ -187,10 +189,10 @@
     font-size:14.5px;
     cursor:pointer;
     letter-spacing:.02em;
-    box-shadow:0 8px 20px rgba(224,33,47,.35);
-    transition:filter .15s, transform .1s;
+    box-shadow:0 0 18px 4px rgba(224,33,47,.55), 0 8px 22px rgba(224,33,47,.4), inset 0 1px 0 rgba(255,255,255,.25);
+    transition:filter .15s, transform .1s, box-shadow .15s;
   }
-  .giris-panel button:hover{filter:brightness(1.1);}
+  .giris-panel button:hover{filter:brightness(1.12);box-shadow:0 0 26px 6px rgba(224,33,47,.7), 0 10px 26px rgba(224,33,47,.5), inset 0 1px 0 rgba(255,255,255,.3);}
   .giris-panel button:active{transform:translateY(1px);}
   .giris-hata{
     color:#ff5a63;
@@ -774,13 +776,12 @@
     padding-left:40px;
   }
   .giris-panel input:focus{
-    background:linear-gradient(160deg, #ffffff 0%, #fdeeee 55%, #f6d3d5 100%);
+    background:linear-gradient(160deg, #ffffff 0%, #eef1f8 55%, #dfe4ee 100%);
     box-shadow:
       6px 6px 14px rgba(28,43,110,.18),
       -6px -6px 14px rgba(255,255,255,.9),
       inset 0 1px 0 rgba(255,255,255,.9),
-      inset 0 -6px 10px rgba(224,33,47,.18),
-      0 0 0 3px rgba(224,33,47,.18);
+      inset 0 -6px 10px rgba(28,43,110,.06);
   }
 
   .empty{color:var(--muted);font-size:13.5px;padding:26px 0;text-align:center;}
