@@ -783,6 +783,7 @@
       inset 0 1px 0 rgba(255,255,255,.5),
       inset 0 -1px 2px rgba(0,0,0,.15);
   }
+  .btn-sorgula-3d:disabled{opacity:.5;cursor:not-allowed;transform:translateY(0);}
   .btn-kaydet-full::after{
     content:"";
     position:absolute;
@@ -809,6 +810,33 @@
     font-size:12.5px;
   }
   .btn-danger:hover{background:var(--red-tint);}
+
+  /* ---------- Temizle butonu: dolu kırmızı 3D kabarık efekt ---------- */
+  .btn-temizle-3d{
+    position:relative;
+    background:linear-gradient(180deg, #ff6b73 0%, var(--red) 55%, #a51e2c 100%)!important;
+    color:#fff!important;
+    border:none!important;
+    box-shadow:
+      0 4px 0 #7a151f,
+      0 7px 14px rgba(0,0,0,.3),
+      inset 0 1px 0 rgba(255,255,255,.5),
+      inset 0 -2px 3px rgba(0,0,0,.2);
+    transform:translateY(0);
+    transition:transform .12s ease, box-shadow .12s ease, background .15s ease;
+  }
+  .btn-temizle-3d:hover{
+    background:linear-gradient(180deg, #ff7a81 0%, #e8404c 55%, #a51e2c 100%)!important;
+    color:#fff!important;
+  }
+  .btn-temizle-3d:active{
+    transform:translateY(3px);
+    box-shadow:
+      0 1px 0 #7a151f,
+      0 2px 6px rgba(0,0,0,.25),
+      inset 0 1px 0 rgba(255,255,255,.4),
+      inset 0 -1px 2px rgba(0,0,0,.15);
+  }
 
   .btn-secondary{
     background:transparent;
@@ -1621,8 +1649,8 @@
       <div class="add-row">
         <input type="text" id="logAramaInput" placeholder="İncelemek istediğiniz kodu buraya girin" autocomplete="off" style="flex:1 1 auto;min-width:0;">
         <button type="button" class="btn-secondary btn-sorgula-3d" id="btnLogSorgula" style="flex-shrink:0;">Sorgula</button>
-        <button class="btn-danger" id="btnLogTemizle" style="flex-shrink:0;">Temizle</button>
-        <button type="button" class="btn-secondary" id="btnPdfIndir" style="flex-shrink:0;" disabled>📄 PDF İndir</button>
+        <button class="btn-danger btn-temizle-3d" id="btnLogTemizle" style="flex-shrink:0;">Temizle</button>
+        <button type="button" class="btn-secondary btn-sorgula-3d" id="btnPdfIndir" style="flex-shrink:0;" disabled>📄 PDF İndir</button>
       </div>
       <div class="tablo-3d tablo-duz" style="overflow-x:auto;margin-top:16px;">
         <table>
@@ -1643,7 +1671,7 @@
       <div class="tablo-3d tablo-duz" style="overflow-x:auto;">
         <table>
           <thead>
-            <tr><th>Sıra No</th><th>Tarih</th><th>Lastik Kodu</th><th>İstasyon</th><th>Bloklanan Kod</th><th>Saat</th><th>Adet</th></tr>
+            <tr><th>Sıra No</th><th>Tarih</th><th>Lastik Kodu</th><th>İstasyon</th><th>Bloklu Bulunan Beadcode'lar</th><th>Saat</th><th>Adet</th></tr>
           </thead>
           <tbody id="logBody">
             <tr><td colspan="7" class="empty">Yükleniyor...</td></tr>
