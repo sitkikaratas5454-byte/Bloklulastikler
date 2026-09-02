@@ -314,6 +314,8 @@
     display:inline-flex;
     align-items:center;
     gap:8px;
+    flex-shrink:0;
+    white-space:nowrap;
     transition:border-color .15s, background .15s;
   }
   .navbar-date-btn svg{flex-shrink:0;color:var(--accent);}
@@ -359,11 +361,11 @@
   .tabbar-inner{
     width:100%;
     margin:0;
-    padding:0 40px;
+    padding:0 20px;
     display:flex;
     align-items:center;
-    justify-content:center;
-    flex-wrap:wrap;
+    justify-content:flex-start;
+    flex-wrap:nowrap;
     gap:14px;
     overflow-x:auto;
     scrollbar-width:none;
