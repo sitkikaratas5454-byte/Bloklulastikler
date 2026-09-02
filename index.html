@@ -83,6 +83,7 @@
     to{opacity:1;}
   }
   .giris-overlay.giris-kapaniyor{
+    animation:none;
     opacity:0;
     transform:scale(.92);
     pointer-events:none;
@@ -336,7 +337,7 @@
   }
   .navbar-date-clear:hover{border-color:var(--accent);background:rgba(255,255,255,.1);}
   @media (max-width:820px){
-    .brand-title{white-space:normal;font-size:22px;}
+    .brand-title{white-space:normal;font-size:19px;}
   }
   .conn-badge{
     display:flex;align-items:center;gap:7px;
@@ -1544,7 +1545,7 @@
   <div class="navbar-inner">
     <div class="navbar-brand">
       <div class="brand-text">
-        <span class="brand-title">BLOKELİ BEADCODE TAKİBİ</span>
+        <span class="brand-title">BLOKELİ BEADCODE İZLEME TABLOSU</span>
       </div>
     </div>
   </div>
@@ -1552,7 +1553,7 @@
     <div class="tabbar-inner">
       <div class="tabs">
         <span class="tab-pill" id="tabPill"></span>
-        <div class="tab active" data-view="ekle">Lastik Kodu ve Blokeli Kod Ekle</div>
+        <div class="tab active" data-view="ekle">Lastik Kodu ve Blokeli Beadcode Ekle</div>
         <div class="tab" data-view="log">Bloklu Bulunan Lastikler</div>
         <div class="tab" data-view="kodara">Lastik Koduna Göre Ara</div>
       </div>
@@ -1575,9 +1576,9 @@
           <input id="kodInput" type="text" autocomplete="off" maxlength="10" placeholder="" aria-label="Lastik Kodu Giriniz" class="entry-kod-input">
         </div>
         <div class="entry-field entry-field-bulk">
-          <label class="entry-label" for="bulkInput">Blokeli Kodları Giriniz</label>
+          <label class="entry-label" for="bulkInput">Blokeli Beadcode'ları Giriniz</label>
           <div class="bulk-box" id="bulkBox">
-            <textarea id="bulkInput" placeholder="" aria-label="Blokeli Kodları Giriniz"></textarea>
+            <textarea id="bulkInput" placeholder="" aria-label="Blokeli Beadcode'ları Giriniz"></textarea>
             <button type="button" class="bulk-expand-btn" id="btnBulkTumunuGor" title="Tümünü Gör">⤢</button>
           </div>
         </div>
@@ -1599,12 +1600,12 @@
         <table>
           <thead>
             <tr>
-              <th>Eklenen Tarih</th>
+              <th>Kayıt Tarihi</th>
               <th>Lastik Kodu</th>
-              <th>Blokeli Kodlar</th>
-              <th>Toplam Blokeli Kod Sayısı</th>
-              <th>Bulunan Blokeli Kod Sayısı</th>
-              <th>Kalan Blokeli Kod Sayısı</th>
+              <th>Blokeli Beadcode'lar</th>
+              <th>Toplam Blokeli Beadcode Sayısı</th>
+              <th>Bulunan Blokeli Beadcode Sayısı</th>
+              <th>Kalan Blokeli Beadcode Sayısı</th>
             </tr>
           </thead>
           <tbody id="kodListe">
@@ -1683,10 +1684,10 @@
       <button class="modal-close" id="modalClose" aria-label="Kapat">✕</button>
     </div>
 
-    <p class="modal-label">Blokeli Kodlar <span style="color:var(--muted);text-transform:none;letter-spacing:0;font-weight:400;">(virgülle ayır)</span></p>
+    <p class="modal-label">Blokeli Beadcode'lar <span style="color:var(--muted);text-transform:none;letter-spacing:0;font-weight:400;">(virgülle ayır)</span></p>
     <textarea id="modalTextarea" autocomplete="off"></textarea>
-    <p class="modal-hint">Kutuyu tamamen boşaltıp Güncelle'ye basarsan tüm blokeli kodlar silinir. Lastik kodunu komple kaldırmak için aşağıdaki "Kaydı Sil" butonunu kullan.</p>
-    <span class="modal-count" id="modalCount">0 blokeli kod</span>
+    <p class="modal-hint">Kutuyu tamamen boşaltıp Güncelle'ye basarsan tüm blokeli beadcode'lar silinir. Lastik kodunu komple kaldırmak için aşağıdaki "Kaydı Sil" butonunu kullan.</p>
+    <span class="modal-count" id="modalCount">0 blokeli beadcode</span>
 
     <div class="modal-actions">
       <button class="btn-danger" id="modalSil">Kaydı Sil</button>
@@ -1713,14 +1714,14 @@
     <div class="modal-head">
       <div>
         <p class="tag">Kod Ekle</p>
-        <p class="kodbaslik">Blokeli Kodlar</p>
+        <p class="kodbaslik">Blokeli Beadcode'lar</p>
       </div>
       <button class="modal-close" id="bulkModalClose" aria-label="Kapat">✕</button>
     </div>
 
-    <p class="modal-label">Blokeli Kodlar <span style="color:var(--muted);text-transform:none;letter-spacing:0;font-weight:400;">(virgül, boşluk veya satır ile ayır)</span></p>
+    <p class="modal-label">Blokeli Beadcode'lar <span style="color:var(--muted);text-transform:none;letter-spacing:0;font-weight:400;">(virgül, boşluk veya satır ile ayır)</span></p>
     <textarea id="bulkModalTextarea" autocomplete="off" style="min-height:320px;"></textarea>
-    <span class="modal-count" id="bulkModalCount">0 blokeli kod</span>
+    <span class="modal-count" id="bulkModalCount">0 blokeli beadcode</span>
 
     <div class="modal-actions">
       <button class="btn-add" id="bulkModalTamam">Tamam</button>
@@ -1822,9 +1823,6 @@ if(sessionStorage.getItem('blokluGiris') === '1'){
 }
 girisBtn.addEventListener('click', girisDeneme);
 girisSifreInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') girisDeneme(); });
-girisSifreInput.addEventListener('input', ()=>{
-  if(girisSifreInput.value.trim().length >= GIRIS_SIFRE.length) girisDeneme();
-});
 
 const firebaseConfig = {
   apiKey: "AIzaSyCTULPTsI4Lvof8YnZCJCWR5mn-BtES_Iw",
@@ -1943,7 +1941,7 @@ async function hepsiniKaydet(){
   const girilenBlokluKodlar = bulkInput.value.split(/[\s,;]+/).map(s=>s.trim().toUpperCase()).filter(Boolean);
   const benzersizBlokluKodlar = [...new Set(girilenBlokluKodlar)];
   if(!lastikKodu){ showMsg('Lastik kodu girmelisin.', 'err'); return; }
-  if(benzersizBlokluKodlar.length === 0){ showMsg('En az bir blokeli kod girmelisin.', 'err'); return; }
+  if(benzersizBlokluKodlar.length === 0){ showMsg('En az bir blokeli beadcode girmelisin.', 'err'); return; }
 
   const cakisanlar = [];
   for(const kod of benzersizBlokluKodlar){
@@ -1983,16 +1981,16 @@ async function hepsiniKaydet(){
     const tumGecmisKodlar = mevcutKodlarTumu.get(lastikKodu) || new Set();
     const yeniler = benzersizBlokluKodlar.filter(k=>!tumGecmisKodlar.has(k));
     if(yeniler.length === 0){
-      showMsg('Girdiğin blokeli kodların hepsi zaten ' + lastikKodu + ' kodunda kayıtlı.', 'err');
+      showMsg('Girdiğin blokeli beadcode\'ların hepsi zaten ' + lastikKodu + ' kodunda kayıtlı.', 'err');
     }else if(bugunMu && mevcutKodlar.get(lastikKodu)){
       const bugunkuKayit = mevcutKodlar.get(lastikKodu);
       const birlesikListe = [...bugunkuKayit.blokluKodlar, ...yeniler];
       await updateDoc(doc(db, 'bloklu_kodlar', bugunkuKayit.id), { blokluKodlar: birlesikListe });
-      showMsg(yeniler.length + ' yeni blokeli kod ' + lastikKodu + ' koduna eklendi.', 'ok');
+      showMsg(yeniler.length + ' yeni blokeli beadcode ' + lastikKodu + ' koduna eklendi.', 'ok');
     }else{
       await addDoc(kodlarCol, { lastikKodu, blokluKodlar: yeniler, eklenme: eklenmeDegeri });
       const tarihMesaji = bugunMu ? 'bugünün tarihiyle' : (String(secilenTarihObj.getDate()).padStart(2,'0') + '.' + String(secilenTarihObj.getMonth()+1).padStart(2,'0') + '.' + secilenTarihObj.getFullYear() + ' tarihiyle');
-      showMsg(lastikKodu + ' lastik kodu ve ' + yeniler.length + ' blokeli kod ' + tarihMesaji + ' kaydedildi.', 'ok');
+      showMsg(lastikKodu + ' lastik kodu ve ' + yeniler.length + ' blokeli beadcode ' + tarihMesaji + ' kaydedildi.', 'ok');
     }
     kodInput.value = '';
     bulkInput.value = '';
@@ -2016,7 +2014,7 @@ const btnBulkTumunuGor = document.getElementById('btnBulkTumunuGor');
 
 function bulkModalSayacGuncelle(){
   const adet = bulkModalTextarea.value.split(/[\s,;]+/).map(s=>s.trim()).filter(Boolean).length;
-  bulkModalCount.textContent = adet + ' blokeli kod';
+  bulkModalCount.textContent = adet + ' blokeli beadcode';
 }
 function bulkModalAc(){
   bulkModalTextarea.value = bulkInput.value;
@@ -2056,7 +2054,7 @@ function modalShowMsg(text, type){
 function modalKodlariGuncelleSayac(){
   const liste = modalTextarea.value.split(/[\s,;]+/).map(s=>s.trim()).filter(Boolean);
   const benzersiz = new Set(liste.map(s=>s.toUpperCase()));
-  modalCount.textContent = benzersiz.size + ' blokeli kod';
+  modalCount.textContent = benzersiz.size + ' blokeli beadcode';
 }
 modalTextarea.addEventListener('input', modalKodlariGuncelleSayac);
 
@@ -2189,7 +2187,7 @@ function kodListesiGoruntuleAc(baslik, kodlar, lastikKodlari){
     : '<span class="beadcod-chip" style="opacity:.6;">Kod yok</span>';
   const bulunanAdet = kodlar.filter(k => bulunanSeti.has(String(k).toUpperCase())).length;
   const kalanAdet = kodlar.length - bulunanAdet;
-  beadcodGoruntuleSayac.textContent = kodlar.length + ' adet blokeli kod / bulunan ' + bulunanAdet + ' adet / kalan ' + kalanAdet + ' adet';
+  beadcodGoruntuleSayac.textContent = kodlar.length + ' adet blokeli beadcode / bulunan ' + bulunanAdet + ' adet / kalan ' + kalanAdet + ' adet';
   beadcodGoruntuleOverlay.classList.add('open');
 }
 beadcodGoruntuleClose.addEventListener('click', beadcodGoruntuleKapat);
