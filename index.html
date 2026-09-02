@@ -569,7 +569,7 @@
       box-shadow:0 0 0 9px rgba(240,179,35,0), 0 0 30px 8px rgba(240,179,35,.9);
     }
   }
-  .entry-kod-input.kod-vurgula{
+  .kod-vurgula{
     animation:kodInputYanipSon .75s ease-in-out infinite;
   }
   .bulk-box{
@@ -1615,7 +1615,7 @@
     <div class="card entry-card">
       <div class="entry-row">
         <div class="entry-field">
-          <label class="entry-label" for="kodInput">Lastik Kodu</label>
+          <label class="entry-label" for="kodInput">Lastik Kodu Giriniz</label>
           <input id="kodInput" type="text" autocomplete="off" maxlength="10" placeholder="" aria-label="Lastik Kodu Giriniz" class="entry-kod-input">
         </div>
         <div class="entry-field entry-field-bulk">
@@ -1941,10 +1941,15 @@ kodInput.addEventListener('input', ()=>{
 });
 
 // Lastik Kodu alanı: buraya girileceği belli olsun diye yanıp söner.
-// Bloklu beadcode alanına geçildiğinde durur, kayıttan sonra tekrar başlar.
+// Bloklu beadcode alanına geçildiğinde durur, o alan yanıp sönmeye başlar; kayıttan sonra Lastik Kodu tekrar başlar.
 kodInput.classList.add('kod-vurgula');
+kodInput.addEventListener('focus', ()=>{
+  bulkInput.classList.remove('kod-vurgula');
+  kodInput.classList.add('kod-vurgula');
+});
 bulkInput.addEventListener('focus', ()=>{
   kodInput.classList.remove('kod-vurgula');
+  bulkInput.classList.add('kod-vurgula');
 });
 
 bulkInput.setAttribute('inputmode', 'numeric');
