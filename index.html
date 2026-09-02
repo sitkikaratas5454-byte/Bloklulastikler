@@ -171,12 +171,15 @@
     letter-spacing:.01em;
     margin:0 0 22px;
   }
-  .giris-logo{
-    display:block;
+  .sayfa-ust-logo-wrap{
+    display:flex;
+    justify-content:center;
+    padding:14px 0 0;
+  }
+  .sayfa-ust-logo{
     width:200px;
     height:200px;
     object-fit:contain;
-    margin:0 auto 22px;
   }
   .giris-input-wrap{
     position:relative;
@@ -1524,7 +1527,6 @@
   <div class="giris-panel" id="girisPanel">
     <p class="giris-baslik">Erişim Paneli</p>
     <p class="giris-alt">Devam etmek için şifreni gir</p>
-    <img src="giris.png" alt="Logo" class="giris-logo">
     <div class="giris-input-wrap">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       <input type="text" id="girisSifre" placeholder="Şifre" autocomplete="off" inputmode="numeric" autocapitalize="off" autocorrect="off" spellcheck="false" style="-webkit-text-security:disc;text-security:disc;">
@@ -1535,6 +1537,9 @@
 </div>
 
 <header class="navbar">
+  <div class="sayfa-ust-logo-wrap">
+    <img src="giris.png" alt="Logo" class="sayfa-ust-logo">
+  </div>
   <div class="navbar-inner">
     <div class="navbar-brand">
       <img src="logo.png" alt="Logo" class="brand-logo">
