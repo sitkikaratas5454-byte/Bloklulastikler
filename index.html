@@ -1628,6 +1628,7 @@
         <table>
           <thead>
             <tr>
+              <th>Sıra No</th>
               <th>Kayıt Tarihi</th>
               <th>Lastik Kodu</th>
               <th>Blokeli Beadcode'lar</th>
@@ -1637,7 +1638,7 @@
             </tr>
           </thead>
           <tbody id="kodListe">
-            <tr><td colspan="6" class="empty">Yükleniyor...</td></tr>
+            <tr><td colspan="7" class="empty">Yükleniyor...</td></tr>
           </tbody>
         </table>
       </div>
@@ -2087,7 +2088,7 @@ function modalKodlariGuncelleSayac(){
 modalTextarea.addEventListener('input', modalKodlariGuncelleSayac);
 
 function kodGuncelle(id, lastikKodu, mevcutListe, kayitTarihi){
-  const bulunanlar = lastikIcinBulunanKodlar(lastikKodu, mevcutListe, kayitTarihi);
+  const bulunanlar = lastikIcinBulunanKodlar(lastikKodu, mevcutListe, kayitTarihi, okutmaIndexOlustur(), kodKayitTarihIndexOlustur());
   const kalanKodlar = mevcutListe.filter(k => !bulunanlar.has(String(k).toUpperCase()));
   modalAktifId = id;
   modalAktifKod = lastikKodu;
@@ -2183,7 +2184,7 @@ const beadcodGoruntuleSayac = document.getElementById('beadcodGoruntuleSayac');
 const beadcodGoruntuleClose = document.getElementById('beadcodGoruntuleClose');
 
 function beadcodGoruntuleAc(lastikKodu, blokluKodlar, kayitTarihi){
-  const bulunanlar = lastikIcinBulunanKodlar(lastikKodu, blokluKodlar, kayitTarihi);
+  const bulunanlar = lastikIcinBulunanKodlar(lastikKodu, blokluKodlar, kayitTarihi, okutmaIndexOlustur(), kodKayitTarihIndexOlustur());
   const kalanKodlar = blokluKodlar.filter(k => !bulunanlar.has(String(k).toUpperCase()));
   beadcodGoruntuleKod.textContent = lastikKodu;
   beadcodGoruntuleListe.innerHTML = kalanKodlar.length
@@ -2281,27 +2282,52 @@ setTimeout(()=>{
   });
 }, 7000);
 
-function lastikIcinBulunanKodlar(lastikKodu, blokluKodlar, kayitTarihi){
+// Performans: her satır için tüm listeleri baştan taramak yerine,
+// lastik koduna göre önceden gruplanmış index'ler kullanılır (Tüm Tarihler'de donmayı önler).
+function okutmaIndexOlustur(){
+  const idx = new Map();
+  if(Array.isArray(tumOkutmalar)){
+    tumOkutmalar.forEach(o=>{
+      const lastikUpper = (o.lastikKodu || '').toUpperCase();
+      if(!idx.has(lastikUpper)) idx.set(lastikUpper, []);
+      idx.get(lastikUpper).push(o);
+    });
+  }
+  return idx;
+}
+function kodKayitTarihIndexOlustur(){
+  const idx = new Map();
+  tumKodKayitlari.forEach(diger=>{
+    if(!diger.tarih) return;
+    const lastikUpper = String(diger.lastikKodu||'').toUpperCase();
+    if(!idx.has(lastikUpper)) idx.set(lastikUpper, []);
+    idx.get(lastikUpper).push(diger.tarih);
+  });
+  idx.forEach(arr=>arr.sort((a,b)=>a-b));
+  return idx;
+}
+
+function lastikIcinBulunanKodlar(lastikKodu, blokluKodlar, kayitTarihi, okutmaIndex, kodKayitTarihIndex){
   const bulunanlar = new Set();
-  if(!Array.isArray(tumOkutmalar) || tumOkutmalar.length === 0 || !Array.isArray(blokluKodlar)) return bulunanlar;
+  if(!Array.isArray(blokluKodlar) || blokluKodlar.length === 0) return bulunanlar;
   const lastikUpper = String(lastikKodu || '').toUpperCase();
+  const okutmalar = okutmaIndex.get(lastikUpper);
+  if(!okutmalar || okutmalar.length === 0) return bulunanlar;
   const kodSeti = new Set(blokluKodlar.map(k=>String(k).toUpperCase()));
 
   // Aynı lastik kodu için bu kayıttan SONRA açılmış bir sonraki kayıt var mı?
   // Varsa, o kayıttan itibaren yapılan okutmalar bu güne değil, o sonraki kayda ait sayılır.
   let pencereBitis = null;
   if(kayitTarihi){
-    tumKodKayitlari.forEach(diger=>{
-      if(String(diger.lastikKodu||'').toUpperCase() !== lastikUpper) return;
-      if(!diger.tarih) return;
-      if(diger.tarih > kayitTarihi){
-        if(pencereBitis === null || diger.tarih < pencereBitis) pencereBitis = diger.tarih;
+    const tarihler = kodKayitTarihIndex.get(lastikUpper);
+    if(tarihler){
+      for(const t of tarihler){
+        if(t > kayitTarihi){ pencereBitis = t; break; }
       }
-    });
+    }
   }
 
-  tumOkutmalar.forEach(o=>{
-    if((o.lastikKodu || '').toUpperCase() !== lastikUpper) return;
+  okutmalar.forEach(o=>{
     const blok = (o.bloklananKod || '').toUpperCase();
     if(!kodSeti.has(blok)) return;
     if(kayitTarihi && o.tarih && o.tarih < kayitTarihi) return;
@@ -2320,15 +2346,18 @@ function renderKodListe(){
     return true;
   });
   if(filtreli.length === 0){
-    kodListe.innerHTML = '<tr><td colspan="6" class="empty">' + (tumKodKayitlari.length === 0 ? 'Henüz bloklu kod eklenmedi.' : 'Seçilen tarihte kayıt yok.') + '</td></tr>';
+    kodListe.innerHTML = '<tr><td colspan="7" class="empty">' + (tumKodKayitlari.length === 0 ? 'Henüz bloklu kod eklenmedi.' : 'Seçilen tarihte kayıt yok.') + '</td></tr>';
     return;
   }
+  const okutmaIndex = okutmaIndexOlustur();
+  const kodKayitTarihIndex = kodKayitTarihIndexOlustur();
   let html = '';
-  filtreli.forEach(k=>{
+  filtreli.forEach((k, i)=>{
     const tarih = k.tarih ? formatTarih(k.tarih) : '—';
-    const bulunanlar = lastikIcinBulunanKodlar(k.lastikKodu, k.blokluKodlar, k.tarih);
+    const bulunanlar = lastikIcinBulunanKodlar(k.lastikKodu, k.blokluKodlar, k.tarih, okutmaIndex, kodKayitTarihIndex);
     const kalanKodlar = k.blokluKodlar.filter(kod => !bulunanlar.has(String(kod).toUpperCase()));
     html += `<tr class="kod-row" data-id="${k.id}">
+      <td class="sira">${i + 1}</td>
       <td class="tarih">${tarih}</td>
       <td class="kod">${escapeHtml(k.lastikKodu)}</td>
       <td>
