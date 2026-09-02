@@ -557,6 +557,21 @@
     height:42px;
     padding:0 12px !important;
   }
+  @keyframes kodInputYanipSon{
+    0%, 100%{
+      border-color:var(--accent);
+      background:var(--surface);
+      box-shadow:0 0 0 0 rgba(240,179,35,.5);
+    }
+    50%{
+      border-color:var(--accent-hover);
+      background:var(--accent-tint);
+      box-shadow:0 0 0 5px rgba(240,179,35,0);
+    }
+  }
+  .entry-kod-input.kod-vurgula{
+    animation:kodInputYanipSon 1s ease-in-out infinite;
+  }
   .bulk-box{
     position:relative;
     flex:1 1 auto;
@@ -1925,6 +1940,13 @@ kodInput.addEventListener('input', ()=>{
   if(temiz !== kodInput.value) kodInput.value = temiz;
 });
 
+// Lastik Kodu alanı: buraya girileceği belli olsun diye yanıp söner.
+// Bloklu beadcode alanına geçildiğinde durur, kayıttan sonra tekrar başlar.
+kodInput.classList.add('kod-vurgula');
+bulkInput.addEventListener('focus', ()=>{
+  kodInput.classList.remove('kod-vurgula');
+});
+
 bulkInput.setAttribute('inputmode', 'numeric');
 bulkInput.addEventListener('input', ()=>{
   const temiz = bulkInput.value.replace(/[^0-9\s,;]/g, '');
@@ -2028,6 +2050,7 @@ async function hepsiniKaydet(){
   }finally{
     kaydediliyor = false;
     btnKaydet.disabled = false;
+    kodInput.classList.add('kod-vurgula');
     kodInput.focus();
   }
 }
