@@ -171,6 +171,13 @@
     letter-spacing:.01em;
     margin:0 0 22px;
   }
+  .giris-logo{
+    display:block;
+    width:200px;
+    height:200px;
+    object-fit:contain;
+    margin:0 auto 22px;
+  }
   .giris-input-wrap{
     position:relative;
     margin-bottom:14px;
@@ -263,14 +270,21 @@
   .brand-logo{height:100px;width:auto;flex-shrink:0;object-fit:contain;}
   .brand-text{display:flex;flex-direction:column;align-items:center;min-width:0;}
   .brand-title{
-    font-family:var(--font-head);
-    font-weight:800;
+    font-family:Arial Black, Impact, var(--font-head), sans-serif;
+    font-weight:900;
     font-size:30px;
-    letter-spacing:.01em;
+    letter-spacing:.02em;
     text-transform:uppercase;
-    color:var(--accent);
+    color:#fff;
     text-align:center;
     white-space:nowrap;
+    text-shadow:
+      -1.5px -1.5px 0 #0b1440,
+      1.5px -1.5px 0 #0b1440,
+      -1.5px 1.5px 0 #0b1440,
+      1.5px 1.5px 0 #0b1440,
+      0 3px 0 #0b1440,
+      0 6px 10px rgba(0,0,0,.5);
   }
   .brand-title span{color:var(--accent);}
   .brand-sub{
@@ -1510,6 +1524,7 @@
   <div class="giris-panel" id="girisPanel">
     <p class="giris-baslik">Erişim Paneli</p>
     <p class="giris-alt">Devam etmek için şifreni gir</p>
+    <img src="giris.png" alt="Logo" class="giris-logo">
     <div class="giris-input-wrap">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       <input type="text" id="girisSifre" placeholder="Şifre" autocomplete="off" inputmode="numeric" autocapitalize="off" autocorrect="off" spellcheck="false" style="-webkit-text-security:disc;text-security:disc;">
@@ -1528,6 +1543,7 @@
       </div>
     </div>
     <div class="navbar-right">
+      <img src="logo.png" alt="Logo" class="brand-logo">
       <button type="button" class="navbar-date-btn" id="navTarihBtn" aria-label="Tarih Filtresi">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
         <span id="navTarihLabel">—</span>
