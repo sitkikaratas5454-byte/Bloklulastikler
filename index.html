@@ -2640,7 +2640,8 @@ let logTemizleniyor = false;
 btnLogTemizle.addEventListener('click', async ()=>{
   if(logTemizleniyor) return;
   if(tumOkutmalar.length === 0){ return; }
-  if(!confirm('Tüm okutma kayıtlarını komple silmek istediğine emin misin?')) return;
+  const onay = await onayAc('Tüm kayıtları silmek üzeresin', 'Tüm okutma kayıtlarını komple silmek istediğine emin misin? Bu işlem geri alınamaz.');
+  if(!onay) return;
   logTemizleniyor = true;
   btnLogTemizle.disabled = true;
   btnLogTemizle.textContent = 'Temizleniyor...';
