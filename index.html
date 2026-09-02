@@ -75,7 +75,7 @@
     background:linear-gradient(135deg, var(--primary) 0%, var(--bg-dark) 55%, #10184a 100%);
     overflow-y:auto;
     opacity:0;
-    transition:opacity 1.1s cubic-bezier(.4,0,.2,1), transform 1.1s cubic-bezier(.4,0,.2,1);
+    transition:opacity 1.8s cubic-bezier(.25,.1,.25,1), transform 1.8s cubic-bezier(.25,.1,.25,1);
     animation:girisOverlayBelir .6s cubic-bezier(.4,0,.2,1) forwards;
   }
   @keyframes girisOverlayBelir{
@@ -84,7 +84,7 @@
   }
   .giris-overlay.giris-kapaniyor{
     opacity:0;
-    transform:scale(1.02);
+    transform:scale(.92);
     pointer-events:none;
   }
   .giris-marka, .giris-panel{
@@ -96,7 +96,7 @@
   body > header, body > main{
     opacity:0;
     transform:translateY(8px);
-    transition:opacity 1.3s cubic-bezier(.4,0,.2,1) .15s, transform 1.3s cubic-bezier(.4,0,.2,1) .15s;
+    transition:opacity 1.8s cubic-bezier(.25,.1,.25,1) .25s, transform 1.8s cubic-bezier(.25,.1,.25,1) .25s;
   }
   body.giris-tamam > header, body.giris-tamam > main{
     opacity:1;
@@ -184,7 +184,7 @@
     pointer-events:none;
     z-index:1;
   }
-  .giris-panel input[type="password"]{
+  #girisSifre{
     width:100%;
     height:42px;
     padding:0 14px 0 48px;
@@ -202,8 +202,8 @@
     outline:none;
     transition:border-color .15s ease, background .15s ease, box-shadow .15s ease;
   }
-  .giris-panel input[type="password"]::placeholder{color:#a9b3cc; letter-spacing:normal; font-size:15px; font-weight:500;}
-  .giris-panel input[type="password"]:focus{
+  #girisSifre::placeholder{color:#a9b3cc; letter-spacing:normal; font-size:15px; font-weight:500;}
+  #girisSifre:focus{
     border-color:var(--accent);
     background:rgba(255,255,255,.1);
     box-shadow:0 0 0 3px rgba(240,179,35,.25);
@@ -1027,14 +1027,15 @@
     -webkit-backdrop-filter:none;
   }
   #view-ekle .kod-listesi-card{
-    background:transparent;
-    border:none;
+    background:rgba(255,255,255,.04);
+    border:1.5px solid rgba(240,179,35,.55);
+    border-radius:14px;
     box-shadow:none;
-    padding:0;
+    padding:14px 14px 10px;
     backdrop-filter:none;
     -webkit-backdrop-filter:none;
   }
-  #view-ekle .kod-listesi-card .card-header{margin:0;}
+  #view-ekle .kod-listesi-card .card-header{margin:0 0 10px;}
   #view-log .lastik-ara-card{
     background:transparent;
     border:none;
@@ -1510,7 +1511,7 @@
     <p class="giris-alt">Devam etmek için şifreni gir</p>
     <div class="giris-input-wrap">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      <input type="password" id="girisSifre" placeholder="Şifre" autocomplete="off" inputmode="numeric">
+      <input type="text" id="girisSifre" placeholder="Şifre" autocomplete="off" inputmode="numeric" autocapitalize="off" autocorrect="off" spellcheck="false" style="-webkit-text-security:disc;text-security:disc;">
     </div>
     <button id="girisBtn">Giriş Yap</button>
     <p class="giris-hata" id="girisHata"></p>
@@ -1535,9 +1536,9 @@
     <div class="tabbar-inner">
       <div class="tabs">
         <span class="tab-pill" id="tabPill"></span>
-        <div class="tab active" data-view="ekle">Kod Ekle</div>
+        <div class="tab active" data-view="ekle">Lastik Kodu ve Blokeli Kod Ekle</div>
         <div class="tab" data-view="log">Bloklu Bulunan Lastikler</div>
-        <div class="tab" data-view="kodara">Koda Göre Ara</div>
+        <div class="tab" data-view="kodara">Lastik Koduna Göre Ara</div>
       </div>
     </div>
   </nav>
@@ -1779,7 +1780,7 @@ const girisHata = document.getElementById('girisHata');
 function girisAc(){
   girisOverlay.classList.add('giris-kapaniyor');
   document.body.classList.add('giris-tamam');
-  setTimeout(()=>{ girisOverlay.style.display = 'none'; }, 1100);
+  setTimeout(()=>{ girisOverlay.style.display = 'none'; }, 1800);
 }
 
 function girisDeneme(){
