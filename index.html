@@ -1930,6 +1930,24 @@ bulkInput.addEventListener('input', ()=>{
   const temiz = bulkInput.value.replace(/[^0-9\s,;]/g, '');
   if(temiz !== bulkInput.value) bulkInput.value = temiz;
 });
+// Birden fazla satır halinde kod yapıştırılırsa (örn. Excel'den), alt alta durmasın diye
+// satırları/tüm boşlukları virgülle ayırıp tek satıra dönüştürür.
+bulkInput.addEventListener('paste', (e)=>{
+  e.preventDefault();
+  const yapistirilan = (e.clipboardData || window.clipboardData).getData('text');
+  const parcalar = yapistirilan.split(/[\s,;]+/).map(s=>s.replace(/[^0-9]/g, '')).filter(Boolean);
+  if(parcalar.length === 0) return;
+  const eklenecek = parcalar.join(', ');
+  const basi = bulkInput.selectionStart;
+  const sonu = bulkInput.selectionEnd;
+  const oncesi = bulkInput.value.slice(0, basi);
+  const sonrasi = bulkInput.value.slice(sonu);
+  const ayirici = (oncesi && !/[,\s]$/.test(oncesi)) ? ', ' : '';
+  bulkInput.value = oncesi + ayirici + eklenecek + sonrasi;
+  const yeniKonum = (oncesi + ayirici + eklenecek).length;
+  bulkInput.setSelectionRange(yeniKonum, yeniKonum);
+  bulkInput.dispatchEvent(new Event('input'));
+});
 function textareaEnterVirgulle(el){
   el.addEventListener('keydown', (e)=>{
     if(e.key === 'Enter'){
